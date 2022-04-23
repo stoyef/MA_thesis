@@ -1,2 +1,2 @@
-# MA_thesis
+# Master thesis
 Thesis code and other things

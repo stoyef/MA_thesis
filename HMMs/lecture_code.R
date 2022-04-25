@@ -399,7 +399,7 @@ states <- viterbi(log(cara),mu,sigma,Gamma,delta,N)
 plot(log(cara),pch=19,col=cbPalette[states])
 
 
-#### Chapter 7 ####
+#### Chapter 7 #### -> state-space models
 
 mllk <- function(theta.star,x,m,bm){
   phi <- plogis(theta.star[1])

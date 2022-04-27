@@ -246,7 +246,8 @@ delta <- solve(t(diag(N)-Gamma+1),rep(1,N))
 delta
 
 # autocorrelation
-plogis(mod$estimate[(N-1)*N+1:N])
+autocor <- plogis(mod$estimate[(N-1)*N+1:N])
+autocor
 
 # step length
 mu.step <- exp(mod$estimate[(N-1)*N+(N+1):(2*N)])
@@ -260,5 +261,98 @@ kappa.angle
 
 
 
-### to be continued
+###
+###
+### state decoding
+###
+###
+### global decoding, using viterbi from lecture
+###
+
+# We need TPM Gamma
+autocor.viterbi <-function(x, Gamma, delta, autocor, 
+                           mu.step, sigma.step, kappa.angle){
+ 
+  n <- dim(x)[1]
+  allprobs <- matrix(1,n,2)
+  ind <- which(!is.na(x$step))[-1] # change: we omit first step 
+  # in order to always have the step in t-1
+  
+  allprobs[ind,] <- cbind(
+    dgamma(x$step[ind],
+           shape=mu.step[1]^2/sigma.step[1]^2,
+           scale=sigma.step[1]^2/mu.step[1]) *
+      dvm(x$angle[ind],0,kappa.angle[1]), # mu.angle fixed as 0
+    dgamma(x$step[ind],
+           shape=mu.step[2]^2/sigma.step[2]^2,
+           scale=sigma.step[2]^2/mu.step[2]) *
+      dvm(x$angle[ind],0,kappa.angle[2]) # mu.angle fixed as 0
+  )
+  
+  xi <- matrix(0,n,2)
+  foo <- delta*allprobs[1,]
+  xi[1,] <- foo/sum(foo)
+  
+  for (t in 2:n){
+    foo <- apply(xi[t-1,]*Gamma, 2, max) * allprobs[t,]
+    xi[t,] <- foo/sum(foo)
+  }
+  
+  iv <- numeric(n)
+  iv[n] <- which.max(xi[n,])
+  
+  for (t in (n-1):1){
+    iv[t] <- which.max(Gamma[,iv[t+1]] * xi[t,])
+  }
+  return(iv)
+}
+
+states_global <- autocor.viterbi(schwalbe_77, 
+                                 Gamma, delta, autocor, mu.step, sigma.step,
+                                 kappa.angle)
+states_global
+
+
+###
+###
+###
+### Visualization
+###
+###
+###
+
+
+# Visualization of the different distributions
+
+# step
+plot(schwalbe_77$step, type='l')
+points(schwalbe_77$step, pch=19, col=states_global+1) # vernünftige viz fehlt
+
+hist(schwalbe_77$step, prob=T, breaks=20, xlab="Step size")
+
+x <- seq(0,45,by=0.0005)
+curve(delta[1]*dgamma(x, shape=mu.step[1]^2/sigma.step[1]^2,
+                    scale=sigma.step[1]^2/mu.step[1]), 0,45, add=T)
+curve(delta[2]*dgamma(x, shape=mu.step[2]^2/sigma.step[2]^2,
+             scale=sigma.step[2]^2/mu.step[2]), 0,45,add=T)
+
+# das sieht ja noch nicht so sinnvoll aus...
+
+
+# angle
+plot(schwalbe_77$angle, type='l')
+points(schwalbe_77$angle, pch=19, col=states_global+1) # vernünftige viz fehlt
+
+hist(schwalbe_77$angle, prob=T, breaks=70, xlab="angle",xlim=c(-1,1))
+
+x <- seq(-1,1,by=0.005)
+curve(delta[1]*dvm(x, 0,kappa.angle[1]), -1,1,add=T)
+curve(delta[2]*dvm(x ,0,kappa.angle[2]), -1,1,add=T)
+curve(delta[2]*dvm(x ,0,kappa.angle[2]), -1,1)
+
+## ach manno, irgendwas ist da Quark, nochmal alles durchgehen als nächstes :)
+
+
+
+
 

@@ -100,7 +100,7 @@ mllk_ar1<-function(theta.star,x,N){
 # starting values
 theta = c(
   -2,-2, # values to construct TPM
-  0.3,0.5, # autocorrelation [0,1]
+  0.1,0.1, # autocorrelation [0,1]
   20,35, # means of step for each state [0,Inf)
   5, 10, # sd of step for each state [0,Inf)
   0, 0, # means of angle for each state [-pi,pi]
@@ -353,6 +353,16 @@ curve(delta[2]*dvm(x ,0,kappa.angle[2]), -1,1)
 ## ach manno, irgendwas ist da Quark, nochmal alles durchgehen als nächstes :)
 
 
+
+##
+## Eigentlich ja auch nicht sinnvoll, das so zu machen.
+## Autocorrelation in step size könnte natürlich auch sein aber wir wollen
+## eigentlich die Autocorrelation in der Tortuosity betrachten
+##
+
+
+
+### das als nächstes!!
 
 
 

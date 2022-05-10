@@ -51,7 +51,7 @@ mllk<-function(theta.star,x,N){
 
 ###
 ### 1st aim: Clone model from Lawler et. al (2019)
-###       (with exception of von Mises distribution instead of Wrappen Cauchy)
+###       (with exception of von Mises distribution instead of Wrapped Cauchy)
 ###
 ### (Code adapted from HMM lecture)
 
@@ -111,7 +111,7 @@ theta.star = c(
   theta[1:2], # values to construct TPM
   qlogis(theta[3:4]), # autocorrelation
   log(theta[5:6]), # step mean
-  theta[7:8], # step sd
+  log(theta[7:8]), # step sd
   # for parameter of von Mises distribution: same transformation as in 
   # function n2w of moveHMM package
   theta[9:10] * cos(theta[11:12]), # angle mean
@@ -221,7 +221,7 @@ theta.star = c(
   theta[1:2], # values to construct TPM
   qlogis(theta[3:4]), # autocorrelation
   log(theta[5:6]), # step mean
-  theta[7:8], # step sd
+  log(theta[7:8]), # step sd
   # for parameter of von Mises distribution: same transformation as in 
   # function n2w of moveHMM package
   #theta[9:10] * cos(theta[11:12]), # angle mean
@@ -231,7 +231,8 @@ theta.star = c(
 mllk_ar1(theta.star=theta.star, x=schwalbe_77, 2) # works
 
 # minimize -logL
-mod <- nlm(mllk_ar1,theta.star,x=schwalbe_77[2:4480,],N=2,print.level=2)
+mod <- nlm(mllk_ar1,theta.star,x=schwalbe_77[2:4480,],N=2,print.level=2,
+           iterlim = 1000)
 mod
 
 ## re-transformation to natural parameters

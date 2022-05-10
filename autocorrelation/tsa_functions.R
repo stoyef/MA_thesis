@@ -49,5 +49,3 @@ plot_autocor <- function(batch_acf, batch_pacf){
   plot(batch_pacf, ylim=c(-1,1), type='h')
   par(mfrow=c(1,1))
 }
-
-

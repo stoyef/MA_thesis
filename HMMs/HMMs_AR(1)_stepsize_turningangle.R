@@ -88,7 +88,7 @@ mllk_ar1<-function(theta.star,x,N){
   foo <- delta%*%diag(allprobs[1,])
   l <- log(sum(foo))
   phi <- foo/sum(foo)
-  for (t in 2:length(x)){
+  for (t in 2:dim(x)[1]){
     foo <- phi%*%Gamma%*%diag(allprobs[t,])
     l <- l+log(sum(foo))
     phi <- foo/sum(foo)
@@ -198,7 +198,7 @@ mllk_ar1<-function(theta.star,x,N){
   foo <- delta%*%diag(allprobs[1,])
   l <- log(sum(foo))
   phi <- foo/sum(foo)
-  for (t in 2:length(x)){
+  for (t in 2:dim(x)[1]){
     foo <- phi%*%Gamma%*%diag(allprobs[t,])
     l <- l+log(sum(foo))
     phi <- foo/sum(foo)

@@ -239,7 +239,7 @@ legend('topright',c('state 1','state 2'),col = c(5,6),pch=15,bty='n')
 ### check for more starting values, takes some time 
 # (may need to restart due to singularity issues for some starting values)
 llks <- rep(NA,100)
-mods <- rep(NA,100)
+mods <- list()
 
 N=2
 
@@ -268,7 +268,7 @@ for (iteration in 1:100){
   # minimize -logL
   mod <- nlm(mllk_ar1,theta.star,x=data[2:dim(data)[1],],N=2,print.level=0,
              iterlim = 1000)
-  mods[iteration] <- mod
+  append(mods, mod)
   llks[iteration] <- -mod$minimum
 }
 

@@ -45,7 +45,7 @@ mllk_ar1_turningangle<-function(theta.star,x,N){
   for (j in 1:N){
     angle.prob <- rep(1,dim(x)[1])
     # here comes the autocorrelation!
-    mu.angle_auto <- c(rep(1,1), # AR(1), more 1's before if higher order
+    mu.angle_auto <- c(rep(NA,1), # AR(1), more 1's before if higher order
                       (1-autocor[j])*mu.angle[j] + autocor[j]*x$angle[ind.angle-1])
     angle.prob[ind.angle] <- dvm(x$angle[ind.angle],mu.angle_auto[ind.angle],kappa.angle[j])
                                   
@@ -73,7 +73,7 @@ theta = c(
   -2,-2, # values to construct TPM
   0.1,0.1, # autocorrelation [0,1]
   0.1,-0.1, # means of angle for each state [-pi,pi]
-  3, 10 # kappa of step for each state [0,Inf)
+  300, 1000 # kappa of step for each state [0,Inf)
 ) 
 # transformation for unconstrained optimization
 theta.star = c(
@@ -173,16 +173,15 @@ states_global
 plot(schwalbe_77$angle, type='l')
 points(schwalbe_77$angle, pch=19, col=states_global+1) # vernünftige viz fehlt
 
-hist(schwalbe_77$angle, prob=T, breaks=80, xlab="Step size",
-     ylim=c(0,12))
+hist(schwalbe_77$angle, prob=T, breaks=250, xlab="Step size",
+     ylim=c(0,17),xlim=c(-0.5,0.5))
 
-x <- seq(-pi,pi,by=0.0005)
-curve(delta[1]*dvm(x,mu.angle[1],kappa.angle[1]), -pi,pi, add=T,
+curve(delta[1]*dvm(x,mu.angle[1],kappa.angle[1]), -pi,pi, add=T,n=10000,
       col=4,lwd=2)
-curve(delta[2]*dvm(x,mu.angle[2],kappa.angle[2]), -pi,pi, add=T,
+curve(delta[2]*dvm(x,mu.angle[2],kappa.angle[2]), -pi,pi, add=T,n=10000,
       col=7,lwd=2)
 curve(delta[1]*dvm(x,mu.angle[1],kappa.angle[1])+
-        delta[2]*dvm(x,mu.angle[2],kappa.angle[2]), -pi,pi, add=T,
+        delta[2]*dvm(x,mu.angle[2],kappa.angle[2]), -pi,pi, add=T,n=10000,
       col=2,lwd=2)
 
 # Interessant...
@@ -324,5 +323,50 @@ curve(delta[1]*dvm(x,mu.angle[1],kappa.angle[1])+
 ###
 ### next steps: gucken, warum, die einzelnen States so komisch sind...
 ###
+
+
+
+
+
+### check for more starting values, takes some time 
+# (may need to restart due to singularity issues for some starting values)
+llks <- rep(NA,10)
+mods <- list()
+
+N=3
+
+for (iteration in 10:10){
+  # starting values
+  theta = c(
+    rep(-2,N*(N-1)), # values to construct TPM
+    runif(N,0,1), # autocorrelation [0,1]
+    runif(N,-2,2), # means of angle for each state [-pi,pi]
+    runif(N,5,1000) # kappa of angle for each state [0,Inf)
+  ) 
+  # transformation for unconstrained optimization
+  theta.star = c(
+    theta[1:(N*(N-1))], # values to construct TPM
+    qlogis(theta[N*(N-1)+1:N]), # autocorrelation
+    # for parameter of von Mises distribution: same transformation as in 
+    # function n2w of moveHMM package
+    theta[N*(N-1)+N+1:N] * cos(theta[N*(N-1)+2*N+1:N]), # angle mean
+    theta[N*(N-1)+N+1:N] * sin(theta[N*(N-1)+2*N+1:N]) # angle kappa
+  )
+  
+  # minimize -logL
+  mod <- nlm(mllk_ar1_turningangle,theta.star,x=schwalbe_77[2:4480,],N=2,print.level=0,
+             iterlim = 1000)
+  mods <- append(mods, list(mod$estimate))
+  llks[iteration] <- -mod$minimum
+}
+
+llks
+mods
+
+sum(round(llks,3)==round(max(llks),3))/length(llks) # proportion of optimal runs
+max(llks)
+
+mod$estimate <- mods[[4]]
+
 
 

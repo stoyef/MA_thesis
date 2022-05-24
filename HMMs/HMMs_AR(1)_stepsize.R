@@ -50,7 +50,7 @@ mllk_ar1_stepsize<-function(theta.star,x,N){
   for (j in 1:N){
     step.prob <- rep(1,dim(x)[1])
     # here comes the autocorrelation!
-    mu.step_auto <- c(rep(1,1), # AR(1), more 1's before if higher order
+    mu.step_auto <- c(rep(NA,1), # AR(1), more NA's before if higher order
                       (1-autocor[j])*mu.step[j] + autocor[j]*x$step[ind.step-1])
     step.prob[ind.step] <- dgamma(x$step[ind.step],
                                   shape=mu.step_auto[ind.step]^2/sigma.step[j]^2,
@@ -77,8 +77,8 @@ mllk_ar1_stepsize<-function(theta.star,x,N){
 # starting values
 theta = c(
   -2,-2, # values to construct TPM
-  0.1,0.1, # autocorrelation [0,1]
-  20,40, # means of step for each state [0,Inf)
+  0.5,0.7, # autocorrelation [0,1]
+  20,35, # means of step for each state [0,Inf)
   5, 5 # sd of step for each state [0,Inf)
 ) 
 # transformation for unconstrained optimization
@@ -133,7 +133,7 @@ autocor.viterbi <-function(x, Gamma, delta, autocor,
   
   n <- dim(x)[1]
   allprobs <- matrix(1,n,2)
-  ind <- which(!is.na(x$step))[-1] # change: we omit first step 
+  ind <- which(!is.na(x$step))[-c(1:1)] # change: we omit first step 
   # in order to always have the step in t-1
   
   allprobs[ind,] <- cbind(
@@ -186,20 +186,62 @@ points(schwalbe_77$step, pch=19, col=states_global+1) # vernünftige viz fehlt
 hist(schwalbe_77$step, prob=T, breaks=40, xlab="Step size",
      ylim=c(0,0.8))
 
-x <- seq(0,45,by=0.0005)
 curve(delta[1]*dgamma(x, shape=mu.step[1]^2/sigma.step[1]^2,
-                      scale=sigma.step[1]^2/mu.step[1]), 0,45, add=T,
+                      scale=sigma.step[1]^2/mu.step[1]), 0,45, add=T,n=10000,
       col=4,lwd=2)
 curve(delta[2]*dgamma(x, shape=mu.step[2]^2/sigma.step[2]^2,
-                      scale=sigma.step[2]^2/mu.step[2]), 0,45,add=T,
+                      scale=sigma.step[2]^2/mu.step[2]), 0,45,add=T,n=10000,
       col=7,lwd=2)
 curve(delta[1]*dgamma(x, shape=mu.step[1]^2/sigma.step[1]^2,
                       scale=sigma.step[1]^2/mu.step[1])+
         delta[2]*dgamma(x, shape=mu.step[2]^2/sigma.step[2]^2,
-                      scale=sigma.step[2]^2/mu.step[2]), 0,45,add=T,
+                      scale=sigma.step[2]^2/mu.step[2]), 0,45,add=T,n=10000,
       col=2,lwd=2)
 
 # das sieht ja noch nicht so sinnvoll aus...
+
+
+### check for more starting values, takes some time 
+# (may need to restart due to singularity issues for some starting values)
+llks <- rep(NA,100)
+mods <- list()
+
+N=2
+
+for (iteration in 1:100){
+  # starting values
+  theta = c(
+    rep(-2,N*(N-1)), # values to construct TPM
+    runif(N,0,1), # autocorrelation [0,1]
+    runif(N,5,45), # means of step for each state [0,Inf)
+    runif(N,0.1,10) # sd of step for each state [0,Inf)
+  ) 
+  # transformation for unconstrained optimization
+  theta.star = c(
+    theta[1:(N*(N-1))], # values to construct TPM
+    qlogis(theta[N*(N-1)+1:N]), # autocorrelation
+    log(theta[N*(N-1)+N+1:N]), # step mean
+    log(theta[N*(N-1)+2*N+1:N]) # step sd
+  )
+  
+  # minimize -logL
+  mod <- nlm(mllk_ar1_stepsize,theta.star,x=schwalbe_77[2:4480,],N=2,print.level=0,
+             iterlim = 1000)
+  mods <- append(mods$estimate, mod)
+  llks[iteration] <- -mod$minimum
+}
+
+llks
+mods
+
+sum(round(llks,3)==round(max(llks),3))/length(llks) # proportion of optimal runs
+max(llks)
+
+mod$estimate <- mods[2]$estimate
+# same old same old...
+
+
+
 
 
 
@@ -323,22 +365,21 @@ points(schwalbe_77$step, pch=19, col=states_global+1) # vernünftige viz fehlt
 hist(schwalbe_77$step, prob=T, breaks=40, xlab="Step size",
      ylim = c(0,0.8))
 
-x <- seq(0,45,by=0.0005)
 curve(delta[1]*dgamma(x, shape=mu.step[1]^2/sigma.step[1]^2,
-                      scale=sigma.step[1]^2/mu.step[1]), 0,45, add=T,
+                      scale=sigma.step[1]^2/mu.step[1]), 0,45, add=T,n=10000,
       col=4,lwd=2)
 curve(delta[2]*dgamma(x, shape=mu.step[2]^2/sigma.step[2]^2,
-                      scale=sigma.step[2]^2/mu.step[2]), 0,45,add=T,
+                      scale=sigma.step[2]^2/mu.step[2]), 0,45,add=T,n=10000,
       col=6,lwd=2)
 curve(delta[3]*dgamma(x, shape=mu.step[3]^2/sigma.step[3]^2,
-                      scale=sigma.step[3]^2/mu.step[3]), 0,45,add=T,
+                      scale=sigma.step[3]^2/mu.step[3]), 0,45,add=T,n=10000,
       col=7,lwd=2)
 curve(delta[1]*dgamma(x, shape=mu.step[1]^2/sigma.step[1]^2,
                       scale=sigma.step[1]^2/mu.step[1])+
         delta[2]*dgamma(x, shape=mu.step[2]^2/sigma.step[2]^2,
                         scale=sigma.step[2]^2/mu.step[2])+
         delta[3]*dgamma(x, shape=mu.step[3]^2/sigma.step[3]^2,
-                        scale=sigma.step[3]^2/mu.step[3]), 0,45, add=T,
+                        scale=sigma.step[3]^2/mu.step[3]), 0,45, add=T,n=10000,
       col=2,lwd=2)
 
 # das sieht ja noch nicht so sinnvoll aus...

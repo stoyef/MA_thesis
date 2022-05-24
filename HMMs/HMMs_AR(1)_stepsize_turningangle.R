@@ -72,7 +72,7 @@ mllk_ar1<-function(theta.star,x,N){
   kappa.angle <- sqrt(theta.star[(N-1)*N+3*N+1:N]^2+theta.star[(N-1)*N+4*N+1:N]^2)
   
   allprobs <- matrix(1,dim(x)[1],N)
-  ind.step <- which(!is.na(x$step))[-1] # change: we omit first step 
+  ind.step <- which(!is.na(x$step))[-c(1:1)] # change: we omit first step 
   # in order to always have the step in t-1
   ind.angle <- which(!is.na(x$angle))
   
@@ -264,7 +264,7 @@ theta = c(
   20,35, # means of step for each state [0,Inf)
   2, 5, # sd of step for each state [0,Inf)
   #0, 0, # means of angle for each state [-pi,pi]
-  2, 4 # kappa of angle for each state [0,Inf)
+  300,800 # kappa of angle for each state [0,Inf)
 ) 
 # transformation for unconstrained optimization
 theta.star = c(
@@ -295,7 +295,7 @@ mods <- list()
 
 N=2
 
-for (iteration in 19:19){
+for (iteration in 1:100){
   # starting values
   theta = c(
     rep(-2,N*(N-1)), # values to construct TPM
@@ -303,24 +303,24 @@ for (iteration in 19:19){
     runif(N,5,45), # means of step for each state [0,Inf)
     runif(N,0.1,10), # sd of step for each state [0,Inf)
     #runif(N,-2,2), # means of angle for each state [-pi,pi]
-    runif(N,5,100) # kappa of angle for each state [0,Inf)
+    runif(N,5,1000) # kappa of angle for each state [0,Inf)
   ) 
   # transformation for unconstrained optimization
   theta.star = c(
-    theta[1:2], # values to construct TPM
-    qlogis(theta[3:4]), # autocorrelation
-    log(theta[5:6]), # step mean
-    log(theta[7:8]), # step sd
+    theta[1:(N*(N-1))], # values to construct TPM
+    qlogis(theta[N*(N-1)+1:N]), # autocorrelation
+    log(theta[N*(N-1)+N+1:N]), # step mean
+    log(theta[N*(N-1)+2*N+1:N]), # step sd
     # for parameter of von Mises distribution: same transformation as in 
     # function n2w of moveHMM package
     #theta[9:10] * cos(theta[11:12]), # angle mean
-    0 * sin(theta[9:10]) # angle kappa
+    0 * sin(theta[N*(N-1)+3*N+1:N]) # angle kappa
   )
   
   # minimize -logL
   mod <- nlm(mllk_ar1,theta.star,x=schwalbe_77[2:4480,],N=2,print.level=0,
              iterlim = 1000)
-  mods <- append(mods, mod)
+  mods <- append(mods, mod$estimate)
   llks[iteration] <- -mod$minimum
 }
 
@@ -357,7 +357,9 @@ sigma.step <- exp(mod$estimate[(N-1)*N+2*N+1:N])
 sigma.step
 
 # turning angles
-kappa.angle <- exp(mod$estimate[(N-1)*N+3*N+1:N])
+mu.angle <- Arg(0+1i*mod$estimate[(N-1)*N+3*N+1:N])
+mu.angle
+kappa.angle <- sqrt(0^2+mod$estimate[(N-1)*N+3*N+1:N]^2)
 kappa.angle
 
 
@@ -451,13 +453,13 @@ legend('topleft',c('state 1', 'state 2'),col=c(5,6),pch=15,bty='n')
 plot(schwalbe_77$angle, type='l')
 points(schwalbe_77$angle, pch=19, col=states_global+1) # vernünftige viz fehlt
 
-hist(schwalbe_77$angle, prob=T, breaks=70, xlab="angle",xlim=c(-1,1))
+hist(schwalbe_77$angle, prob=T, breaks=70, xlab="angle",xlim=c(-pi,pi))
 
-curve(delta[1]*dvm(x, 0,kappa.angle[1]), -1,1,add=T,col=5,lwd=2,n=10000)
-curve(delta[2]*dvm(x ,0,kappa.angle[2]), -1,1,add=T,col=6,lwd=2,n=10000)
+curve(delta[1]*dvm(x, 0,kappa.angle[1]), -pi,pi,add=T,col=5,lwd=2,n=10000)
+curve(delta[2]*dvm(x ,0,kappa.angle[2]), -pi,pi,add=T,col=6,lwd=2,n=10000)
 curve(delta[1]*dvm(x, 0,kappa.angle[1])+
         delta[2]*dvm(x ,0,kappa.angle[2]), 
-      -1,1,add=T,col=2,lwd=2,n=10000)
+      -pi,pi,add=T,col=2,lwd=2,n=10000)
 legend('topleft',c('state 1', 'state 2'),col=c(5,6),pch=15,bty='n')
 
 ## ach manno, irgendwas ist da Quark, nochmal alles durchgehen als nächstes :)

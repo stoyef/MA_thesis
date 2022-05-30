@@ -1,0 +1,13 @@
+Package: MasterThesis
+Version: 0.0.1
+Date: 2022-05-30
+Title: Master Thesis
+Description: Master Thesis about autocorrelation in HMMs.
+Authors@R: person("Ferdinand", "Stoye", email = "ferdinand.stoye@uni-bielefeld.de", 
+  role = c("aut","cre"))
+RoxygenNote: 7.2.0
+Encoding: UTF-8
+License: GPL-3
+LazyData: true
+ByteCompile: true
+

@@ -243,15 +243,95 @@ BIC_gamma_HMM(mod_ar3_data_ar3$mllk,2,3, sim_ar3$data)
 ###
 ###
 
-states_est <- viterbi_arp(x=sim_normal$data, Gamma=mod_normal_data_normal$Gamma, delta=mod_normal_data_normal$delta, 
+# normal HMM
+states_mod_normal_data_normal <- viterbi_arp(x=sim_normal$data, Gamma=mod_normal_data_normal$Gamma, delta=mod_normal_data_normal$delta, 
                           autocor=0, mu=mod_normal_data_normal$mu,
                           sigma=mod_normal_data_normal$sigma, N=2, p=0)
-sum(states_est==sim_normal$states)/length(sim_normal$states)
+sum(states_mod_normal_data_normal==sim_normal$states)/length(sim_normal$states)
 
-states_est <- viterbi_arp(x=sim_ar1$data, Gamma=mod_ar1_data_ar1$Gamma, delta=mod_ar1_data_ar1$delta, 
-                          autocor=mod_ar1_data_ar1$autocorrelation, mu=mod_ar1_data_ar1$mu,
-                          sigma=mod_ar1_data_ar1$sigma, N=2, p=1)
-sum(states_est==sim_ar1$states)/length(sim_ar1$states)
+states_mod_normal_data_ar1 <- viterbi_arp(x=sim_ar1$data, Gamma=mod_normal_data_ar1$Gamma, delta=mod_normal_data_ar1$delta, 
+                                             autocor=0, mu=mod_normal_data_ar1$mu,
+                                             sigma=mod_normal_data_ar1$sigma, N=2, p=0)
+sum(states_mod_normal_data_ar1==sim_ar1$states)/length(sim_ar1$states)
+
+states_mod_normal_data_ar2 <- viterbi_arp(x=sim_ar2$data, Gamma=mod_normal_data_ar2$Gamma, delta=mod_normal_data_ar2$delta, 
+                                             autocor=0, mu=mod_normal_data_ar2$mu,
+                                             sigma=mod_normal_data_ar2$sigma, N=2, p=0)
+sum(states_mod_normal_data_ar2==sim_ar2$states)/length(sim_ar2$states)
+
+states_mod_normal_data_ar3 <- viterbi_arp(x=sim_ar3$data, Gamma=mod_normal_data_ar3$Gamma, delta=mod_normal_data_ar3$delta, 
+                                          autocor=0, mu=mod_normal_data_ar3$mu,
+                                          sigma=mod_normal_data_ar3$sigma, N=2, p=0)
+sum(states_mod_normal_data_ar3==sim_ar3$states)/length(sim_ar3$states)
+
+# AR(1)-HMM
+states_mod_ar1_data_normal <- viterbi_arp(x=sim_normal$data, Gamma=mod_ar1_data_normal$Gamma, delta=mod_ar1_data_normal$delta, 
+                                             autocor=mod_ar1_data_normal$autocorrelation, mu=mod_ar1_data_normal$mu,
+                                             sigma=mod_ar1_data_normal$sigma, N=2, p=1)
+sum(states_mod_ar1_data_normal==sim_normal$states)/length(sim_normal$states)
+
+states_mod_ar1_data_ar1 <- viterbi_arp(x=sim_ar1$data, Gamma=mod_ar1_data_ar1$Gamma, delta=mod_ar1_data_ar1$delta, 
+                                          autocor=mod_ar1_data_ar1$autocorrelation, mu=mod_ar1_data_ar1$mu,
+                                          sigma=mod_ar1_data_ar1$sigma, N=2, p=1)
+sum(states_mod_ar1_data_ar1==sim_ar1$states)/length(sim_ar1$states)
+
+states_mod_ar1_data_ar2 <- viterbi_arp(x=sim_ar2$data, Gamma=mod_ar1_data_ar2$Gamma, delta=mod_ar1_data_ar2$delta, 
+                                          autocor=mod_ar1_data_ar2$autocorrelation, mu=mod_ar1_data_ar2$mu,
+                                          sigma=mod_ar1_data_ar2$sigma, N=2, p=1)
+sum(states_mod_ar1_data_ar2==sim_ar2$states)/length(sim_ar2$states)
+
+states_mod_ar1_data_ar3 <- viterbi_arp(x=sim_ar3$data, Gamma=mod_ar1_data_ar3$Gamma, delta=mod_ar1_data_ar3$delta, 
+                                          autocor=mod_ar1_data_ar3$autocorrelation, mu=mod_ar1_data_ar3$mu,
+                                          sigma=mod_ar1_data_ar3$sigma, N=2, p=1)
+sum(states_mod_ar1_data_ar3==sim_ar3$states)/length(sim_ar3$states)
+
+# AR(2)-HMM
+states_mod_ar2_data_normal <- viterbi_arp(x=sim_normal$data, Gamma=mod_ar2_data_normal$Gamma, delta=mod_ar2_data_normal$delta, 
+                                          autocor=mod_ar2_data_normal$autocorrelation, mu=mod_ar2_data_normal$mu,
+                                          sigma=mod_ar2_data_normal$sigma, N=2, p=2)
+sum(states_mod_ar2_data_normal==sim_normal$states)/length(sim_normal$states)
+
+states_mod_ar2_data_ar1 <- viterbi_arp(x=sim_ar1$data, Gamma=mod_ar2_data_ar1$Gamma, delta=mod_ar2_data_ar1$delta, 
+                                       autocor=mod_ar2_data_ar1$autocorrelation, mu=mod_ar2_data_ar1$mu,
+                                       sigma=mod_ar2_data_ar1$sigma, N=2, p=2)
+sum(states_mod_ar2_data_ar1==sim_ar1$states)/length(sim_ar1$states)
+
+states_mod_ar2_data_ar2 <- viterbi_arp(x=sim_ar2$data, Gamma=mod_ar2_data_ar2$Gamma, delta=mod_ar2_data_ar2$delta, 
+                                       autocor=mod_ar2_data_ar2$autocorrelation, mu=mod_ar2_data_ar2$mu,
+                                       sigma=mod_ar2_data_ar2$sigma, N=2, p=2)
+sum(states_mod_ar2_data_ar2==sim_ar2$states)/length(sim_ar2$states)
+
+states_mod_ar2_data_ar3 <- viterbi_arp(x=sim_ar3$data, Gamma=mod_ar2_data_ar3$Gamma, delta=mod_ar2_data_ar3$delta, 
+                                       autocor=mod_ar2_data_ar3$autocorrelation, mu=mod_ar2_data_ar3$mu,
+                                       sigma=mod_ar2_data_ar3$sigma, N=2, p=2)
+sum(states_mod_ar2_data_ar3==sim_ar3$states)/length(sim_ar3$states)
+
+# AR(3)-HMM
+states_mod_ar3_data_normal <- viterbi_arp(x=sim_normal$data, Gamma=mod_ar3_data_normal$Gamma, delta=mod_ar3_data_normal$delta, 
+                                          autocor=mod_ar3_data_normal$autocorrelation, mu=mod_ar3_data_normal$mu,
+                                          sigma=mod_ar3_data_normal$sigma, N=2, p=3)
+sum(states_mod_ar3_data_normal==sim_normal$states)/length(sim_normal$states)
+
+states_mod_ar3_data_ar1 <- viterbi_arp(x=sim_ar1$data, Gamma=mod_ar3_data_ar1$Gamma, delta=mod_ar3_data_ar1$delta, 
+                                       autocor=mod_ar3_data_ar1$autocorrelation, mu=mod_ar3_data_ar1$mu,
+                                       sigma=mod_ar3_data_ar1$sigma, N=2, p=3)
+sum(states_mod_ar3_data_ar1==sim_ar1$states)/length(sim_ar1$states)
+
+states_mod_ar3_data_ar2 <- viterbi_arp(x=sim_ar2$data, Gamma=mod_ar3_data_ar2$Gamma, delta=mod_ar3_data_ar2$delta, 
+                                       autocor=mod_ar3_data_ar2$autocorrelation, mu=mod_ar3_data_ar2$mu,
+                                       sigma=mod_ar3_data_ar2$sigma, N=2, p=3)
+sum(states_mod_ar3_data_ar2==sim_ar2$states)/length(sim_ar2$states)
+
+states_mod_ar3_data_ar3 <- viterbi_arp(x=sim_ar3$data, Gamma=mod_ar3_data_ar3$Gamma, delta=mod_ar3_data_ar3$delta, 
+                                       autocor=mod_ar3_data_ar3$autocorrelation, mu=mod_ar3_data_ar3$mu,
+                                       sigma=mod_ar3_data_ar3$sigma, N=2, p=3)
+sum(states_mod_ar3_data_ar3==sim_ar3$states)/length(sim_ar3$states)
+
+
+###
+### next steps here: take average values of like 10 runs or 1st and 3rd quartiles
+### -> better uncertainty quantification
+### maybe even confidence intervals???
 
 
 

@@ -18,8 +18,8 @@ fit_arp_model(mllk, data, theta.star, N, p)
 \item{p}{Degree of autocorrelation, 0 is possible for no autocorrelation.}
 }
 \value{
-List, containing Gamma, delta, (autocorrelation, depending on degree),
-        mu, sigma.
+List, containing minimal value of negative log-Likelihood, Gamma, 
+        delta, (autocorrelation, depending on degree), mu, sigma.
 }
 \description{
 Fit an AR(p)-gamma HMM to data using a specified function to compute the negative 

@@ -238,8 +238,8 @@ mllk_arp <-function(theta.star,x,N,p){
 #' @param N Number of states.
 #' @param p Degree of autocorrelation, 0 is possible for no autocorrelation.
 #' 
-#' @return List, containing Gamma, delta, (autocorrelation, depending on degree),
-#'         mu, sigma.
+#' @return List, containing minimal value of negative log-Likelihood, Gamma, 
+#'         delta, (autocorrelation, depending on degree), mu, sigma.
 #' 
 #' @export
 #' @rdname fit_arp_model
@@ -261,16 +261,132 @@ fit_arp_model <- function(mllk, data, theta.star, N, p){
     # mu and sigma 
     mu <- exp(mod$par[(N-1)*N+(p*N+1):(p*N+N)])
     sigma <- exp(mod$par[(N-1)*N+p*N+N+1:N])
-    ret <- list(Gamma, delta, autocor, mu, sigma)
-    names(ret) <- c('Gamma', 'delta', 'autocorrelation', 'mu', 'sigma')
+    ret <- list(mod$value, Gamma, delta, autocor, mu, sigma)
+    names(ret) <- c('mllk', 'Gamma', 'delta', 'autocorrelation', 'mu', 'sigma')
     return(ret)
   } else{
     # mu and sigma 
     mu <- exp(mod$par[(N-1)*N+1:N])
     sigma <- exp(mod$par[(N-1)*N+N+1:N])
-    ret <- list(Gamma, delta, mu, sigma)
-    names(ret) <- c('Gamma', 'delta', 'mu', 'sigma')
+    ret <- list(mod$value, Gamma, delta, mu, sigma)
+    names(ret) <- c('mllk', 'Gamma', 'delta', 'mu', 'sigma')
     return(ret)
   }
 }
+
+
+#' Calculate AIC for fitted gamma HMM
+#'
+#' Calculate the AIC criterion for a fitted gamma HMM 
+#' (with or without autocorrelation).
+#' 
+#' @param mllk minimum negative Log-Likelihood, output of \code{fit_gamma_hmm}.
+#' @param N Number of states of the HMM.
+#' @param p Degree of autocorrelation of the HMM (0 - no autocorrelation).
+#' 
+#' @return AIC of fitted model.
+#' 
+#' @export
+#' @rdname AIC_gamma_HMM
+AIC_gamma_HMM <- function(mllk, N, p){
+  n_params <- N*(N-1) + p*N + 2*N # TPM+autocor+mu+sigma
+  ret <- 2*mllk + 2*n_params # AIC (logLike is already negative)
+  return(ret)
+}
+
+
+#' Calculate BIC for fitted gamma HMM
+#'
+#' Calculate the BIC criterion for a fitted gamma HMM 
+#' (with or without autocorrelation).
+#' 
+#' @param mllk minimum negative Log-Likelihood, output of \code{fit_gamma_hmm}.
+#' @param N Number of states of the HMM.
+#' @param p Degree of autocorrelation of the HMM (0 - no autocorrelation).
+#' @param data Data vector the data was fitted to, to determine \eqn{\log(n)}.
+#' 
+#' @return BIC of fitted model.
+#' 
+#' @export
+#' @rdname BIC_gamma_HMM
+BIC_gamma_HMM <- function(mllk, N, p, data){
+  n_params <- N*(N-1) + p*N + 2*N # TPM+autocor+mu+sigma
+  ret <- 2*mllk + log(length(data))*n_params # BIC (logLike is already negative)
+  return(ret)
+}
+
+
+#' Global decoding for AR(p)-gamma HMM using Viterbi
+#' 
+#' Global decoding for an AR(p)-gamma HMM using the Viterbi algorithm.
+#' 
+#' @param x Data vector the model was fitted to.
+#' @param Gamma Transition probability matrix (full matrix, not only off diagonal entries).
+#' @param delta Stationary distribution.
+#' @param autocor default 0, Autocorrelation vector, in suitable form.
+#' @param mu Optimized vector of the mu parameter in the gamma distribution.
+#' @param sigma Optimized vector of the mu parameter in the gamma distribution.
+#' @param N Number of states.
+#' @param p Degree of autocorrelation (0 - no autocorrelation).
+#' 
+#' @return Estimated states using Viterbi.
+#' 
+#' @export
+#' @rdname viterbi_arp
+viterbi_arp <-function(x, Gamma, delta, autocor=0, 
+                       mu, sigma, N, p){
+  n <- length(x)
+  allprobs <- matrix(1,n,N)
+  
+  if (p==0){
+    ind <- which(!is.na(x))
+    
+    for (j in 1:N){
+      allprobs[ind,j] <- dgamma(x[ind],
+                                shape=mu[j]^2/sigma[j]^2,
+                                scale=sigma[j]^2/mu[j])
+    }
+  } else{ # p!=0, autocorrelation
+    ind <- which(!is.na(x))[-c(1:p)] # change: we omit first step 
+    # in order to always have the step in t-1
+    
+    autocor <- matrix(autocor, ncol=p, byrow=TRUE) # aurocorrelation matrix for easier handling later on
+    
+    autocor_ind <- matrix(NA,nrow=length(ind),ncol=p) # matrix for indices of autocor data
+    for (i in 1:p){
+      autocor_ind[,i] <- ind-p+i-1
+    }
+    autocor_ind <- apply(autocor_ind, 2, function(a)x[a]) # substitute indices with values
+    
+    for (j in 1:N){
+      mu_auto <- c(rep(NA,p), # AR(p)
+                   ((1-sum(autocor[j,]))*mu[j] + 
+                      as.vector(autocor_ind%*%autocor[j,]))) # matmul of values with autocor coefficient
+      
+      allprobs[ind,j] <- dgamma(x[ind],
+                                shape=mu_auto[ind]^2/sigma[j]^2,
+                                scale=sigma[j]^2/mu_auto[ind])
+    }
+  }
+  
+  xi <- matrix(0,n,N)
+  foo <- delta*allprobs[1,]
+  xi[1,] <- foo/sum(foo)
+  
+  for (t in 2:n){
+    foo <- apply(xi[t-1,]*Gamma, 2, max) * allprobs[t,]
+    xi[t,] <- foo/sum(foo)
+  }
+  
+  iv <- numeric(n)
+  iv[n] <- which.max(xi[n,])
+  
+  for (t in (n-1):1){
+    iv[t] <- which.max(Gamma[,iv[t+1]] * xi[t,])
+  }
+  return(iv)
+}
+
+
+
 

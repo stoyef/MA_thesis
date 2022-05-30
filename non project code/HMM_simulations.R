@@ -616,25 +616,30 @@ theta_hmm_best_star_arp <- c(
 
 
 
-autocor.viterbi <-function(x, Gamma, delta, autocor, 
-                           mu.step, sigma.step, N, p){
-  
-  n <- dim(x)[1]
+viterbi_arp <-function(x, Gamma, delta, autocor, 
+                           mu, sigma, N, p){
+  n <- length(x)
   allprobs <- matrix(1,n,N)
   ind <- which(!is.na(x))[-c(1:p)] # change: we omit first step 
   # in order to always have the step in t-1
   
-  allprobs[ind,] <- cbind(
-    dgamma(x$step[ind],
-           shape=mu.step[1]^2/sigma.step[1]^2,
-           scale=sigma.step[1]^2/mu.step[1]),
-    dgamma(x$step[ind],
-           shape=mu.step[2]^2/sigma.step[2]^2,
-           scale=sigma.step[2]^2/mu.step[2]),
-    dgamma(x$step[ind],
-           shape=mu.step[3]^2/sigma.step[3]^2,
-           scale=sigma.step[3]^2/mu.step[3])
-  )
+  autocor <- matrix(autocor, ncol=p, byrow=TRUE) # aurocorrelation matrix for easier handling later on
+  
+  autocor_ind <- matrix(NA,nrow=length(ind),ncol=p) # matrix for indices of autocor data
+  for (i in 1:p){
+    autocor_ind[,i] <- ind-p+i-1
+  }
+  autocor_ind <- apply(autocor_ind, 2, function(a)x[a]) # substitute indices with values
+  
+  for (j in 1:N){
+  mu_auto <- c(rep(NA,p), # AR(p)
+               ((1-sum(autocor[j,]))*mu[j] + 
+                  as.vector(autocor_ind%*%autocor[j,]))) # matmul of values with autocor coefficient
+  
+  allprobs[ind,j] <- dgamma(x[ind],
+           shape=mu_auto[ind]^2/sigma[j]^2,
+           scale=sigma[j]^2/mu_auto[ind])
+  }
   
   xi <- matrix(0,n,N)
   foo <- delta*allprobs[1,]
@@ -653,14 +658,4 @@ autocor.viterbi <-function(x, Gamma, delta, autocor,
   }
   return(iv)
 }
-
-states_global <- autocor.viterbi(schwalbe_77, 
-                                 Gamma, delta, autocor, mu.step, sigma.step)
-states_global
-
-
-
-
-
-
 

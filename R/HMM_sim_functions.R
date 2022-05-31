@@ -388,5 +388,101 @@ viterbi_arp <-function(x, Gamma, delta, autocor=0,
 }
 
 
+#' Plot states decoded by Viterbi algorithm
+#' 
+#' This function plots the states decoded by the Viterbi algorithm.
+#' 
+#' @param states Vector of states (natural numbers, range 1-N).
+#' @param names optional, specifies the names of the states. If "none", state 1-N will be used.
+#' @param title bool, indicator if the plot should habe a title.
+#' 
+#' @export
+#' @rdname plot_states
+plot_states <- function(states, names="none", title=TRUE){
+  N <- length(unique(states))
+  require(RColorBrewer)
+  pal <- brewer.pal(N,'Dark2')
+  
+  if (title){
+  plot(states, pch=19, bty='n', main='Decoded states using Viterbi',
+       xlab='Index', ylab='State', col=pal[states])
+  } else{
+    plot(states, pch=19, bty='n', main='',
+         xlab='Index', ylab='State', col=pal[states])
+    }
+  if (names[1]=="none"){
+    legend(length(states)/1.5, 1.8, paste("State",1:N), col=pal,lwd=1.5,bty='n')
+  } else{
+    legend(length(states)/1.5, 1.8, names, col=pal,lwd=1.5,bty='n')
+  }
+}
+
+
+#' Density plot of estimated gamma distributions
+#'
+#' Plots the estimted gamma distributions along with a histogram of the values.
+#' 
+#' @param data Input data for histogram
+#' @param mu Input vector for parameter mu
+#' @param sigma Input vector for parameter sigma
+#' @param delta Input vector for parameter delta
+#' @param title optional, title of the plot, if "none", then no title
+#' 
+#' @export
+#' @rdname plot_fitted_gamma_dist
+plot_fitted_gamma_dist <- function(data, mu, sigma, delta, title="none"){
+  N <- length(mu)
+  require(RColorBrewer)
+  pal <- brewer.pal(N+1, 'Dark2')
+  gams <- matrix(NA, nrow=10000,ncol=N)
+  x <- seq(min(data),max(data),length=10000)
+  for (i in 1:N){
+    gams[,i] = delta[i]*dgamma(x, shape=mu[i]^2/sigma[i]^2, scale=sigma[i]^2/mu[i])
+  }
+  
+  if (title=="none"){
+    hist(data, breaks=length(data)/25, probability = TRUE,
+         main="", xlab="x")
+  }else{
+  hist(data, breaks=length(data)/25, probability = TRUE,
+       main=title, xlab="x")
+  }
+  for (i in 1:N){
+    lines(x,gams[,i],col=pal[i], lwd=2)
+  }
+  lines(x,apply(gams,1,sum),col=pal[N+1],lwd=2)
+  legend('topright', c(paste("State",1:N),"Total"), bty='n', lwd=2,
+         col=pal)
+}
+
+
+#' Plot data 
+#'
+#' Plot a data vector
+#' 
+#' @param data Data vector to be plotted
+#' @param name optional, y-axis label, if "none" than "data"
+#' @param title optional, title of the plot, if "none", then no title
+#' 
+#' @export
+#' @rdname plot_data
+plot_data <- function(data, name="none", title="none"){
+  if (name=="none"){
+    plot(data, typ='l',xlab="Index", ylab="Data",bty='n')
+  } else{
+    plot(data, typ='l',xlab="Index", ylab=name,bty='n')
+  }
+  if (title=="none"){
+    title(main="")
+  } else{
+    title(main=title)
+  }
+  
+}
+
+
+#' Simulate HMMs with and without autocorrelation
+#'
+#'
 
 

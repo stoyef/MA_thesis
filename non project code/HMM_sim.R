@@ -334,4 +334,17 @@ sum(states_mod_ar3_data_ar3==sim_ar3$states)/length(sim_ar3$states)
 ### maybe even confidence intervals???
 
 
+###
+###
+### plot the Viterbi decoded states
+###
+###
 
+plot_states(states_mod_ar3_data_ar3[1:100],names=c("resting","travelling"),
+            title=FALSE)
+
+plot_fitted_gamma_dist(data=sim_ar3$data, mu=mod_ar3_data_ar3$mu, sigma=mod_ar3_data_ar3$sigma,
+                       delta=mod_ar3_data_ar3$delta,
+                       title="2-state-AR(3)-gamma HMM")
+
+plot_data(sim_ar3$data[1:500],name='Step size', title="First 500 observations of AR(3)-gamma HMM")

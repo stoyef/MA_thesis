@@ -348,3 +348,45 @@ plot_fitted_gamma_dist(data=sim_ar3$data, mu=mod_ar3_data_ar3$mu, sigma=mod_ar3_
                        title="2-state-AR(3)-gamma HMM")
 
 plot_data(sim_ar3$data[1:500],name='Step size', title="First 500 observations of AR(3)-gamma HMM")
+
+
+### All in for no autocorrelation
+Gamma_sim = matrix(c(0.8,0.1,0.1,0.1,0.8,0.1,0.1,0.1,0.8),3,3,byrow = TRUE)
+Gamma_sim = matrix(c(0.8,0.2,0.2,0.8),2,2,byrow=TRUE)
+sim1 <- gamma_simulation(model_sim=0, # autocor simulated model
+                 model_fit=0, # autocor fitted model
+                 2, # states simulated model
+                 2, # states fitted model
+                 1000, # #samples
+                 Gamma_sim, # TPM simulated model
+                 delta=c(0.5,0.5), # Initial distribution simulated model
+                 c(10,20), # mu simulated model
+                 c(2,5), # sigma simulated model
+                 autocor_sim = 0,
+                 estimate_states = TRUE,
+                 plot_it = TRUE
+                 )
+sum(sim1$simulated_model$states==sim1$viterbi_states)/1000
+
+### All in for AR(2) autocorrelation
+Gamma_sim = matrix(c(0.8,0.1,0.1,0.1,0.8,0.1,0.1,0.1,0.8),3,3,byrow = TRUE)
+Gamma_sim = matrix(c(0.8,0.2,0.2,0.8),2,2,byrow=TRUE)
+sim1 <- gamma_simulation(model_sim=1, # autocor simulated model
+                         model_fit=1, # autocor fitted model
+                         2, # states simulated model
+                         2, # states fitted model
+                         1000, # #samples
+                         Gamma_sim, # TPM simulated model
+                         #delta=c(0.3,0.3,0.4), # Initial distribution simulated model
+                         #c(10,20,30), # mu simulated model
+                         #c(10,10,10), # sigma simulated model
+                         delta=c(0.5,0.5), # Initial distribution simulated model
+                         c(10,30), # mu simulated model
+                         c(5,6), # sigma simulated model
+                         autocor_sim = c(0.1,0.6),
+                         estimate_states = TRUE,
+                         plot_it = TRUE
+)
+sum(sim1$simulated_model$states==sim1$viterbi_states)/1000
+
+

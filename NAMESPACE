@@ -2,6 +2,7 @@
 
 export(AIC_gamma_HMM)
 export(BIC_gamma_HMM)
+export(boxplot_params)
 export(fit_arp_model)
 export(gamma_simulation)
 export(mllk_arp)

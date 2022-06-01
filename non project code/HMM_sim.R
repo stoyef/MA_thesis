@@ -370,7 +370,7 @@ sum(sim1$simulated_model$states==sim1$viterbi_states)/1000
 
 ### All in for AR(2) autocorrelation
 Gamma_sim = matrix(c(0.8,0.1,0.1,0.1,0.8,0.1,0.1,0.1,0.8),3,3,byrow = TRUE)
-Gamma_sim = matrix(c(0.8,0.2,0.2,0.8),2,2,byrow=TRUE)
+Gamma_sim = matrix(c(0.9,0.1,0.1,0.9),2,2,byrow=TRUE)
 sim1 <- gamma_simulation(model_sim=1, # autocor simulated model
                          model_fit=1, # autocor fitted model
                          2, # states simulated model
@@ -388,5 +388,115 @@ sim1 <- gamma_simulation(model_sim=1, # autocor simulated model
                          plot_it = TRUE
 )
 sum(sim1$simulated_model$states==sim1$viterbi_states)/1000
+sim1$fitted_model$mu
+
+
+#### 
+#### now simulations in a loop, 250 for each configuration
+
+n_sims = 250
+n_samples = 2000
+mu_true = c(20,40)
+sigma_true = c(5,5)
+autocor_true = c(0.2,0.6)
+delta = c(0.5,0.5)
+Gamma_true = matrix(c(0.95,0.05,0.05,0.95),2,2,byrow=TRUE)
+
+estimated_mu = matrix(NA,nrow=n_sims,ncol=2)
+estimated_sigma = matrix(NA,nrow=n_sims,ncol=2)
+estimated_autocor = matrix(NA,nrow=n_sims,ncol=2)
+true_states = matrix(NA,nrow=n_sims,ncol=n_samples)
+estimated_states = matrix(NA,nrow=n_sims,ncol=n_samples)
+
+
+## AR(1)
+for (i in which(is.na(estimated_mu[,1]))){
+  sim <- gamma_simulation(model_sim=1, # autocor simulated model
+                           model_fit=1, # autocor fitted model
+                           2, # states simulated model
+                           2, # states fitted model
+                           n_samples, # #samples
+                           Gamma_sim=Gamma_true, # TPM simulated model
+                           delta=delta, # Initial distribution simulated model
+                           mu_sim=mu_true, # mu simulated model
+                           sigma_sim=sigma_true, # sigma simulated model
+                           autocor_sim = autocor_true,
+                           estimate_states = TRUE,
+                           plot_it = TRUE
+  )
+  
+  # error handling, skip iteration if optim() in fit_arp_model() didn't work
+  if(anyNA(sim)){
+    next
+  }
+  estimated_mu[i,] = sim$fitted_model$mu
+  estimated_sigma[i,] = sim$fitted_model$sigma
+  estimated_autocor[i,] = sim$fitted_model$autocorrelation
+  true_states[i,] = sim$simulated_model$states
+  estimated_states[i,] = sim$viterbi_states
+  
+}
+
+which(is.na(estimated_mu[,1]))
+estimated_mu
+estimated_sigma
+estimated_autocor
+true_states[1:10,1:10]
+estimated_states[1:10,1:10]
+
+# exclude data where the global optimum is not reached
+not_global = which(estimated_mu[,1] > 25 | estimated_mu[,1] < 15)
+if (length(not_global>0)){ # only delete if there is any to delete
+  delete = which(estimated_mu[,1] > 25 | estimated_mu[,1] < 15)
+  estimated_mu = estimated_mu[-delete,]
+  estimated_sigma = estimated_sigma[-delete,]
+  estimated_autocor = estimated_autocor[-delete,]
+}
+
+write.table(data.frame(c(length(not_global),n_sims-length(not_global)),
+                     row.names = c('global optimum not reached','global optimum reached')), 
+          "/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation results/sim_100_2state_ar1_ar1/sim_stats.csv",
+          col.names=FALSE, sep=",")
+write.table(estimated_mu, 
+          "/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation results/sim_100_2state_ar1_ar1/estimated_mu.csv",
+          col.names=FALSE, sep=",")
+write.table(estimated_sigma, 
+          "/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation results/sim_100_2state_ar1_ar1/estimated_sigma.csv",
+          col.names=FALSE, sep=",")
+write.table(estimated_autocor, 
+          "/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation results/sim_100_2state_ar1_ar1/estimated_autocor.csv",
+          col.names=FALSE, sep=",")
+write.table(true_states, 
+          "/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation results/sim_100_2state_ar1_ar1/true_states.csv",
+          col.names=FALSE, sep=",")
+write.table(estimated_states, 
+          "/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation results/sim_100_2state_ar1_ar1/estimated_states.csv",
+          col.names=FALSE, sep=",")
+
+
+
+
+
+acc = rep(NA,n_sims)[-delete]
+for (i in (1:n_sims)[-delete]){
+  acc[i]=sum(true_states[i,] == estimated_states[i,])/n_samples
+}
+par(mfrow=c(1,1))
+boxplot(acc)
+
+
+
+par(mfrow=c(3,2))
+boxplot_params(estimated_mu[,1], name=expression(mu[1]), true_value = mu_true[1])
+boxplot_params(estimated_mu[,2], name=expression(mu[2]), true_value = mu_true[2])
+boxplot_params(estimated_sigma[,1], name=expression(sigma[1]), 
+               true_value = sigma_true[1])
+boxplot_params(estimated_sigma[,2], name=expression(sigma[2]), 
+               true_value = sigma_true[2])
+boxplot_params(estimated_autocor[,1], name=expression(phi[1]), 
+               true_value = autocor_true[1])
+boxplot_params(estimated_autocor[,2], name=expression(phi[2]), 
+               true_value = autocor_true[2])
+
 
 

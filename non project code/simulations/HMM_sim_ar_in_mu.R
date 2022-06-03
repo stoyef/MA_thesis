@@ -133,55 +133,55 @@ theta_ar3_star <- c(
 ##
 
 ### 1. Data from normal HMM
-mod_normal_data_normal <- fit_arp_model_gamma_mu(mllk_hmm, sim_normal$data, theta_normal_star, N=2,p=0)
+mod_normal_data_normal <- fit_arp_model_gamma(mllk_hmm, sim_normal$data, theta_normal_star, N=2,p=0)
 mod_normal_data_normal
 
-mod_ar1_data_normal <- fit_arp_model_gamma_mu(mllk_arp_mu, sim_normal$data, theta_ar1_star, N=2,p=1)
+mod_ar1_data_normal <- fit_arp_model_gamma(mllk_arp_mu, sim_normal$data, theta_ar1_star, N=2,p=1)
 mod_ar1_data_normal
 
-mod_ar2_data_normal <- fit_arp_model_gamma_mu(mllk_arp_mu, sim_normal$data, theta_ar2_star, N=2,p=2)
+mod_ar2_data_normal <- fit_arp_model_gamma(mllk_arp_mu, sim_normal$data, theta_ar2_star, N=2,p=2)
 mod_ar2_data_normal
 
-mod_ar3_data_normal <- fit_arp_model_gamma_mu(mllk_arp_mu, sim_normal$data, theta_ar3_star, N=2,p=3)
+mod_ar3_data_normal <- fit_arp_model_gamma(mllk_arp_mu, sim_normal$data, theta_ar3_star, N=2,p=3)
 mod_ar3_data_normal
 
 ### 2. Data from AR(1) HMM
-mod_normal_data_ar1 <- fit_arp_model_gamma_mu(mllk_hmm, sim_ar1$data, theta_normal_star, N=2,p=0)
+mod_normal_data_ar1 <- fit_arp_model_gamma(mllk_hmm, sim_ar1$data, theta_normal_star, N=2,p=0)
 mod_normal_data_ar1
 
-mod_ar1_data_ar1 <- fit_arp_model_gamma_mu(mllk_arp_mu, sim_ar1$data, theta_ar1_star, N=2,p=1)
+mod_ar1_data_ar1 <- fit_arp_model_gamma(mllk_arp_mu, sim_ar1$data, theta_ar1_star, N=2,p=1)
 mod_ar1_data_ar1
 
-mod_ar2_data_ar1 <- fit_arp_model_gamma_mu(mllk_arp_mu, sim_ar1$data, theta_ar2_star, N=2,p=2)
+mod_ar2_data_ar1 <- fit_arp_model_gamma(mllk_arp_mu, sim_ar1$data, theta_ar2_star, N=2,p=2)
 mod_ar2_data_ar1
 
-mod_ar3_data_ar1 <- fit_arp_model_gamma_mu(mllk_arp_mu, sim_ar1$data, theta_ar3_star, N=2,p=3)
+mod_ar3_data_ar1 <- fit_arp_model_gamma(mllk_arp_mu, sim_ar1$data, theta_ar3_star, N=2,p=3)
 mod_ar3_data_ar1
 
 ### 3. Data from AR(2) HMM
-mod_normal_data_ar2 <- fit_arp_model_gamma_mu(mllk_hmm, sim_ar2$data, theta_normal_star, N=2,p=0)
+mod_normal_data_ar2 <- fit_arp_model_gamma(mllk_hmm, sim_ar2$data, theta_normal_star, N=2,p=0)
 mod_normal_data_ar2
 
-mod_ar1_data_ar2 <- fit_arp_model_gamma_mu(mllk_arp_mu, sim_ar2$data, theta_ar1_star, N=2,p=1)
+mod_ar1_data_ar2 <- fit_arp_model_gamma(mllk_arp_mu, sim_ar2$data, theta_ar1_star, N=2,p=1)
 mod_ar1_data_ar2
 
-mod_ar2_data_ar2 <- fit_arp_model_gamma_mu(mllk_arp_mu, sim_ar2$data, theta_ar2_star, N=2,p=2)
+mod_ar2_data_ar2 <- fit_arp_model_gamma(mllk_arp_mu, sim_ar2$data, theta_ar2_star, N=2,p=2)
 mod_ar2_data_ar2
 
-mod_ar3_data_ar2 <- fit_arp_model_gamma_mu(mllk_arp_mu, sim_ar2$data, theta_ar3_star, N=2,p=3)
+mod_ar3_data_ar2 <- fit_arp_model_gamma(mllk_arp_mu, sim_ar2$data, theta_ar3_star, N=2,p=3)
 mod_ar3_data_ar2
 
 ### 4. Data from AR(3) HMM
-mod_normal_data_ar3 <- fit_arp_model_gamma_mu(mllk_hmm, sim_ar3$data, theta_normal_star, N=2,p=0)
+mod_normal_data_ar3 <- fit_arp_model_gamma(mllk_hmm, sim_ar3$data, theta_normal_star, N=2,p=0)
 mod_normal_data_ar3
 
-mod_ar1_data_ar3 <- fit_arp_model_gamma_mu(mllk_arp_mu, sim_ar3$data, theta_ar1_star, N=2,p=1)
+mod_ar1_data_ar3 <- fit_arp_model_gamma(mllk_arp_mu, sim_ar3$data, theta_ar1_star, N=2,p=1)
 mod_ar1_data_ar3
 
-mod_ar2_data_ar3 <- fit_arp_model_gamma_mu(mllk_arp_mu, sim_ar3$data, theta_ar2_star, N=2,p=2)
+mod_ar2_data_ar3 <- fit_arp_model_gamma(mllk_arp_mu, sim_ar3$data, theta_ar2_star, N=2,p=2)
 mod_ar2_data_ar3
 
-mod_ar3_data_ar3 <- fit_arp_model_gamma_mu(mllk_arp_mu, sim_ar3$data, theta_ar3_star, N=2,p=3)
+mod_ar3_data_ar3 <- fit_arp_model_gamma(mllk_arp_mu, sim_ar3$data, theta_ar3_star, N=2,p=3)
 mod_ar3_data_ar3
 
 
@@ -425,7 +425,7 @@ for (i in which(is.na(estimated_mu[,1]))){
                            plot_it = TRUE
   )
   
-  # error handling, skip iteration if optim() in fit_arp_model_gamma_mu() didn't work
+  # error handling, skip iteration if optim() in fit_arp_model_gamma() didn't work
   if(anyNA(sim)){
     next
   }

@@ -46,10 +46,10 @@ gamma_simulation_mu <- function(model_sim, model_fit, N_sim, N_fit, n_samples,
     simulated_data <- sample_hmm_normal(n_samples, delta_sim, Gamma_sim, N_sim,
                                         mu_sim, sigma_sim)
   } else if (model_sim==1){
-    simulated_data <- sample_hmm_ar1_mu(n_samples, delta_sim, Gamma_sim, N_sim,
+    simulated_data <- sample_hmm_ar1(n_samples, delta_sim, Gamma_sim, N_sim,
                                            mu_sim, sigma_sim, autocor_matrix)
   } else if (model_sim>1){
-    simulated_data <- sample_hmm_arp_mu(n_samples, delta_sim, Gamma_sim, N_sim,
+    simulated_data <- sample_hmm_arp(n_samples, delta_sim, Gamma_sim, N_sim,
                                      mu_sim, sigma_sim, autocor_matrix,p=model_sim)
   } else{
     return("Wrong input for parameter model_sim.")
@@ -77,10 +77,10 @@ gamma_simulation_mu <- function(model_sim, model_fit, N_sim, N_fit, n_samples,
   }
 
   if (model_fit==0){ # no autocorrelation in fitted model
-    fitted_model <- fit_arp_model_gamma_mu(mllk_hmm, simulated_data$data,
+    fitted_model <- fit_arp_model_gamma(mllk_hmm, simulated_data$data,
                                   theta.star, N=N_fit, p=model_fit)
   } else if (model_fit>0){ # there is autocorrelation in fitted model
-    fitted_model <- fit_arp_model_gamma_mu(mllk_arp_mu, simulated_data$data,
+    fitted_model <- fit_arp_model_gamma(mllk_arp, simulated_data$data,
                                   theta.star, N=N_fit, p=model_fit)
   } else{
     return("Wrong input for parameter model_fit.")

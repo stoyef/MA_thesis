@@ -4,3 +4,8 @@ Thesis code and other things
 - Simulation of HMMs with AR(p)-structure in state-dependent process
 - Application to real data
 - Hopefully much more soon
+
+
+## ToDo
+
+- Look over Viterbi function: How can we make sure that the order of the decoded states match the order of the simulated data? 

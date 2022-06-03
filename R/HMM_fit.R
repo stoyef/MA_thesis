@@ -4,7 +4,7 @@
 
 #' Fit an AR(p)-gamma HMM to data
 #' 
-#' Fit an AR(p)-gamma HMM with autocorrelation in the parameter \eqn{\mu} to data 
+#' Fit an AR(p)-gamma HMM with autocorrelation to data 
 #' using a specified function to compute the negative 
 #' Log-Likelihood. This function gets minimized using the function \code{optim}.
 #' It returns the estimated parameters of the fitted model.
@@ -19,8 +19,8 @@
 #'         delta, (autocorrelation, depending on degree), mu, sigma.
 #' 
 #' @export
-#' @rdname fit_arp_model_gamma_mu
-fit_arp_model_gamma_mu <- function(mllk, data, theta.star, N, p){
+#' @rdname fit_arp_model_gamma
+fit_arp_model_gamma <- function(mllk, data, theta.star, N, p){
   # Error handling: sometimes the optim function does not work, because of some
   # error. We want to be notified that there is an error, but the execution should 
   # not be interrupted (important for for loops that use this function)

@@ -90,41 +90,41 @@ theta_normal_star <- c(
 
 theta_ar1 <- c(
   -2,-2, # TPM
-  0.1,0.5, # autocorrelation
   15,30, # mu
-  5,10 # sigma
+  5,10, # sigma
+  0.1,0.5 # autocorrelation
 )
 
 theta_ar1_star <- c(
   theta_ar1[1:2],
-  qlogis(theta_ar1[3:4]),
-  log(theta_ar1[5:8])
+  log(theta_ar1[3:6]),
+  qlogis(theta_ar1[7:8])
 )
 
 theta_ar2 <- c(
   -2,-2, # TPM
-  0.1,0.1,0.3,0.1, # autocorrelation
   15,30, # mu
-  5,10 # sigma
+  5,10, # sigma
+  0.1,0.1,0.3,0.1 # autocorrelation
 )
 
 theta_ar2_star <- c(
   theta_ar2[1:2],
-  qlogis(theta_ar2[3:6]),
-  log(theta_ar2[7:10])
+  log(theta_ar2[3:6]),
+  qlogis(theta_ar2[7:10])
 )
 
 theta_ar3 <- c(
   -2,-2, # TPM
-  0.2,0.05,0.1,0.1,0.05,0.1, # autocorrelation (has to be smaller than 1 in total)
   15,30, # mu
-  5,10 # sigma
+  5,10, # sigma
+  0.2,0.05,0.1,0.1,0.05,0.1 # autocorrelation (has to be smaller than 1 in total)
 )
 
 theta_ar3_star <- c(
   theta_ar3[1:2],
-  qlogis(theta_ar3[3:8]),
-  log(theta_ar3[9:12])
+  log(theta_ar3[3:6]),
+  qlogis(theta_ar3[7:12])
 )
 
 
@@ -133,55 +133,55 @@ theta_ar3_star <- c(
 ##
 
 ### 1. Data from normal HMM
-mod_normal_data_normal <- fit_arp_model_gamma(mllk_hmm, sim_normal$data, theta_normal_star, N=2,p=0)
+mod_normal_data_normal <- fit_arp_model(mllk_gamma_hmm, sim_normal$data, theta_normal_star, N=2,p=0, dist='gamma')
 mod_normal_data_normal
 
-mod_ar1_data_normal <- fit_arp_model_gamma(mllk_arp_mu, sim_normal$data, theta_ar1_star, N=2,p=1)
+mod_ar1_data_normal <- fit_arp_model(mllk_arp_mu, sim_normal$data, theta_ar1_star, N=2,p=1, dist='gamma')
 mod_ar1_data_normal
 
-mod_ar2_data_normal <- fit_arp_model_gamma(mllk_arp_mu, sim_normal$data, theta_ar2_star, N=2,p=2)
+mod_ar2_data_normal <- fit_arp_model(mllk_arp_mu, sim_normal$data, theta_ar2_star, N=2,p=2, dist='gamma')
 mod_ar2_data_normal
 
-mod_ar3_data_normal <- fit_arp_model_gamma(mllk_arp_mu, sim_normal$data, theta_ar3_star, N=2,p=3)
+mod_ar3_data_normal <- fit_arp_model(mllk_arp_mu, sim_normal$data, theta_ar3_star, N=2,p=3, dist='gamma')
 mod_ar3_data_normal
 
 ### 2. Data from AR(1) HMM
-mod_normal_data_ar1 <- fit_arp_model_gamma(mllk_hmm, sim_ar1$data, theta_normal_star, N=2,p=0)
+mod_normal_data_ar1 <- fit_arp_model(mllk_gamma_hmm, sim_ar1$data, theta_normal_star, N=2,p=0, dist='gamma')
 mod_normal_data_ar1
 
-mod_ar1_data_ar1 <- fit_arp_model_gamma(mllk_arp_mu, sim_ar1$data, theta_ar1_star, N=2,p=1)
+mod_ar1_data_ar1 <- fit_arp_model(mllk_arp_mu, sim_ar1$data, theta_ar1_star, N=2,p=1, dist='gamma')
 mod_ar1_data_ar1
 
-mod_ar2_data_ar1 <- fit_arp_model_gamma(mllk_arp_mu, sim_ar1$data, theta_ar2_star, N=2,p=2)
+mod_ar2_data_ar1 <- fit_arp_model(mllk_arp_mu, sim_ar1$data, theta_ar2_star, N=2,p=2, dist='gamma')
 mod_ar2_data_ar1
 
-mod_ar3_data_ar1 <- fit_arp_model_gamma(mllk_arp_mu, sim_ar1$data, theta_ar3_star, N=2,p=3)
+mod_ar3_data_ar1 <- fit_arp_model(mllk_arp_mu, sim_ar1$data, theta_ar3_star, N=2,p=3, dist='gamma')
 mod_ar3_data_ar1
 
 ### 3. Data from AR(2) HMM
-mod_normal_data_ar2 <- fit_arp_model_gamma(mllk_hmm, sim_ar2$data, theta_normal_star, N=2,p=0)
+mod_normal_data_ar2 <- fit_arp_model(mllk_gamma_hmm, sim_ar2$data, theta_normal_star, N=2,p=0, dist='gamma')
 mod_normal_data_ar2
 
-mod_ar1_data_ar2 <- fit_arp_model_gamma(mllk_arp_mu, sim_ar2$data, theta_ar1_star, N=2,p=1)
+mod_ar1_data_ar2 <- fit_arp_model(mllk_arp_mu, sim_ar2$data, theta_ar1_star, N=2,p=1, dist='gamma')
 mod_ar1_data_ar2
 
-mod_ar2_data_ar2 <- fit_arp_model_gamma(mllk_arp_mu, sim_ar2$data, theta_ar2_star, N=2,p=2)
+mod_ar2_data_ar2 <- fit_arp_model(mllk_arp_mu, sim_ar2$data, theta_ar2_star, N=2,p=2, dist='gamma')
 mod_ar2_data_ar2
 
-mod_ar3_data_ar2 <- fit_arp_model_gamma(mllk_arp_mu, sim_ar2$data, theta_ar3_star, N=2,p=3)
+mod_ar3_data_ar2 <- fit_arp_model(mllk_arp_mu, sim_ar2$data, theta_ar3_star, N=2,p=3, dist='gamma')
 mod_ar3_data_ar2
 
 ### 4. Data from AR(3) HMM
-mod_normal_data_ar3 <- fit_arp_model_gamma(mllk_hmm, sim_ar3$data, theta_normal_star, N=2,p=0)
+mod_normal_data_ar3 <- fit_arp_model(mllk_gamma_hmm, sim_ar3$data, theta_normal_star, N=2,p=0, dist='gamma')
 mod_normal_data_ar3
 
-mod_ar1_data_ar3 <- fit_arp_model_gamma(mllk_arp_mu, sim_ar3$data, theta_ar1_star, N=2,p=1)
+mod_ar1_data_ar3 <- fit_arp_model(mllk_arp_mu, sim_ar3$data, theta_ar1_star, N=2,p=1, dist='gamma')
 mod_ar1_data_ar3
 
-mod_ar2_data_ar3 <- fit_arp_model_gamma(mllk_arp_mu, sim_ar3$data, theta_ar2_star, N=2,p=2)
+mod_ar2_data_ar3 <- fit_arp_model(mllk_arp_mu, sim_ar3$data, theta_ar2_star, N=2,p=2, dist='gamma')
 mod_ar2_data_ar3
 
-mod_ar3_data_ar3 <- fit_arp_model_gamma(mllk_arp_mu, sim_ar3$data, theta_ar3_star, N=2,p=3)
+mod_ar3_data_ar3 <- fit_arp_model(mllk_arp_mu, sim_ar3$data, theta_ar3_star, N=2,p=3, dist='gamma')
 mod_ar3_data_ar3
 
 
@@ -353,7 +353,7 @@ plot_data(sim_ar3$data[1:500],name='Step size', title="First 500 observations of
 ### All in for no autocorrelation
 Gamma_sim = matrix(c(0.8,0.1,0.1,0.1,0.8,0.1,0.1,0.1,0.8),3,3,byrow = TRUE)
 Gamma_sim = matrix(c(0.8,0.2,0.2,0.8),2,2,byrow=TRUE)
-sim1 <- gamma_simulation_mu(model_sim=0, # autocor simulated model
+sim1 <- gamma_simulation(model_sim=0, # autocor simulated model
                  model_fit=0, # autocor fitted model
                  2, # states simulated model
                  2, # states fitted model
@@ -371,7 +371,7 @@ sum(sim1$simulated_model$states==sim1$viterbi_states)/1000
 ### All in for AR(2) autocorrelation
 Gamma_sim = matrix(c(0.8,0.1,0.1,0.1,0.8,0.1,0.1,0.1,0.8),3,3,byrow = TRUE)
 Gamma_sim = matrix(c(0.9,0.1,0.1,0.9),2,2,byrow=TRUE)
-sim1 <- gamma_simulation_mu(model_sim=1, # autocor simulated model
+sim1 <- gamma_simulation(model_sim=1, # autocor simulated model
                          model_fit=1, # autocor fitted model
                          2, # states simulated model
                          2, # states fitted model
@@ -411,7 +411,7 @@ estimated_states = matrix(NA,nrow=n_sims,ncol=n_samples)
 
 ## AR(1)
 for (i in which(is.na(estimated_mu[,1]))){
-  sim <- gamma_simulation_mu(model_sim=1, # autocor simulated model
+  sim <- gamma_simulation(model_sim=1, # autocor simulated model
                            model_fit=1, # autocor fitted model
                            2, # states simulated model
                            2, # states fitted model

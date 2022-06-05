@@ -228,3 +228,74 @@ sample_hmm_arp <- function(n_samples, delta, Gamma, N, mu, sigma, autocor, p){
   names(ret) <- c('states','data')
   return(ret)
 }
+
+
+#' Simulate data from a von Mises HMM with AR(p) structure
+#' 
+#' Simulate data from a von Mises HMM with AR(p) structure in the parameter \eqn{\mu}
+#' (and \eqn{\kappa} in the future?).
+
+#' 
+#' @param n_samples Number of samples to generate.
+#' @param delta Initial distribution of the Markov chain.
+#' @param Gamma Transition probability matrix of the Markov chain.
+#' @param N Number of states.
+#' @param mu Parameter vector for mu of the gamma distribution.
+#' @param kappa Parameter vector for sigma of the gamma distribution.
+#' @param autocor Parameter vector for the autocorrelation coefficient. 
+#'             Has to match p, in the order \eqn{\phi_{t-p},\dots,\phi_{t-1}}
+#'             where \eqn{\phi} is the vector of autocorrelation coefficients
+#'             for one specific time lag (one value for each state).
+#'             0, if no autocorrelation
+#' @param p Degree of autocorrelation, 0=no autocorrelation.
+#' 
+#' @return Tupel of states and data of the HMM.
+#' 
+#' @export
+#' @rdname sample_vonMises_arp
+sample_vonMises_arp <- function(n_samples, delta, Gamma, N, mu, kappa, autocor, p){
+  require(CircStats)
+  states <- rep(NA,n_samples)
+  data <- rep(NA,n_samples)
+  
+  # first p data points given, no autocorrelation -> just like normal HMM
+  # we have to be careful with rvm, it uses 0-2*pi instead of -pi-+pi
+  states[1] <- sample(1:N, 1, prob = delta)
+  data[1] <- rvm(1,mean=mu[states[1]]+pi,
+                    k=kappa[states[1]])-pi
+  if (p>1){
+    for (t in 2:p){
+      states[t] <- sample(1:N, 1, prob = Gamma[states[t-1],])
+      data[t] <- rvm(1,mean=mu[states[t]]+pi,
+                        k=kappa[states[t]])-pi
+    }
+  }
+  
+  if (p==0){ # no autocorrelation
+    for (t in 2:n_samples){
+      states[t] <- sample(1:N, 1, prob=Gamma[states[t-1],])
+      data[t] <- rvm(1,mean=mu[states[t]]+pi,k=kappa[states[t]])-pi
+    }
+  } else{
+    for (t in (p+1):n_samples){
+      states[t] <- sample(1:N, 1, prob=Gamma[states[t-1],])
+      # compute mu with AR(p)
+      ##
+      ###
+      ## hier: muss summe der autocor 1 ergeben oder alles in der Summe 1????
+      ## -> wir machen erstmal alles in der Summe 1 aber nochmal überlegen!
+      mu_ar <- sum(autocor[states[t],]*data[(t-p):(t-1)]) + 
+        (1-sum(autocor[states[t],]))*mu[states[t]]
+      # rvm samples in region 0-2pi, so we substract pi
+      data[t] <- rvm(1,mean=mu_ar+pi,
+                        k=kappa[states[t]]) - pi
+    }
+  }
+  
+  ret <- list(states, data)
+  names(ret) <- c('states','data')
+  return(ret)
+}
+
+
+

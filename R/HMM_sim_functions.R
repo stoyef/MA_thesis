@@ -30,9 +30,9 @@
 #' @return List of Fitted model and its parameters (and optional the decoded states).
 #' 
 #' @export
-#' @rdname gamma_simulation_mu     
+#' @rdname gamma_simulation     
 #' 
-gamma_simulation_mu <- function(model_sim, model_fit, N_sim, N_fit, n_samples, 
+gamma_simulation <- function(model_sim, model_fit, N_sim, N_fit, n_samples, 
                              Gamma_sim, delta_sim, mu_sim, sigma_sim, autocor_sim=0,
                              estimate_states=TRUE,plot_it=TRUE){
   
@@ -58,9 +58,9 @@ gamma_simulation_mu <- function(model_sim, model_fit, N_sim, N_fit, n_samples,
   # Parameters for model fitting
   theta = c(
     rep(-2,N_fit*(N_fit-1)), # TPM
-    rep(0.1,N_fit*model_fit)/(N_fit*model_fit+1), # autocor, n_states*p, regularization to avoid sum > 1
     quantile(simulated_data$data, seq(0,1,length=N_fit)), # mu 
-    rep(sd(simulated_data$data),N_fit) # sigma
+    rep(sd(simulated_data$data),N_fit), # sigma
+    rep(0.1,N_fit*model_fit)/(N_fit*model_fit+1) # autocor, n_states*p, regularization to avoid sum > 1
   )
   
   if (model_fit==0){
@@ -71,17 +71,17 @@ gamma_simulation_mu <- function(model_sim, model_fit, N_sim, N_fit, n_samples,
   } else{
     theta.star = c(
       theta[1:(N_fit*(N_fit-1))],
-      qlogis(theta[(N_fit*(N_fit-1))+1:(N_fit*model_fit)]),
-      log(theta[N_fit*(N_fit-1)+(N_fit*model_fit)+1:(2*N_fit)])
+      log(theta[N_fit*(N_fit-1)+1:(2*N_fit)]),
+      qlogis(theta[(N_fit*(N_fit-1))+(2*N_fit)+1:(N_fit*model_fit)])
     )
   }
 
   if (model_fit==0){ # no autocorrelation in fitted model
-    fitted_model <- fit_arp_model_gamma(mllk_hmm, simulated_data$data,
-                                  theta.star, N=N_fit, p=model_fit)
+    fitted_model <- fit_arp_model(mllk_gamma_hmm, simulated_data$data,
+                                  theta.star, N=N_fit, p=model_fit, dist='gamma')
   } else if (model_fit>0){ # there is autocorrelation in fitted model
-    fitted_model <- fit_arp_model_gamma(mllk_arp, simulated_data$data,
-                                  theta.star, N=N_fit, p=model_fit)
+    fitted_model <- fit_arp_model(mllk_gamma_arp, simulated_data$data,
+                                  theta.star, N=N_fit, p=model_fit, dist='gamma')
   } else{
     return("Wrong input for parameter model_fit.")
   }
@@ -100,7 +100,7 @@ gamma_simulation_mu <- function(model_sim, model_fit, N_sim, N_fit, n_samples,
   
   # Viterbi, if wanted
   if (estimate_states){
-    estimated_states <- viterbi_arp_mu(simulated_data$data, fitted_model$Gamma,
+    estimated_states <- viterbi_gamma_arp(simulated_data$data, fitted_model$Gamma,
                                     fitted_model$delta, fitted_model$autocor,
                                     fitted_model$mu, fitted_model$sigma,
                                     N_fit, model_fit)

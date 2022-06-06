@@ -8,7 +8,7 @@
 #' 
 #' @param states Vector of states (natural numbers, range 1-N).
 #' @param names optional, specifies the names of the states. If "none", state 1-N will be used.
-#' @param title bool, indicator if the plot should habe a title.
+#' @param title bool, indicator if the plot should have a title.
 #' 
 #' @export
 #' @rdname plot_states
@@ -32,28 +32,41 @@ plot_states <- function(states, names="none", title=TRUE){
 }
 
 
-#' Density plot of estimated gamma distributions
+#' Density plot of estimated distributions
 #'
-#' Plots the estimted gamma distributions along with a histogram of the values.
+#' Plots the estimted distributions along with a histogram of the values.
 #' 
 #' @param data Input data for histogram
-#' @param mu Input vector for parameter mu
-#' @param sigma Input vector for parameter sigma
+#' @param dist string, indicates the kind of distribution, one of ['gamma', 'von Mises'].
+#' @param param Vector of distribution parameters, in customary form, e.g. for 2 state gamma
+#'              HMM: c(\eqn{\mu1,\mu2,\sigma1,\sigma2}).
+#' @param N int, number of states (or weighted distributions) to be plotted.
 #' @param delta Input vector for parameter delta
 #' @param title optional, title of the plot, if "none", then no title
 #' 
 #' @export
-#' @rdname plot_fitted_gamma_dist
-plot_fitted_gamma_dist <- function(data, mu, sigma, delta, title="none"){
-  N <- length(mu)
+#' @rdname plot_fitted_dist
+plot_fitted_dist <- function(data, dist, param, N, delta, title="none"){
+  require(CircStats)
   require(RColorBrewer)
   pal <- brewer.pal(N+1, 'Dark2')
-  gams <- matrix(NA, nrow=10000,ncol=N)
+  dens <- matrix(NA, nrow=10000,ncol=N)
   x <- seq(min(data),max(data),length=10000)
-  for (i in 1:N){
-    gams[,i] = delta[i]*dgamma(x, shape=mu[i]^2/sigma[i]^2, scale=sigma[i]^2/mu[i])
+  
+  if (dist=='gamma'){
+    mu <- param[1:N]
+    sigma <- param[N+1:N]
+    for (i in 1:N){
+      dens[,i] = delta[i]*dgamma(x, shape=mu[i]^2/sigma[i]^2, scale=sigma[i]^2/mu[i])
+    }
+  } else if (dist=='von Mises'){
+    mu <- param[1:N]
+    kappa <- param[N+1:N]
+    for (i in 1:N){
+      dens[,i] = delta[i]*dvm(x, mu[i], kappa[i])
+    }
   }
-  total_dist <- apply(gams,1,sum)
+  total_dist <- apply(dens,1,sum)
   
   if (title=="none"){
     hist(data, breaks=length(data)/25, probability = TRUE,
@@ -63,7 +76,7 @@ plot_fitted_gamma_dist <- function(data, mu, sigma, delta, title="none"){
          main=title, xlab="x", ylim=c(0,1.1*max(total_dist)))
   }
   for (i in 1:N){
-    lines(x,gams[,i],col=pal[i], lwd=2)
+    lines(x,dens[,i],col=pal[i], lwd=2)
   }
   lines(x,total_dist,col=pal[N+1],lwd=2)
   legend('topright', c(paste("State",1:N),"Total"), bty='n', lwd=2,
@@ -109,9 +122,9 @@ plot_data <- function(data, name="none", title="none"){
 #' @export
 #' @rdname boxplot_params
 #' 
-boxplot_params <- function(data, name,true_value){
-  boxplot(data,ylab="Parameter value",
-          xlab=name)
+boxplot_params <- function(data, name,true_value,...){
+  args=list(x=data,xlab=name,...)
+  do.call(boxplot,args)
   if (true_value){
     abline(h=true_value,lwd=2,col=2)
   }

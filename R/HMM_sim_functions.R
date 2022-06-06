@@ -84,7 +84,7 @@ ar_simulation <- function(model_sim, model_fit, N_sim, N_fit, n_samples,
   } else if (model_fit[1]=='von Mises'){
     theta = c(
       rep(-2,N_fit*(N_fit-1)), # TPM
-      quantile(simulated_data$data, seq(0,1,length=N_fit)), # mu 
+      quantile(simulated_data$data, seq(0.25,0.75,length=N_fit)), # mu 
       rep(est.kappa(simulated_data$data),N_fit), # kappa
       rep(0.1,N_fit*as.integer(model_fit[2]))/(N_fit*as.integer(model_fit[2])+1) # autocor, n_states*p, regularization to avoid sum > 1
     )
@@ -119,12 +119,13 @@ ar_simulation <- function(model_sim, model_fit, N_sim, N_fit, n_samples,
   # Plot, if wanted
   if (plot_it){
     if (model_fit[1]=='gamma'){
-    plot_fitted_gamma_dist(simulated_data$data, fitted_model$mu, fitted_model$sigma,
-                           fitted_model$delta)
+      param <- c(fitted_model$mu,fitted_model$sigma)
     } else if (model_fit[1]=='von Mises'){
-      print('The plot function for the von Mises distribution is not implemented yet.')
+      param <- c(fitted_model$mu,fitted_model$kappa)
     }
-  }
+    plot_fitted_dist(simulated_data$data, model_fit[1], param, N_fit,
+                           fitted_model$delta)
+    }
   
   # Viterbi, if wanted
   if (estimate_states){
@@ -138,7 +139,14 @@ ar_simulation <- function(model_sim, model_fit, N_sim, N_fit, n_samples,
       names(ret) <- c('simulated_model','fitted_model', 'viterbi_states')
       return(ret)
     } else if (model_fit[1]=='von Mises'){
-        print('The decoding function for the von Mises distribution is not implemented yet.')
+      estimated_states <- viterbi_vonMises_arp(simulated_data$data, fitted_model$Gamma,
+                                            fitted_model$delta, fitted_model$autocor,
+                                            fitted_model$mu, fitted_model$kappa,
+                                            N_fit, as.integer(model_fit[2]))
+      
+      ret <- list(simulated_data, fitted_model, estimated_states)
+      names(ret) <- c('simulated_model','fitted_model', 'viterbi_states')
+      return(ret)
       }
     } else{
       ret <- list(simulated_data, fitted_model)

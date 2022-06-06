@@ -11,7 +11,7 @@ plot_states(states, names = "none", title = TRUE)
 
 \item{names}{optional, specifies the names of the states. If "none", state 1-N will be used.}
 
-\item{title}{bool, indicator if the plot should habe a title.}
+\item{title}{bool, indicator if the plot should have a title.}
 }
 \description{
 This function plots the states decoded by the Viterbi algorithm.

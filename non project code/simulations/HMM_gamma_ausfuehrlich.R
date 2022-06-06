@@ -470,22 +470,22 @@ if (length(not_global>0)){ # only delete if there is any to delete
 
 write.table(data.frame(c(length(not_global),n_sims-length(not_global)),
                      row.names = c('global optimum not reached','global optimum reached')), 
-          "/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation results/sim_250_2state_ar1_ar1/sim_stats.csv",
+          "/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation results/sim_250_gamma_2state_ar1_ar1/sim_stats.csv",
           col.names=FALSE, sep=",")
 write.table(estimated_mu, 
-          "/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation results/sim_250_2state_ar1_ar1/estimated_mu.csv",
+          "/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation results/sim_250_gamma_2state_ar1_ar1/estimated_mu.csv",
           col.names=FALSE, sep=",")
 write.table(estimated_sigma, 
-          "/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation results/sim_250_2state_ar1_ar1/estimated_sigma.csv",
+          "/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation results/sim_250_gamma_2state_ar1_ar1/estimated_sigma.csv",
           col.names=FALSE, sep=",")
 write.table(estimated_autocor, 
-          "/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation results/sim_250_2state_ar1_ar1/estimated_autocor.csv",
+          "/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation results/sim_250_gamma_2state_ar1_ar1/estimated_autocor.csv",
           col.names=FALSE, sep=",")
 write.table(true_states, 
-          "/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation results/sim_250_2state_ar1_ar1/true_states.csv",
+          "/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation results/sim_250_gamma_2state_ar1_ar1/true_states.csv",
           col.names=FALSE, sep=",")
 write.table(estimated_states, 
-          "/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation results/sim_250_2state_ar1_ar1/estimated_states.csv",
+          "/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation results/sim_250_gamma_2state_ar1_ar1/estimated_states.csv",
           col.names=FALSE, sep=",")
 
 
@@ -502,12 +502,12 @@ boxplot(acc)
 
 
 par(mfrow=c(3,2))
-boxplot_params(estimated_mu[,1], name=expression(mu[1]), true_value = mu_true[1])
-boxplot_params(estimated_mu[,2], name=expression(mu[2]), true_value = mu_true[2])
+boxplot_params(estimated_mu[,1], name=expression(mu[1]), true_value = param_true[1])
+boxplot_params(estimated_mu[,2], name=expression(mu[2]), true_value = param_true[2])
 boxplot_params(estimated_sigma[,1], name=expression(sigma[1]), 
-               true_value = sigma_true[1])
+               true_value = param_true[3])
 boxplot_params(estimated_sigma[,2], name=expression(sigma[2]), 
-               true_value = sigma_true[2])
+               true_value = param_true[4])
 boxplot_params(estimated_autocor[,1], name=expression(phi[1]), 
                true_value = autocor_true[1])
 boxplot_params(estimated_autocor[,2], name=expression(phi[2]), 

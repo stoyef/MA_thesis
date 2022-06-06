@@ -4,7 +4,7 @@
 \alias{boxplot_params}
 \title{Boxplot of different simulation runs}
 \usage{
-boxplot_params(data, name, true_value)
+boxplot_params(data, name, true_value, ...)
 }
 \arguments{
 \item{data}{Simulated values of the parameter.}

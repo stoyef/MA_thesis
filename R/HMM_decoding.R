@@ -152,4 +152,75 @@ viterbi_gamma_arp <-function(x, Gamma, delta, autocor=0,
 
 
 
+#' Global decoding for AR(p)-von Mises HMM using Viterbi
+#' 
+#' Global decoding for an AR(p)-von Mises HMM with autocorrelation in the parameter \eqn{\mu}
+#' using the Viterbi algorithm.
+#' 
+#' @param x Data vector the model was fitted to.
+#' @param Gamma Transition probability matrix (full matrix, not only off diagonal entries).
+#' @param delta Stationary distribution.
+#' @param autocor default 0, Autocorrelation vector, in suitable form.
+#' @param mu Optimized vector of the mu parameter in the von Mises distribution.
+#' @param kappa Optimized vector of the kappa parameter in the von Mises distribution.
+#' @param N Number of states.
+#' @param p Degree of autocorrelation (0 - no autocorrelation).
+#' 
+#' @return Estimated states using Viterbi.
+#' 
+#' @export
+#' @rdname viterbi_vonMises_arp
+viterbi_vonMises_arp <-function(x, Gamma, delta, autocor=0, 
+                             mu, kappa, N, p){
+  n <- length(x)
+  allprobs <- matrix(1,n,N)
+
+  if (p==0){
+    ind <- which(!is.na(x))
+    
+    for (j in 1:N){
+      allprobs[ind,j] <- dvm(x[ind],mu[j],kappa[j])
+    }
+  } else{ # p!=0, autocorrelation
+    ind <- which(!is.na(x))[-c(1:p)] # change: we omit first step 
+    # in order to always have the step in t-1
+    
+    autocor <- matrix(autocor, ncol=p, byrow=TRUE) # aurocorrelation matrix for easier handling later on
+    
+    autocor_ind <- matrix(NA,nrow=length(ind),ncol=p) # matrix for indices of autocor data
+    for (i in 1:p){
+      autocor_ind[,i] <- ind-p+i-1
+    }
+    autocor_ind <- apply(autocor_ind, 2, function(a)x[a]) # substitute indices with values
+    
+    for (j in 1:N){
+      mu_auto <- c(rep(NA,p), # AR(p)
+                   ((1-sum(autocor[j,]))*mu[j] + 
+                      as.vector(autocor_ind%*%autocor[j,]))) # matmul of values with autocor coefficient
+
+      allprobs[ind,j] <- dvm(x[ind],mu_auto[ind],kappa[j])
+    }
+  }
+  
+  xi <- matrix(0,n,N)
+  foo <- delta*allprobs[1,]
+  xi[1,] <- foo/sum(foo)
+  
+  for (t in 2:n){
+    foo <- apply(xi[t-1,]*Gamma, 2, max) * allprobs[t,]
+    xi[t,] <- foo/sum(foo)
+  }
+  
+  iv <- numeric(n)
+  iv[n] <- which.max(xi[n,])
+  
+  for (t in (n-1):1){
+    iv[t] <- which.max(Gamma[,iv[t+1]] * xi[t,])
+  }
+  return(iv)
+}
+
+
+
+
 

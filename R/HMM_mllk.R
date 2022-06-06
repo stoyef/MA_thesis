@@ -132,31 +132,41 @@ mllk_gamma_arp <-function(theta.star,x,N,p){
   sigma <- exp(theta.star[(N-1)*N+N+1:N])
   # calculate coefficient of variance, should be constant while modeling
   cv <- sigma/mu
-  
-  autocor <- plogis(theta.star[(N-1)*N+2*N+1:(p*N)])
-  autocor <- matrix(autocor, ncol=p, byrow=TRUE) # matrix for easier handling later on
-  
   allprobs <- matrix(1,length(x),N)
-  ind <- which(!is.na(x))[-c(1:p)] # change: we omit first p steps 
-  # in order to always have the step in t-p
   
-  autocor_ind <- matrix(NA,nrow=length(ind),ncol=p) # matrix for indices of autocor data
-  for (i in 1:p){
-    autocor_ind[,i] <- ind-p+i-1
-  }
-  autocor_ind <- apply(autocor_ind, 2, function(a)x[a]) # substitute indices with values
-  
-  for (j in 1:N){
-    # here comes the autocorrelation!
-    mu_auto <- c(rep(NA,p), # AR(p)
-                 ((1-sum(autocor[j,]))*mu[j] + 
-                    as.vector(autocor_ind%*%autocor[j,]))) # matmul of values with autocor coefficient
-    sigma_auto <- cv[j]*mu_auto # calculate sigma using ccv
-    allprobs[ind,j] <- dgamma(x[ind],
-                              shape=mu_auto[ind]^2/sigma_auto[ind]^2,
-                              scale=sigma_auto[ind]^2/mu_auto[ind]) 
-    # here we have to choose mu_auto[ind], because
-    # we have an individual mu for each data point
+  if (p>0){
+    autocor <- plogis(theta.star[(N-1)*N+2*N+1:(p*N)])
+    autocor <- matrix(autocor, ncol=p, byrow=TRUE) # matrix for easier handling later on
+    
+    ind <- which(!is.na(x))[-c(1:p)] # change: we omit first p steps 
+    # in order to always have the step in t-p
+    
+    autocor_ind <- matrix(NA,nrow=length(ind),ncol=p) # matrix for indices of autocor data
+    for (i in 1:p){
+      autocor_ind[,i] <- ind-p+i-1
+    }
+    autocor_ind <- apply(autocor_ind, 2, function(a)x[a]) # substitute indices with values
+    
+    for (j in 1:N){
+      # here comes the autocorrelation!
+      mu_auto <- c(rep(NA,p), # AR(p)
+                   ((1-sum(autocor[j,]))*mu[j] + 
+                      as.vector(autocor_ind%*%autocor[j,]))) # matmul of values with autocor coefficient
+      sigma_auto <- cv[j]*mu_auto # calculate sigma using ccv
+      allprobs[ind,j] <- dgamma(x[ind],
+                                shape=mu_auto[ind]^2/sigma_auto[ind]^2,
+                                scale=sigma_auto[ind]^2/mu_auto[ind]) 
+      # here we have to choose mu_auto[ind], because
+      # we have an individual mu for each data point
+    }
+  } else{
+    ind <- which(!is.na(x))
+    
+    for (j in 1:N){
+      allprobs[ind,j] <- dgamma(x[ind],
+                                shape=mu[j]^2/sigma[j]^2,
+                                scale=sigma[j]^2/mu[j]) 
+    }
   }
   foo <- delta%*%diag(allprobs[1,])
   l <- log(sum(foo))
@@ -201,36 +211,36 @@ mllk_vonMises_arp <-function(theta.star,x,N,p){
   allprobs <- matrix(1,length(x),N)
   
   if (p>0){
-  autocor <- plogis(theta.star[(N-1)*N+(2*N)+1:(p*N)])
-  autocor <- matrix(autocor, ncol=p, byrow=TRUE) # matrix for easier handling later on
-  
-  ind <- which(!is.na(x))[-c(1:p)] # change: we omit first p steps 
-  # in order to always have the step in t-p
-  autocor_ind <- matrix(NA,nrow=length(ind),ncol=p) # matrix for indices of autocor data
-  
-  for (i in 1:p){
-    autocor_ind[,i] <- ind-p+i-1
-    }
-  autocor_ind <- apply(autocor_ind, 2, function(a)x[a]) # substitute indices with values
-  
-  for (j in 1:N){
-    # here comes the autocorrelation!
-    mu_auto <- c(rep(NA,p), # AR(p)
-                 ((1-sum(autocor[j,]))*mu[j] + 
-                    as.vector(autocor_ind%*%autocor[j,]))) # matmul of values with autocor coefficient
-    allprobs[ind,j] <- dvm(x[ind],
-                           mu=mu_auto[ind],
-                           kappa=kappa[j]) 
-    # here we have to choose mu_auto[ind], because
-    # we have an individual mu for each data point
-  }
+    autocor <- plogis(theta.star[(N-1)*N+(2*N)+1:(p*N)])
+    autocor <- matrix(autocor, ncol=p, byrow=TRUE) # matrix for easier handling later on
+    
+    ind <- which(!is.na(x))[-c(1:p)] # change: we omit first p steps 
+    # in order to always have the step in t-p
+    autocor_ind <- matrix(NA,nrow=length(ind),ncol=p) # matrix for indices of autocor data
+    
+    for (i in 1:p){
+      autocor_ind[,i] <- ind-p+i-1
+      }
+    autocor_ind <- apply(autocor_ind, 2, function(a)x[a]) # substitute indices with values
+    
+    for (j in 1:N){
+      # here comes the autocorrelation!
+      mu_auto <- c(rep(NA,p), # AR(p)
+                   ((1-sum(autocor[j,]))*mu[j] + 
+                      as.vector(autocor_ind%*%autocor[j,]))) # matmul of values with autocor coefficient
+      allprobs[ind,j] <- dvm(x[ind],
+                             mu=mu_auto[ind],
+                             kappa=kappa[j])
+      # here we have to choose mu_auto[ind], because
+      # we have an individual mu for each data point
+      }
   } else{
     ind <- which(!is.na(x))
     
     for (j in 1:N){
       allprobs[ind,j] <- dvm(x[ind],
                                 mu=mu[j],
-                                kappa=kappa[j]) 
+                                kappa=kappa[j])
     }
   }
 

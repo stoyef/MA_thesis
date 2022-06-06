@@ -30,8 +30,8 @@ delta_normal <- c(0.5,0.5)
 Gamma_normal <- matrix(c(0.8,0.2,0.2,0.8),nrow=2)
 mu_normal <- c(10,20)
 sigma_normal <- c(2,5)
-sim_normal <- sample_hmm_normal(1000, delta_normal, Gamma_normal, 2, 
-                                mu_normal, sigma_normal)
+sim_normal <- sample_gamma_arp(1000, delta_normal, Gamma_normal, 2, 
+                                mu_normal, sigma_normal, autocor=0, p=0)
 head(sim_normal$data)
 
 ### 2. HMM with AR(1)
@@ -40,9 +40,9 @@ delta_ar1 <- c(0.5,0.5)
 Gamma_ar1 <- matrix(c(0.8,0.2,0.2,0.8),nrow=2)
 mu_ar1 <- c(10,20)
 sigma_ar1 <- c(2,5)
-autocor_ar1 <- c(0.2,0.4)
-sim_ar1 <- sample_hmm_ar1_mu(1000, delta_ar1, Gamma_ar1, 2, 
-                          mu_ar1, sigma_ar1, autocor_ar1)
+autocor_ar1 <- matrix(c(0.2,0.4),nrow=2)
+sim_ar1 <- sample_gamma_arp(1000, delta_ar1, Gamma_ar1, 2, 
+                          mu_ar1, sigma_ar1, autocor_ar1, 1)
 head(sim_ar1$data)
 
 ### 3. HMM with AR(2)
@@ -53,7 +53,7 @@ mu_ar2 <- c(10,20)
 sigma_ar2 <- c(2,5)
 autocor_ar2 <- matrix(c(0.05,0.15,0.1,0.3),nrow=2) # first entry for t-2, second entry for t-1
 p <- 2
-sim_ar2 <- sample_hmm_arp_mu(1000, delta_ar2, Gamma_ar2, 2, 
+sim_ar2 <- sample_gamma_arp(1000, delta_ar2, Gamma_ar2, 2, 
                           mu_ar2, sigma_ar2, autocor_ar2, p)
 head(sim_ar2$data)
 
@@ -65,7 +65,7 @@ mu_ar3 <- c(10,20)
 sigma_ar3 <- c(2,5)
 autocor_ar3 <- matrix(c(0.05,0.05,0.1,0.1,0.1,0.2),nrow=2) # first entry for t-2, second entry for t-1
 p <- 3
-sim_ar3 <- sample_hmm_arp_mu(1000, delta_ar3, Gamma_ar3, 2, 
+sim_ar3 <- sample_gamma_arp(1000, delta_ar3, Gamma_ar3, 2, 
                           mu_ar3, sigma_ar3, autocor_ar3, p)
 head(sim_ar3$data)
 
@@ -353,15 +353,14 @@ plot_data(sim_ar3$data[1:500],name='Step size', title="First 500 observations of
 ### All in for no autocorrelation
 Gamma_sim = matrix(c(0.8,0.1,0.1,0.1,0.8,0.1,0.1,0.1,0.8),3,3,byrow = TRUE)
 Gamma_sim = matrix(c(0.8,0.2,0.2,0.8),2,2,byrow=TRUE)
-sim1 <- gamma_simulation(model_sim=0, # autocor simulated model
-                 model_fit=0, # autocor fitted model
+sim1 <- ar_simulation(model_sim=c('gamma',0), # autocor simulated model
+                 model_fit=c('gamma',0), # autocor fitted model
                  2, # states simulated model
                  2, # states fitted model
                  1000, # #samples
                  Gamma_sim, # TPM simulated model
-                 delta=c(0.5,0.5), # Initial distribution simulated model
-                 c(10,20), # mu simulated model
-                 c(2,5), # sigma simulated model
+                 delta_sim=c(0.5,0.5), # Initial distribution simulated model
+                 c(10,20,2,5), # mu and sigma simulated model
                  autocor_sim = 0,
                  estimate_states = TRUE,
                  plot_it = TRUE
@@ -371,8 +370,8 @@ sum(sim1$simulated_model$states==sim1$viterbi_states)/1000
 ### All in for AR(2) autocorrelation
 Gamma_sim = matrix(c(0.8,0.1,0.1,0.1,0.8,0.1,0.1,0.1,0.8),3,3,byrow = TRUE)
 Gamma_sim = matrix(c(0.9,0.1,0.1,0.9),2,2,byrow=TRUE)
-sim1 <- gamma_simulation(model_sim=1, # autocor simulated model
-                         model_fit=1, # autocor fitted model
+sim1 <- ar_simulation(model_sim=c('gamma',1), # autocor simulated model
+                         model_fit=c('gamma',1), # autocor fitted model
                          2, # states simulated model
                          2, # states fitted model
                          1000, # #samples
@@ -380,9 +379,8 @@ sim1 <- gamma_simulation(model_sim=1, # autocor simulated model
                          #delta=c(0.3,0.3,0.4), # Initial distribution simulated model
                          #c(10,20,30), # mu simulated model
                          #c(10,10,10), # sigma simulated model
-                         delta=c(0.5,0.5), # Initial distribution simulated model
-                         c(10,30), # mu simulated model
-                         c(5,6), # sigma simulated model
+                         delta_sim=c(0.5,0.5), # Initial distribution simulated model
+                         c(10,30,5,6), # mu and sigma simulated model
                          autocor_sim = c(0.1,0.6),
                          estimate_states = TRUE,
                          plot_it = TRUE
@@ -396,10 +394,9 @@ sim1$fitted_model$mu
 
 n_sims = 250
 n_samples = 2000
-mu_true = c(20,40)
-sigma_true = c(5,5)
+param_true = c(20,40,5,5)
 autocor_true = c(0.2,0.6)
-delta = c(0.5,0.5)
+delta_sim = c(0.5,0.5)
 Gamma_true = matrix(c(0.95,0.05,0.05,0.95),2,2,byrow=TRUE)
 
 estimated_mu = matrix(NA,nrow=n_sims,ncol=2)
@@ -411,21 +408,20 @@ estimated_states = matrix(NA,nrow=n_sims,ncol=n_samples)
 
 ## AR(1)
 for (i in which(is.na(estimated_mu[,1]))){
-  sim <- gamma_simulation(model_sim=1, # autocor simulated model
-                           model_fit=1, # autocor fitted model
+  sim <- ar_simulation(model_sim=c('gamma',1), # autocor simulated model
+                           model_fit=c('gamma',1), # autocor fitted model
                            2, # states simulated model
                            2, # states fitted model
                            n_samples, # #samples
                            Gamma_sim=Gamma_true, # TPM simulated model
-                           delta=delta, # Initial distribution simulated model
-                           mu_sim=mu_true, # mu simulated model
-                           sigma_sim=sigma_true, # sigma simulated model
+                           delta_sim=delta, # Initial distribution simulated model
+                           param_sim=param_true, # mu and simulated model
                            autocor_sim = autocor_true,
                            estimate_states = TRUE,
                            plot_it = TRUE
   )
   
-  # error handling, skip iteration if optim() in fit_arp_model_gamma() didn't work
+  # error handling, skip iteration if optim() in fit function didn't work
   if(anyNA(sim)){
     next
   }
@@ -444,6 +440,25 @@ estimated_autocor
 true_states[1:10,1:10]
 estimated_states[1:10,1:10]
 
+# find rows where state 1 and 2 are swapped and swap back
+swap = which(estimated_mu[,1] > 37 & estimated_mu[,1] < 43 & estimated_mu[,2] < 23 & estimated_mu[,2] > 17)
+for (row in swap){
+  hold = estimated_mu[row,1]
+  estimated_mu[row,1]=estimated_mu[row,2]
+  estimated_mu[row,2]=hold
+  
+  hold = estimated_sigma[row,1]
+  estimated_sigma[row,1]=estimated_sigma[row,2]
+  estimated_sigma[row,2]=hold
+  
+  hold = estimated_autocor[row,1]
+  estimated_autocor[row,1]=estimated_autocor[row,2]
+  estimated_autocor[row,2]=hold
+  
+  estimated_states[row,]=estimated_states[row,]+1
+  estimated_states[row,estimated_states[row,]==3]=1
+}
+
 # exclude data where the global optimum is not reached
 not_global = which(estimated_mu[,1] > 25 | estimated_mu[,1] < 15)
 if (length(not_global>0)){ # only delete if there is any to delete
@@ -451,34 +466,34 @@ if (length(not_global>0)){ # only delete if there is any to delete
   estimated_mu = estimated_mu[-delete,]
   estimated_sigma = estimated_sigma[-delete,]
   estimated_autocor = estimated_autocor[-delete,]
-}
+} 
 
 write.table(data.frame(c(length(not_global),n_sims-length(not_global)),
                      row.names = c('global optimum not reached','global optimum reached')), 
-          "/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation results/sim_100_2state_ar1_ar1/sim_stats.csv",
+          "/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation results/sim_250_2state_ar1_ar1/sim_stats.csv",
           col.names=FALSE, sep=",")
 write.table(estimated_mu, 
-          "/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation results/sim_100_2state_ar1_ar1/estimated_mu.csv",
+          "/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation results/sim_250_2state_ar1_ar1/estimated_mu.csv",
           col.names=FALSE, sep=",")
 write.table(estimated_sigma, 
-          "/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation results/sim_100_2state_ar1_ar1/estimated_sigma.csv",
+          "/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation results/sim_250_2state_ar1_ar1/estimated_sigma.csv",
           col.names=FALSE, sep=",")
 write.table(estimated_autocor, 
-          "/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation results/sim_100_2state_ar1_ar1/estimated_autocor.csv",
+          "/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation results/sim_250_2state_ar1_ar1/estimated_autocor.csv",
           col.names=FALSE, sep=",")
 write.table(true_states, 
-          "/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation results/sim_100_2state_ar1_ar1/true_states.csv",
+          "/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation results/sim_250_2state_ar1_ar1/true_states.csv",
           col.names=FALSE, sep=",")
 write.table(estimated_states, 
-          "/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation results/sim_100_2state_ar1_ar1/estimated_states.csv",
+          "/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation results/sim_250_2state_ar1_ar1/estimated_states.csv",
           col.names=FALSE, sep=",")
 
 
 
 
-
-acc = rep(NA,n_sims)[-delete]
-for (i in (1:n_sims)[-delete]){
+# [-delete] if necessary
+acc = rep(NA,n_sims)#[-delete]
+for (i in (1:n_sims)){
   acc[i]=sum(true_states[i,] == estimated_states[i,])/n_samples
 }
 par(mfrow=c(1,1))
@@ -498,5 +513,6 @@ boxplot_params(estimated_autocor[,1], name=expression(phi[1]),
 boxplot_params(estimated_autocor[,2], name=expression(phi[2]), 
                true_value = autocor_true[2])
 
+# looking good :)
 
 

@@ -1,5 +1,5 @@
 # 2022-06-03
-# Functions to calculate the negative logg-Likelihood of different HMMs
+# Functions to calculate the negative log-Likelihood of different HMMs
 
 
 

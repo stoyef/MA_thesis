@@ -17,3 +17,10 @@ Thesis code and other things
 - [ ] Literature source for the constant constant coefficient of variation (some paper??)
 - [x] Re-run of the simulation with 250 runs for updated functions (inclusion of sigma)
 - [x] Simulation with 250 runs for von Mises distribution (only autocorrelation in $\mu$), for AR(1), AR(2), AR(3)
+- [ ] Incorporate zero-inflation?
+
+
+## Future prospects
+
+- Implement selected portions of the code (the for loops) in C++ (using the package ```rcpt```)
+- For real data examples: Incorporate modeling of $\gamma_{ij}$ with covariates? (Not meaningful in simulations, because it distracts from the AR(p) processes)

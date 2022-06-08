@@ -14,7 +14,7 @@ Gamma, mu, kappa, autocorrelation)!}
 
 \item{N}{Number of states.}
 
-\item{p}{Degree of autocorrelation, 0=no autocorrelation}
+\item{p}{Degree of autocorrelation, 0=no autocorrelation.}
 }
 \value{
 Minus Log-Likelihood

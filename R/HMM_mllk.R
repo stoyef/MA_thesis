@@ -191,7 +191,7 @@ mllk_gamma_arp <-function(theta.star,x,N,p){
 #' Gamma, mu, kappa, autocorrelation)!
 #' @param x Data vector for which the negative Log-Likelihood should be computed.
 #' @param N Number of states.
-#' @param p Degree of autocorrelation, 0=no autocorrelation
+#' @param p Degree of autocorrelation, 0=no autocorrelation.
 #' 
 #' @return Minus Log-Likelihood
 #' 
@@ -248,6 +248,93 @@ mllk_vonMises_arp <-function(theta.star,x,N,p){
   l <- log(sum(foo))
   phi <- foo/sum(foo)
   for (t in 2:length(x)){
+    foo <- phi%*%Gamma%*%diag(allprobs[t,])
+    l <- l+log(sum(foo))
+    phi <- foo/sum(foo)
+  }
+  return(-l)
+}
+
+
+###### general function for arbitrary distribution
+
+
+#' Compute negative Log-Likelihood
+#'
+#' Compute the negative Log-Likelihood, using one or several specified distributions.
+#' The distributions have to be specified by their commonly known abbreviation in R, 
+#' e.g. one of ['gamma', 'vm', 'pois', 'binom',...].
+#' The named list of parameters (one value for each parameter and for each state) have to be
+#' in suitable form, i.e. they have to respect the natural parameter boundaries of the distributions.
+#' In the likelihood computation, contemporaneus independence is assumed.
+#' 
+#' @param theta named list of parameters, containing a list with N entries for each parameter, and full TPM.
+#' @param dists list containing abbreviated names (in R-jargon) of the distributions to be considered in the Likelihood computation.
+#' @param x Data vector or matrix for which the negative Log-Likelihood should be computed.
+#' @param N Number of states.
+#' @param p Vector of degree of autocorrelation for each distribution, 0=no autocorrelation.
+#' 
+#' @return Negative Log-Likelihood.
+#' 
+#' @export
+#' @rdname mllk
+mllk <- function(theta, dists, x, N, p){
+  
+  # computation of the different densities is outsourced to the respective 
+  # functions with name "d<name_of_distribution>, e.g. dgamma for gamma distribution
+
+  delta <- solve(t(diag(N)-theta$Gamma+1),rep(1,N))
+  # transform data to matrix, if necessary
+  if (is.vector(x)) x <- matrix(x, nrow=length(x))
+  allprobs <- matrix(1,dim(x)[1],N)
+  
+  for (dist in 1:length(dists)){ # for each distribution (= column of x) to consider
+    dens_name = match.fun(paste('dens_', dists[dist], sep=""))
+    
+    if (p>0){
+      autocor <- matrix(theta$autocor, ncol=p, byrow=TRUE) # matrix for easier handling later on
+      
+      ind <- which(!is.na(x))[-c(1:p)] # change: we omit first p steps 
+      # in order to always have the step in t-p
+      autocor_ind <- matrix(NA,nrow=length(ind),ncol=p) # matrix for indices of autocor data
+      
+      for (i in 1:p){
+        autocor_ind[,i] <- ind-p+i-1
+      }
+      autocor_ind <- apply(autocor_ind, 2, function(a)x[a]) # substitute indices with values
+      
+      for (j in 1:N){
+        # here comes the autocorrelation! -> computed inside the dens_<...> functions, considering the 
+        # autocorrelation!
+        theta_j <- theta$params
+        # theta_j consists the parameters of state j for each parameter in theta$params
+        for (i in names(theta_j)) theta_j[i][[1]] = theta_j[i][[1]][j] 
+     
+        allprobs[ind,j] <- allprobs[ind,j] * 
+                              match.fun(paste('dens_', dists[dist], sep=""))(x[ind], theta_j, autocor_ind, autocor[j,], p)
+        # here we have to choose mu_auto[ind], because
+        # we have an individual mu for each data point
+      }
+    } else{
+      ind <- which(!is.na(x))
+      
+      for (j in 1:N){
+        
+        theta_j <- theta$params
+        # theta_j consists the parameters of state j for each parameter in theta$params
+        for (i in names(theta_j)) theta_j[i][[1]] = theta_j[i][[1]][j] 
+        
+        allprobs[ind,j] <- allprobs[ind,j] * 
+                              match.fun(paste('dens_', dists[dist], sep=""))(x[ind], theta_j, autocor_ind, theta$autocor, p)
+      }
+    }
+      
+  }
+  
+  foo <- delta%*%diag(allprobs[1,])
+  l <- log(sum(foo))
+  phi <- foo/sum(foo)
+  for (t in 2:dim(x)[1]){
     foo <- phi%*%Gamma%*%diag(allprobs[t,])
     l <- l+log(sum(foo))
     phi <- foo/sum(foo)

@@ -18,6 +18,7 @@ Thesis code and other things
 - [x] Re-run of the simulation with 250 runs for updated functions (inclusion of $\sigma$)
 - [x] Simulation with 250 runs for von Mises distribution (only autocorrelation in $\mu$), for AR(1), AR(2), AR(3)
 - [ ] Incorporate zero-inflation?
+- [ ] Master mllk function for arbitrary distribution(s) $\to$ work in progress, how to distinguish parameters that are called the same in multivariate cases???
 
 
 ## Future prospects

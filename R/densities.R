@@ -15,10 +15,10 @@
 #' 
 #' @export
 #' @rdname dens_gamma
-dens_gamma <- function(x, theta, autocor_ind, autocor, p){
+dens_gamma <- function(x, theta, autocor_ind=0, autocor=0, p=0){
   cv = theta$sigma/theta$mu
   if (p>0){
-    mu_auto <- c(rep(NA,p), # AR(p)
+    mu_auto <- c(#rep(NA,p), # AR(p)
                  ((1-sum(autocor))*theta$mu + 
                     as.vector(autocor_ind%*%autocor))) # matmul of values with autocor coefficient
     sigma_auto <- cv*mu_auto # calculate sigma using ccv
@@ -44,7 +44,7 @@ dens_gamma <- function(x, theta, autocor_ind, autocor, p){
 #' 
 #' @export
 #' @rdname dens_vm
-dens_vm <- function(x, theta, autocor_ind, autocor, p){
+dens_vm <- function(x, theta, autocor_ind=0, autocor=0, p=0){
   require(CircStats)
   if (p>0){
   mu_auto <- c(#rep(NA,p), # AR(p)
@@ -70,9 +70,9 @@ dens_vm <- function(x, theta, autocor_ind, autocor, p){
 #' 
 #' @export
 #' @rdname dens_norm
-dens_norm <- function(x, theta, autocor_ind, autocor, p){
+dens_norm <- function(x, theta, autocor_ind=0, autocor=0, p=0){
   if (p>0){
-    mu_auto <- c(rep(NA,p), # AR(p)
+    mu_auto <- c(#rep(NA,p), # AR(p)
                  ((1-sum(autocor))*theta$mu + 
                     as.vector(autocor_ind%*%autocor))) # matmul of values with autocor coefficient
     return(dnorm(x, mu_auto, theta$sigma))

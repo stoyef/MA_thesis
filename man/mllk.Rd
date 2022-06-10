@@ -7,9 +7,9 @@
 mllk(theta, dists, x, N, p)
 }
 \arguments{
-\item{theta}{named list of parameters, containing a list with N entries for each parameter, and full TPM.}
+\item{theta}{Named list of parameters, containing a list with N entries for each parameter, and full TPM.}
 
-\item{dists}{list containing abbreviated names (in R-jargon) of the distributions to be considered in the Likelihood computation.}
+\item{dists}{Vector containing abbreviated names (in R-jargon) of the distributions to be considered in the Likelihood computation.}
 
 \item{x}{Data vector or matrix for which the negative Log-Likelihood should be computed.}
 

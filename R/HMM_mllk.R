@@ -268,8 +268,8 @@ mllk_vonMises_arp <-function(theta.star,x,N,p){
 #' in suitable form, i.e. they have to respect the natural parameter boundaries of the distributions.
 #' In the likelihood computation, contemporaneus independence is assumed.
 #' 
-#' @param theta named list of parameters, containing a list with N entries for each parameter, and full TPM.
-#' @param dists list containing abbreviated names (in R-jargon) of the distributions to be considered in the Likelihood computation.
+#' @param theta Named list of parameters, containing a list with N entries for each parameter, and full TPM.
+#' @param dists Vector containing abbreviated names (in R-jargon) of the distributions to be considered in the Likelihood computation.
 #' @param x Data vector or matrix for which the negative Log-Likelihood should be computed.
 #' @param N Number of states.
 #' @param p Vector of degree of autocorrelation for each distribution, 0=no autocorrelation.
@@ -289,43 +289,42 @@ mllk <- function(theta, dists, x, N, p){
   allprobs <- matrix(1,dim(x)[1],N)
   
   for (dist in 1:length(dists)){ # for each distribution (= column of x) to consider
-    dens_name = match.fun(paste('dens_', dists[dist], sep=""))
-    
-    if (p>0){
-      autocor <- matrix(theta$autocor, ncol=p, byrow=TRUE) # matrix for easier handling later on
+
+    if (p[dist]>0){
+      autocor <- matrix(theta$autocor[[dist]], ncol=p[dist], byrow=TRUE) # matrix for easier handling later on
       
-      ind <- which(!is.na(x))[-c(1:p)] # change: we omit first p steps 
+      ind <- which(!is.na(x[,dist]))[-c(1:p[dist])] # change: we omit first p steps 
       # in order to always have the step in t-p
-      autocor_ind <- matrix(NA,nrow=length(ind),ncol=p) # matrix for indices of autocor data
+      autocor_ind <- matrix(NA,nrow=length(ind),ncol=p[dist]) # matrix for indices of autocor data
       
-      for (i in 1:p){
-        autocor_ind[,i] <- ind-p+i-1
+      for (i in 1:p[dist]){
+        autocor_ind[,i] <- ind-p[dist]+i-1
       }
-      autocor_ind <- apply(autocor_ind, 2, function(a)x[a]) # substitute indices with values
+      autocor_ind <- apply(autocor_ind, 2, function(a)x[a,dist]) # substitute indices with values
       
       for (j in 1:N){
         # here comes the autocorrelation! -> computed inside the dens_<...> functions, considering the 
         # autocorrelation!
-        theta_j <- theta$params
+        theta_j <- theta$params[[dist]]
         # theta_j consists the parameters of state j for each parameter in theta$params
         for (i in names(theta_j)) theta_j[i][[1]] = theta_j[i][[1]][j] 
      
         allprobs[ind,j] <- allprobs[ind,j] * 
-                              match.fun(paste('dens_', dists[dist], sep=""))(x[ind], theta_j, autocor_ind, autocor[j,], p)
+                              match.fun(paste('dens_', dists[dist], sep=""))(x[ind,dist], theta_j, autocor_ind, autocor[j,], p[dist])
         # here we have to choose mu_auto[ind], because
         # we have an individual mu for each data point
       }
     } else{
-      ind <- which(!is.na(x))
+      ind <- which(!is.na(x[,dist]))
       
       for (j in 1:N){
         
-        theta_j <- theta$params
+        theta_j <- theta$params[[dist]]
         # theta_j consists the parameters of state j for each parameter in theta$params
         for (i in names(theta_j)) theta_j[i][[1]] = theta_j[i][[1]][j] 
         
         allprobs[ind,j] <- allprobs[ind,j] * 
-                              match.fun(paste('dens_', dists[dist], sep=""))(x[ind], theta_j, autocor_ind, theta$autocor, p)
+                              match.fun(paste('dens_', dists[dist], sep=""))(x[ind,dist], theta_j, autocor_ind, theta$autocor[[dist]], p[dist])
       }
     }
       

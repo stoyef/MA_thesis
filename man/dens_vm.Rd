@@ -4,7 +4,7 @@
 \alias{dens_vm}
 \title{Density of von Mises distribution}
 \usage{
-dens_vm(x, theta, autocor_ind, autocor, p)
+dens_vm(x, theta, autocor_ind = 0, autocor = 0, p = 0)
 }
 \arguments{
 \item{x}{Data}

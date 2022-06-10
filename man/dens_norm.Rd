@@ -4,7 +4,7 @@
 \alias{dens_norm}
 \title{Density of normal distribution}
 \usage{
-dens_norm(x, theta, autocor_ind, autocor, p)
+dens_norm(x, theta, autocor_ind = 0, autocor = 0, p = 0)
 }
 \arguments{
 \item{x}{Data}

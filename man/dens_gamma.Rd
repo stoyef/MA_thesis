@@ -4,7 +4,7 @@
 \alias{dens_gamma}
 \title{Density of gamma distribution}
 \usage{
-dens_gamma(x, theta, autocor_ind, autocor, p)
+dens_gamma(x, theta, autocor_ind = 0, autocor = 0, p = 0)
 }
 \arguments{
 \item{x}{Data.}

@@ -8,7 +8,7 @@
 #' 
 #' Simulate data from a Gamma HMM with AR(p) structure in the parameters \eqn{\mu}
 #' and \eqn{\sigma}.
-
+#'
 #' 
 #' @param n_samples Number of samples to generate.
 #' @param delta Initial distribution of the Markov chain.
@@ -76,7 +76,7 @@ sample_gamma_arp <- function(n_samples, delta, Gamma, N, mu, sigma, autocor, p){
 #' 
 #' Simulate data from a von Mises HMM with AR(p) structure in the parameter \eqn{\mu}
 #' (and \eqn{\kappa} in the future?).
-
+#'
 #' 
 #' @param n_samples Number of samples to generate.
 #' @param delta Initial distribution of the Markov chain.
@@ -138,6 +138,13 @@ sample_vonMises_arp <- function(n_samples, delta, Gamma, N, mu, kappa, autocor, 
   names(ret) <- c('states','data')
   return(ret)
 }
+
+
+
+
+
+
+
 
 
 
@@ -319,7 +326,104 @@ sample_hmm_arp_mu <- function(n_samples, delta, Gamma, N, mu, sigma, autocor, p)
 
 
 
-
+#' Simulate data from an HMM with AR(p) structure
+#' 
+#' Simulate data from an HMM with AR(p) structure. 
+#' Different distributions can be specified in \code{dists} (uni- and multivariate).
+#' 
+#'
+#' 
+#' @param n_samples Number of samples to generate.
+#' @param delta Initial distribution of the Markov chain.
+#' @param Gamma Transition probability matrix of the Markov chain.
+#' @param N Number of states.
+#' @param params Parameter vector for the different distributions. 
+#'.              Has to respect the order specified in \code{dists}.
+#' @param autocor List of parameter matrix (Dimensions for each matrix: \eqn{n\times p}) for the autocorrelation coefficients. 
+#'             Has to match p, in the order \eqn{\phi_{t-p},\dots,\phi_{t-1}}
+#'             where \eqn{\phi} is the vector of autocorrelation coefficients
+#'             for one specific time lag (one value for each state).
+#'             0, if no autocorrelation. Has to respect the order specified in \code{dists}.
+#' @param p Vector of degree of autocorrelation for each distribution, 0=no autocorrelation.
+#' @param dists Vector containing abbreviated names (in R-jargon) of the distributions 
+#'              to be considered in the Likelihood computation.
+#'               
+#' @return List of states and data of the HMM.
+#' 
+#' @export
+#' @rdname sample_arp
+sample_arp <- function(n_samples, delta, Gamma, N, params, autocor, p, dists){
+  
+  states <- rep(NA,n_samples)
+  data <- matrix(NA,nrow=n_samples,ncol=length(dists))
+  # calculate cv in case we need them
+  cv = rep(NA, length(dists)*N)
+  s = N
+  m = 0
+  for (i in 1:length(dists)){
+    cv[(i-1)*N+1:N] = params[s+1:N] / params[m+1:N]
+    s = s + 2*N
+    m = m + 2*N 
+  }
+  
+  # first p data points given, no autocorrelation -> just like normal HMM
+  # we have to be careful with rvm, it uses 0-2*pi instead of -pi-+pi
+  # currently only works for distributions with 2 parameters!
+  states[1] <- sample(1:N, 1, prob = delta)
+  for (dist in 1:length(dists)){
+    param1=params[(N*(dist-1)*N)+1:N] # first parameter
+    param2=params[(N*(dist-1)*N)+N+1:N] # second parameter
+    # choose distribution and sample
+    data[1,dist] <- match.fun(paste('sample_', dists[dist], sep=""))(1, param1[states[1]], param2[states[1]])
+  }
+  if (p>1){
+    for (t in 2:p){
+      states[t] <- sample(1:N, 1, prob = Gamma[states[t-1],])
+      for (dist in 1:length(dists)){
+        param1=params[(N*(dist-1)*N)+1:N] # first parameter
+        param2=params[(N*(dist-1)*N)+N+1:N] # second parameter
+        # choose distribution and sample
+        data[t,dist] <- match.fun(paste('sample_', dists[dist], sep=""))(1, param1[states[t]], param2[states[t]])
+      }
+    }
+  }
+  if (p==0){ # no autocorrelation
+    for (t in 2:n_samples){
+      states[t] <- sample(1:N, 1, prob = Gamma[states[t-1],])
+      for (dist in 1:length(dists)){
+        param1=params[(N*(dist-1)*N)+1:N] # first parameter
+        param2=params[(N*(dist-1)*N)+N+1:N] # second parameter
+        # choose distribution and sample
+        data[t,dist] <- match.fun(paste('sample_', dists[dist], sep=""))(1, param1[states[t]], param2[states[t]])
+      }
+    }
+  } else{ # autocorrelation
+    for (t in (p+1):n_samples){
+      states[t] <- sample(1:N, 1, prob=Gamma[states[t-1],])
+      for (dist in 1:length(dists)){
+        param1=params[(N*(dist-1)*N)+1:N] # first parameter
+        param2=params[(N*(dist-1)*N)+N+1:N] # second parameter
+        ar_matrix <- autocor[[dist]]
+        param1_ar <- sum(ar_matrix[states[t],]*data[(t-p):(t-1),dist]) + 
+          (1-sum(ar_matrix[states[t],]))*param1[states[t]]
+        
+        if (dists[dist]=='gamma'){ # respect ccv
+          param2_ar=cv[N*(dist-1)+1:N] * param1_ar
+          param2_ar = param2_ar[states[t]]
+        } else{
+          param2_ar=param2[states[t]]
+        }
+        
+        # choose distribution and sample
+        data[t,dist] <- match.fun(paste('sample_', dists[dist], sep=""))(1, param1_ar, param2_ar)
+      }
+    }
+  }
+  
+  ret <- list(states, data)
+  names(ret) <- c('states','data')
+  return(ret)
+}
 
 
 

@@ -4,12 +4,16 @@
 \alias{mllk}
 \title{Compute negative Log-Likelihood}
 \usage{
-mllk(theta, dists, x, N, p)
+mllk(theta.star, dists, x, N, p)
 }
 \arguments{
-\item{theta}{Named list of parameters, containing a list with N entries for each parameter, and full TPM.}
+\item{theta.star}{Named list of parameters, containing: 1) Full TPM, 2) List of 
+autocorrelation parameters, one vector entry for each distribution, 
+3) List with sublist for each distribution, containing named 
+parameters (N entries for each parameter of each distribution)}
 
-\item{dists}{Vector containing abbreviated names (in R-jargon) of the distributions to be considered in the Likelihood computation.}
+\item{dists}{Vector containing abbreviated names (in R-jargon) of the distributions 
+to be considered in the Likelihood computation.}
 
 \item{x}{Data vector or matrix for which the negative Log-Likelihood should be computed.}
 

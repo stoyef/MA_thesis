@@ -10,20 +10,27 @@
 #' decoded states using the Viterbi algorithm. Optionally: Also plot the resulting 
 #' density functions of the weighted distributions.
 #' 
-#' @param model_sim Form of simulated data in a vector: First entry is distribution
-#'                  of the data (one of ['gamma', 'von Mises']), second entry is 
-#'                  Degree of autocorrelation  (0 - no autocorrelation).
-#' @param model_fit Form of fitted model in a vector: First entry is distribution
-#'                  of the data (one of ['gamma', 'von Mises']), second entry is 
-#'                  Degree of autocorrelation  (0 - no autocorrelation).
+#' @param model_sim Form of simulated data in a vector: First entry is vector containing 
+#'                  abbreviated names (in R-jargon) of the distributions 
+#'                  the data should be sampled from. Second entry is 
+#'                  vector of degree of autocorrelation for each distribution, 
+#'                  0=no autocorrelation.
+#' @param model_fit Form of fitted data in a vector: First entry is vector containing 
+#'                  abbreviated names (in R-jargon) of the distributions 
+#'                  to be considered in the Likelihood computation. Second entry is 
+#'                  vector of degree of autocorrelation for each distribution, 
+#'                  0=no autocorrelation.
 #' @param N_sim Number of states of the HMM used for data generation.
-#' @param N_fit Number of states of the HMM used for data generation.
-#' @param n_samples Number of samples generated.
+#' @param N_fit Number of states of the HMM used for fitting the data.
+#' @param n_samples Number of samples to be generated.
 #' @param Gamma_sim Full transition probability matrix of simulated data.
 #' @param delta_sim Initial distribution of simulated data.
 #' @param param_sim Parameter vector for parameters of the simulated data. In a vector form,
-#'                  and in the order that is customary: e.g. for a gamma HMM c(\eqn{\mu1,\mu2,\sigma1,\sigma2})
-#' @param autocor_sim Vector of autocorrelation coefficients of simulated data (if there are any).
+#'                  and in the order that is customary: e.g. for a gamma HMM c(\eqn{\mu1,\mu2,\sigma1,\sigma2}).
+#'                  The order of distributions has to be the same as in model_sim.
+#' @param autocor_sim Vector of autocorrelation coefficients of simulated data (if there are any,
+#'                    one value for each time lag and state). The order of distributions has
+#'                    to be the same as in model_sim.
 #' @param estimate_states Bool, determines if states are estimated and returned
 #'                        using Viterbi.
 #' @param plot_it Bool, determines if resulting densities are plotted.    

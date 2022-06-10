@@ -268,8 +268,12 @@ mllk_vonMises_arp <-function(theta.star,x,N,p){
 #' in suitable form, i.e. they have to respect the natural parameter boundaries of the distributions.
 #' In the likelihood computation, contemporaneus independence is assumed.
 #' 
-#' @param theta Named list of parameters, containing a list with N entries for each parameter, and full TPM.
-#' @param dists Vector containing abbreviated names (in R-jargon) of the distributions to be considered in the Likelihood computation.
+#' @param theta.star Named list of parameters, containing: 1) Full TPM, 2) List of 
+#'              autocorrelation parameters, one vector entry for each distribution, 
+#'              3) List with sublist for each distribution, containing named 
+#'              parameters (N entries for each parameter of each distribution)
+#' @param dists Vector containing abbreviated names (in R-jargon) of the distributions 
+#'              to be considered in the Likelihood computation.
 #' @param x Data vector or matrix for which the negative Log-Likelihood should be computed.
 #' @param N Number of states.
 #' @param p Vector of degree of autocorrelation for each distribution, 0=no autocorrelation.
@@ -278,12 +282,49 @@ mllk_vonMises_arp <-function(theta.star,x,N,p){
 #' 
 #' @export
 #' @rdname mllk
-mllk <- function(theta, dists, x, N, p){
+mllk <- function(theta.star, dists, x, N, p){
   
-  # computation of the different densities is outsourced to the respective 
-  # functions with name "d<name_of_distribution>, e.g. dgamma for gamma distribution
-
-  delta <- solve(t(diag(N)-theta$Gamma+1),rep(1,N))
+  # First: Working to natural parameters, list structure for better handling
+  # We currently only use distributions with 2 parameters, once we use Poisson distribution etc, we need a re-write
+  
+  ### TPM
+  Gamma <- diag(N)
+  Gamma[!Gamma] <- exp(theta.star[1:((N-1)*N)])
+  Gamma <- Gamma/rowSums(Gamma) 
+  delta <- solve(t(diag(N)-Gamma+1),rep(1,N))
+  
+  ### distribution parameters
+  n_dists <- length(dists)
+  n_dist_params <- 2*n_dists*N
+  params = list()
+  counter = N*(N-1)
+  for (dist in 1:n_dists){
+    if (dists[dist]=='gamma'){
+      params[[dist]] = list(mu=exp(theta.star[counter+1:N]),
+                          sigma=exp(theta.star[counter+N+1:N]))
+    } else if (dists[dist]=='vm'){
+      params[[dist]] = list(mu = Arg(theta.star[counter+1:N]+1i*theta.star[counter+N+1:N]),
+                            kappa = sqrt(theta.star[counter+1:N]^2+theta.star[counter+N+1:N]^2))
+      
+    } else if (dists[dist]=='norm'){
+      params[[dist]] = list(mu=theta.star[counter+1:N],
+                            sigma=exp(theta.star[counter+N+1:N]))
+    } else{
+      return(paste("ERROR: The distribution", dists[dist], "is not implemented."))
+    }
+    counter = counter+2*N
+  }
+  
+  ### Autocorrelation parameters
+  a_params = theta.star[-c(1:counter)]
+  autocor = list()
+  counter = 0
+  for (dist in 1:n_dists){
+    autocor[[dist]] = plogis(a_params[counter+1:(p[dist]*N)])
+    counter = counter+p[dist]*N
+  }
+  
+  
   # transform data to matrix, if necessary
   if (is.vector(x)) x <- matrix(x, nrow=length(x))
   allprobs <- matrix(1,dim(x)[1],N)
@@ -291,7 +332,7 @@ mllk <- function(theta, dists, x, N, p){
   for (dist in 1:length(dists)){ # for each distribution (= column of x) to consider
 
     if (p[dist]>0){
-      autocor <- matrix(theta$autocor[[dist]], ncol=p[dist], byrow=TRUE) # matrix for easier handling later on
+      autocor_m <- matrix(autocor[[dist]], ncol=p[dist], byrow=TRUE) # matrix for easier handling later on
       
       ind <- which(!is.na(x[,dist]))[-c(1:p[dist])] # change: we omit first p steps 
       # in order to always have the step in t-p
@@ -305,12 +346,14 @@ mllk <- function(theta, dists, x, N, p){
       for (j in 1:N){
         # here comes the autocorrelation! -> computed inside the dens_<...> functions, considering the 
         # autocorrelation!
-        theta_j <- theta$params[[dist]]
+        theta_j <- params[[dist]]
         # theta_j consists the parameters of state j for each parameter in theta$params
         for (i in names(theta_j)) theta_j[i][[1]] = theta_j[i][[1]][j] 
-     
+        
+        # computation of the different densities is outsourced to the respective 
+        # functions with name "d<name_of_distribution>, e.g. dgamma for gamma distribution
         allprobs[ind,j] <- allprobs[ind,j] * 
-                              match.fun(paste('dens_', dists[dist], sep=""))(x[ind,dist], theta_j, autocor_ind, autocor[j,], p[dist])
+                              match.fun(paste('dens_', dists[dist], sep=""))(x[ind,dist], theta_j, autocor_ind, autocor_m[j,], p[dist])
         # here we have to choose mu_auto[ind], because
         # we have an individual mu for each data point
       }
@@ -319,12 +362,12 @@ mllk <- function(theta, dists, x, N, p){
       
       for (j in 1:N){
         
-        theta_j <- theta$params[[dist]]
+        theta_j <- params[[dist]]
         # theta_j consists the parameters of state j for each parameter in theta$params
         for (i in names(theta_j)) theta_j[i][[1]] = theta_j[i][[1]][j] 
         
         allprobs[ind,j] <- allprobs[ind,j] * 
-                              match.fun(paste('dens_', dists[dist], sep=""))(x[ind,dist], theta_j, autocor_ind, theta$autocor[[dist]], p[dist])
+                              match.fun(paste('dens_', dists[dist], sep=""))(x[ind,dist], theta_j, autocor_ind, autocor[[dist]], p[dist])
       }
     }
       

@@ -4,7 +4,7 @@
 \alias{fit_arp_model}
 \title{Fit an AR(p) HMM to data}
 \usage{
-fit_arp_model(mllk, data, theta.star, N, p, dist)
+fit_arp_model(mllk, data, theta.star, N, p, dists)
 }
 \arguments{
 \item{mllk}{Negative log-Likelihood function that should be minimized.}
@@ -15,9 +15,10 @@ fit_arp_model(mllk, data, theta.star, N, p, dist)
 
 \item{N}{Number of states.}
 
-\item{p}{Degree of autocorrelation, 0 is possible for no autocorrelation.}
+\item{p}{Vector of degree of autocorrelation for each distribution, 0=no autocorrelation.}
 
-\item{dist}{Kind of distribution in the HMM. One of ['gamma', 'von Mises'].}
+\item{dists}{Vector containing abbreviated names (in R-jargon) of the distributions 
+to be considered in the Likelihood computation.}
 }
 \value{
 List, containing minimal value of negative log-Likelihood, Gamma, 

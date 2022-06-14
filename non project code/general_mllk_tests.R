@@ -238,6 +238,7 @@ for (i in which(is.na(estimated_gamma_mu[,1]))){
   
 }
 elapsed_time = Sys.time()-start_time
+elapsed_time
 
 which(is.na(estimated_gamma_mu[,1]))
 estimated_gamma_mu
@@ -343,7 +344,7 @@ boxplot_params(estimated_autocor_gamma[,2], name=expression(phi[2]),
                true_value = autocor_sim[[1]][2])
 
 par(mfrow=c(1,2))
-boxplot(estimated_gamma_mu,ylim=c(19,42),xlab=expression(mu))
+boxplot(estimated_gamma_mu,ylim=c(19,43),xlab=expression(mu))
 abline(h=c(20,40),col=2,lwd=1.5)
 boxplot(estimated_gamma_sigma,xlab=expression(sigma))
 abline(h=c(5,7),col=2,lwd=1.5)

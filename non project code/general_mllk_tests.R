@@ -204,6 +204,7 @@ estimated_autocor_vm = matrix(NA,nrow=n_sims,ncol=2)
 #true_states = matrix(NA,nrow=n_sims,ncol=n_samples)
 #estimated_states = matrix(NA,nrow=n_sims,ncol=n_samples)
 
+start_time = Sys.time()
 for (i in which(is.na(estimated_gamma_mu[,1]))){
   sim <- ar_simulation(model_sim=list(c('gamma','vm'),c(1,1)),
                                      model_fit=list(c('gamma','vm'),c(1,1)),
@@ -219,6 +220,7 @@ for (i in which(is.na(estimated_gamma_mu[,1]))){
                                      estimate_states = FALSE,
                                      plot_it = TRUE
   )
+  cat(i,'/',n_sims,'\n')
   
   # error handling, skip iteration if optim() in fit function didn't work
   if(anyNA(sim)){
@@ -235,64 +237,120 @@ for (i in which(is.na(estimated_gamma_mu[,1]))){
   #estimated_states[i,] = sim$viterbi_states
   
 }
+elapsed_time = Sys.time()-start_time
 
 which(is.na(estimated_gamma_mu[,1]))
-estimated_mu
-estimated_kappa
-estimated_autocor
-true_states[1:10,1:10]
-estimated_states[1:10,1:10]
+estimated_gamma_mu
+estimated_gamma_sigma
+estimated_vm_mu
+estimated_vm_kappa
+estimated_autocor_gamma
+estimated_autocor_vm
 
 # find rows where state 1 and 2 are swapped and swap back
-swap = which(estimated_mu[,1] > 0 & estimated_mu[,1] < 0.2 & estimated_mu[,2] > -0.2 & estimated_mu[,2] < 0)
+swap = which(estimated_gamma_mu[,1] > 35 & estimated_gamma_mu[,1] < 45 & estimated_gamma_mu[,2] > 15 & estimated_gamma_mu[,2] < 25)
 for (row in swap){
-  hold = estimated_mu[row,1]
-  estimated_mu[row,1]=estimated_mu[row,2]
-  estimated_mu[row,2]=hold
+  hold = estimated_gamma_mu[row,1]
+  estimated_gamma_mu[row,1]=estimated_gamma_mu[row,2]
+  estimated_gamma_mu[row,2]=hold
   
-  hold = estimated_kappa[row,1]
-  estimated_kappa[row,1]=estimated_kappa[row,2]
-  estimated_kappa[row,2]=hold
+  hold = estimated_gamma_sigma[row,1]
+  estimated_gamma_sigma[row,1]=estimated_gamma_sigma[row,2]
+  estimated_gamma_sigma[row,2]=hold
   
-  hold = estimated_autocor[row,1:3]
-  estimated_autocor[row,1:3]=estimated_autocor[row,4:6]
-  estimated_autocor[row,4:6]=hold
+  hold = estimated_vm_mu[row,1]
+  estimated_vm_mu[row,1]=estimated_vm_mu[row,2]
+  estimated_vm_mu[row,2]=hold
   
-  estimated_states[row,]=estimated_states[row,]+1
-  estimated_states[row,estimated_states[row,]==3]=1
+  hold = estimated_vm_kappa[row,1]
+  estimated_vm_kappa[row,1]=estimated_vm_kappa[row,2]
+  estimated_vm_kappa[row,2]=hold
+  
+  hold = estimated_autocor_gamma[row,1]
+  estimated_autocor_gamma[row,1]=estimated_autocor_gamma[row,2]
+  estimated_autocor_gamma[row,2]=hold
+  
+  hold = estimated_autocor_vm[row,1]
+  estimated_autocor_vm[row,1]=estimated_autocor_vm[row,2]
+  estimated_autocor_vm[row,2]=hold
+  
+#  estimated_states[row,]=estimated_states[row,]+1
+#  estimated_states[row,estimated_states[row,]==3]=1
 }
 
 # exclude data where the global optimum is not reached
-not_global = which(estimated_kappa[,1] > 4 | estimated_kappa[,2] < 8)
+not_global = which(estimated_gamma_mu[,1] > 25 | estimated_gamma_mu[,2] < 35)
 if (length(not_global>0)){ # only delete if there is any to delete
-  delete = which(estimated_mu[,1] > 4 | estimated_mu[,2] < 8)
-  estimated_mu = estimated_mu[-delete,]
-  estimated_kappa = estimated_kappa[-delete,]
-  estimated_autocor = estimated_autocor[-delete,]
-} 
+  delete = which(estimated_gamma_mu[,1] > 25 | estimated_gamma_mu[,2] < 35)
+  estimated_gamma_mu = estimated_gamma_mu[-delete,]
+  estimated_gamma_sigma = estimated_gamma_sigma[-delete,]
+  estimated_vm_mu = estimated_vm_mu[-delete,]
+  estimated_vm_kappa = estimated_vm_kappa[-delete,]
+  estimated_autocor_gamma = estimated_autocor_gamma[-delete,]
+  estimated_autocor_vm = estimated_autocor_vm[-delete,]
+  } 
 
 write.table(data.frame(c(length(not_global),n_sims-length(not_global)),
                        row.names = c('global optimum not reached','global optimum reached')), 
-            "/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation results/sim_250_vonMises_2state_ar3_ar3/sim_stats.csv",
+            "/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation results/sim_250_gamma_vm_2state_ar1_ar1/sim_stats.csv",
             col.names=FALSE, sep=",")
-write.table(estimated_mu, 
-            "/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation results/sim_250_vonMises_2state_ar3_ar3/estimated_mu.csv",
+write.table(estimated_gamma_mu, 
+            "/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation results/sim_250_gamma_vm_2state_ar1_ar1/estimated_gamma_mu.csv",
             col.names=FALSE, sep=",")
-write.table(estimated_kappa, 
-            "/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation results/sim_250_vonMises_2state_ar3_ar3/estimated_kappa.csv",
+write.table(estimated_gamma_sigma, 
+            "/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation results/sim_250_gamma_vm_2state_ar1_ar1/estimated_gamma_sigma.csv",
             col.names=FALSE, sep=",")
-write.table(estimated_autocor, 
-            "/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation results/sim_250_vonMises_2state_ar3_ar3/estimated_autocor.csv",
+write.table(estimated_vm_mu, 
+            "/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation results/sim_250_gamma_vm_2state_ar1_ar1/estimated_vm_mu.csv",
             col.names=FALSE, sep=",")
-write.table(true_states, 
-            "/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation results/sim_250_vonMises_2state_ar3_ar3/true_states.csv",
+write.table(estimated_vm_kappa, 
+            "/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation results/sim_250_gamma_vm_2state_ar1_ar1/estimated_vm_kappa.csv",
             col.names=FALSE, sep=",")
-write.table(estimated_states, 
-            "/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation results/sim_250_vonMises_2state_ar3_ar3/estimated_states.csv",
+write.table(estimated_autocor_gamma, 
+            "/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation results/sim_250_gamma_vm_2state_ar1_ar1/estimated_autocor_gamma.csv",
             col.names=FALSE, sep=",")
+write.table(estimated_autocor_vm, 
+            "/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation results/sim_250_gamma_vm_2state_ar1_ar1/estimated_autocor_vm.csv",
+            col.names=FALSE, sep=",")
+#write.table(true_states, 
+#            "/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation results/sim_250_gamma_vm_2state_ar1_ar1/true_states.csv",
+#            col.names=FALSE, sep=",")
+#write.table(estimated_states, 
+#            "/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation results/sim_250_gamma_vm_2state_ar1_ar1/estimated_states.csv",
+#            col.names=FALSE, sep=",")
+
+
+# [-delete] if necessary
+#acc = rep(NA,n_sims)#[-delete]
+#for (i in (1:n_sims)){
+#  acc[i]=sum(true_states[i,] == estimated_states[i,])/n_samples
+#}
+#par(mfrow=c(1,1))
+#boxplot(acc)
 
 
 
+par(mfrow=c(3,2))
+boxplot_params(estimated_gamma_mu[,1], name=expression(mu[1]), true_value = param_sim[1])
+boxplot_params(estimated_gamma_mu[,2], name=expression(mu[2]), true_value = param_sim[2])
+boxplot_params(estimated_gamma_sigma[,1], name=expression(sigma[1]), 
+               true_value = param_sim[3])
+boxplot_params(estimated_gamma_sigma[,2], name=expression(sigma[2]), 
+               true_value = param_sim[4])
+boxplot_params(estimated_autocor_gamma[,1], name=expression(phi[1]), 
+               true_value = autocor_sim[[1]][1])
+boxplot_params(estimated_autocor_gamma[,2], name=expression(phi[2]), 
+               true_value = autocor_sim[[1]][2])
 
+par(mfrow=c(1,2))
+boxplot(estimated_gamma_mu,ylim=c(19,42),xlab=expression(mu))
+abline(h=c(20,40),col=2,lwd=1.5)
+boxplot(estimated_gamma_sigma,xlab=expression(sigma))
+abline(h=c(5,7),col=2,lwd=1.5)
+title("Parameters of the gamma distribution",outer=TRUE,line=-3)
 
-
+boxplot(estimated_vm_mu,xlab=expression(mu))
+abline(h=c(0),col=2,lwd=1.5)
+boxplot(estimated_vm_kappa,xlab=expression(kappa))
+abline(h=c(2,12),col=2,lwd=1.5)
+title("Parameters of the von Mises distribution",outer=TRUE,line=-3)

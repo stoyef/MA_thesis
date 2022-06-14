@@ -371,8 +371,8 @@ sample_arp <- function(n_samples, delta, Gamma, N, params, autocor, p, dists){
   # currently only works for distributions with 2 parameters!
   states[1] <- sample(1:N, 1, prob = delta)
   for (dist in 1:length(dists)){
-    param1=params[(N*(dist-1)*N)+1:N] # first parameter
-    param2=params[(N*(dist-1)*N)+N+1:N] # second parameter
+    param1=params[(2*(dist-1)*N)+1:N] # first parameter
+    param2=params[(2*(dist-1)*N)+N+1:N] # second parameter
     # choose distribution and sample
     data[1,dist] <- match.fun(paste('sample_', dists[dist], sep=""))(1, param1[states[1]], param2[states[1]])
   }
@@ -380,19 +380,19 @@ sample_arp <- function(n_samples, delta, Gamma, N, params, autocor, p, dists){
     for (t in 2:max(p)){ # we assume the data as given for all distributions until time point p
       states[t] <- sample(1:N, 1, prob = Gamma[states[t-1],])
       for (dist in 1:length(dists)){
-        param1=params[(N*(dist-1)*N)+1:N] # first parameter
-        param2=params[(N*(dist-1)*N)+N+1:N] # second parameter
+        param1=params[(2*(dist-1)*N)+1:N] # first parameter
+        param2=params[(2*(dist-1)*N)+N+1:N] # second parameter
         # choose distribution and sample
         data[t,dist] <- match.fun(paste('sample_', dists[dist], sep=""))(1, param1[states[t]], param2[states[t]])
       }
     }
   }
-  if (sum(p==0)<1){ # no autocorrelation
+  if (sum(p==0) == length(p)){ # no autocorrelation
     for (t in 2:n_samples){
       states[t] <- sample(1:N, 1, prob = Gamma[states[t-1],])
       for (dist in 1:length(dists)){
-        param1=params[(N*(dist-1)*N)+1:N] # first parameter
-        param2=params[(N*(dist-1)*N)+N+1:N] # second parameter
+        param1=params[(2*(dist-1)*N)+1:N] # first parameter
+        param2=params[(2*(dist-1)*N)+N+1:N] # second parameter
         # choose distribution and sample
         data[t,dist] <- match.fun(paste('sample_', dists[dist], sep=""))(1, param1[states[t]], param2[states[t]])
       }
@@ -401,8 +401,8 @@ sample_arp <- function(n_samples, delta, Gamma, N, params, autocor, p, dists){
     for (t in (max(p)+1):n_samples){
       states[t] <- sample(1:N, 1, prob=Gamma[states[t-1],])
       for (dist in 1:length(dists)){
-        param1=params[(N*(dist-1)*N)+1:N] # first parameter
-        param2=params[(N*(dist-1)*N)+N+1:N] # second parameter
+        param1=params[(2*(dist-1)*N)+1:N] # first parameter
+        param2=params[(2*(dist-1)*N)+N+1:N] # second parameter
         ar_matrix <- autocor[[dist]]
         param1_ar <- sum(ar_matrix[states[t],]*data[(t-p[dist]):(t-1),dist]) + 
           (1-sum(ar_matrix[states[t],]))*param1[states[t]]

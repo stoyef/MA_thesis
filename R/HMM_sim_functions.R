@@ -65,16 +65,16 @@ ar_simulation <- function(model_sim, model_fit, N_sim, N_fit, n_samples,
   ## starting parameters for model fitting
   params <- c()
   for (dist in 1:length(model_fit[[1]])){
-    pars_dist <- starting_params_opt(data=simulated_data$data[,dist],dist=model_fit[[1]][dist],N=N)
+    pars_dist <- starting_params_opt(data=simulated_data$data[,dist],dist=model_fit[[1]][dist],N=N_fit)
     params <- c(params,pars_dist)
   }
   autocor <- c()
   for (dist in 1:length(model_fit[[1]])){
     ac <- as.numeric(acf(simulated_data$data[,dist], plot=F)$acf[2:(model_fit[[2]][dist]+1)])
-    autocor <- c(autocor, rep(ac,N))
+    autocor <- c(autocor, rep(ac,N_fit))
   }
   theta <- c(
-    rep(-2,N*(N-1)), #TPM
+    rep(-2,N_fit*(N_fit-1)), #TPM
     params, # dist parameters
     autocor # autocor parameters
   )

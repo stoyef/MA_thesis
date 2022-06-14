@@ -376,8 +376,8 @@ sample_arp <- function(n_samples, delta, Gamma, N, params, autocor, p, dists){
     # choose distribution and sample
     data[1,dist] <- match.fun(paste('sample_', dists[dist], sep=""))(1, param1[states[1]], param2[states[1]])
   }
-  if (p>1){
-    for (t in 2:p){
+  if (any(p>1)){
+    for (t in 2:max(p)){ # we assume the data as given for all distributions until time point p
       states[t] <- sample(1:N, 1, prob = Gamma[states[t-1],])
       for (dist in 1:length(dists)){
         param1=params[(N*(dist-1)*N)+1:N] # first parameter
@@ -387,7 +387,7 @@ sample_arp <- function(n_samples, delta, Gamma, N, params, autocor, p, dists){
       }
     }
   }
-  if (p==0){ # no autocorrelation
+  if (sum(p==0)<1){ # no autocorrelation
     for (t in 2:n_samples){
       states[t] <- sample(1:N, 1, prob = Gamma[states[t-1],])
       for (dist in 1:length(dists)){
@@ -398,13 +398,13 @@ sample_arp <- function(n_samples, delta, Gamma, N, params, autocor, p, dists){
       }
     }
   } else{ # autocorrelation
-    for (t in (p+1):n_samples){
+    for (t in (max(p)+1):n_samples){
       states[t] <- sample(1:N, 1, prob=Gamma[states[t-1],])
       for (dist in 1:length(dists)){
         param1=params[(N*(dist-1)*N)+1:N] # first parameter
         param2=params[(N*(dist-1)*N)+N+1:N] # second parameter
         ar_matrix <- autocor[[dist]]
-        param1_ar <- sum(ar_matrix[states[t],]*data[(t-p):(t-1),dist]) + 
+        param1_ar <- sum(ar_matrix[states[t],]*data[(t-p[dist]):(t-1),dist]) + 
           (1-sum(ar_matrix[states[t],]))*param1[states[t]]
         
         if (dists[dist]=='gamma'){ # respect ccv

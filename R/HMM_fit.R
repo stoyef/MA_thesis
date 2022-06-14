@@ -13,6 +13,8 @@
 #' @param mllk Negative log-Likelihood function that should be minimized.
 #' @param data Data that should be fitted using the HMM.
 #' @param theta.star Unconstrained parameter vector (has to be provided in suitable form).
+#'                   Attention: -Inf values (resulting e.g. from supplying autocorrelation = 0) are not possible
+#'                   for the optimization function. 
 #' @param N Number of states.
 #' @param p Vector of degree of autocorrelation for each distribution, 0=no autocorrelation.
 #' @param dists Vector containing abbreviated names (in R-jargon) of the distributions 
@@ -31,7 +33,8 @@ fit_arp_model <- function(mllk, data, theta.star, N, p, dists){
     tryCatch(
       mod <- optim(par=theta.star, fn=mllk, method='L-BFGS-B',
                    N=N,p=p,x=data, dists=dists),
-      error=function(e){cat("ERROR: optim() failed. Continue to next iteration.\n")
+      error=function(e){cat("ERROR: optim() failed. Did you supply autocorrelation parameters = 0?\n
+                            Continue to next iteration.\n")
         skip <<- TRUE
       }
       
@@ -83,6 +86,7 @@ fit_arp_model <- function(mllk, data, theta.star, N, p, dists){
   counter = 0
   for (dist in 1:length(dists)){
     autocor[[dist]] = ac[counter+1:(p[dist]*N)]
+    counter <- counter+1
   }
   
   # create return object

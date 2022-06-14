@@ -11,7 +11,9 @@ fit_arp_model(mllk, data, theta.star, N, p, dists)
 
 \item{data}{Data that should be fitted using the HMM.}
 
-\item{theta.star}{Unconstrained parameter vector (has to be provided in suitable form).}
+\item{theta.star}{Unconstrained parameter vector (has to be provided in suitable form).
+Attention: -Inf values (resulting e.g. from supplying autocorrelation = 0) are not possible
+for the optimization function.}
 
 \item{N}{Number of states.}
 

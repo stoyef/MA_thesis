@@ -19,13 +19,13 @@ ar_simulation(
 )
 }
 \arguments{
-\item{model_sim}{Form of simulated data in a vector: First entry is vector containing 
+\item{model_sim}{Form of simulated data in a list: First entry is vector containing 
 abbreviated names (in R-jargon) of the distributions 
 the data should be sampled from. Second entry is 
 vector of degree of autocorrelation for each distribution, 
 0=no autocorrelation.}
 
-\item{model_fit}{Form of fitted data in a vector: First entry is vector containing 
+\item{model_fit}{Form of fitted data in a list: First entry is vector containing 
 abbreviated names (in R-jargon) of the distributions 
 to be considered in the Likelihood computation. Second entry is 
 vector of degree of autocorrelation for each distribution, 
@@ -45,9 +45,11 @@ vector of degree of autocorrelation for each distribution,
 and in the order that is customary: e.g. for a gamma HMM c(\eqn{\mu1,\mu2,\sigma1,\sigma2}).
 The order of distributions has to be the same as in model_sim.}
 
-\item{autocor_sim}{Vector of autocorrelation coefficients of simulated data (if there are any,
-one value for each time lag and state). The order of distributions has
-to be the same as in model_sim.}
+\item{autocor_sim}{List of parameter matrix (Dimensions for each matrix: \eqn{n\times p}) for the autocorrelation coefficients. 
+ Has to match p, in the order \eqn{\phi_{t-p},\dots,\phi_{t-1}}
+ where \eqn{\phi} is the vector of autocorrelation coefficients
+for one specific time lag (one value for each state).
+0, if no autocorrelation. Has to respect the order specified in \code{dists}.#'}
 
 \item{estimate_states}{Bool, determines if states are estimated and returned
 using Viterbi.}

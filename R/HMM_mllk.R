@@ -265,13 +265,15 @@ mllk_vonMises_arp <-function(theta.star,x,N,p){
 #' The distributions have to be specified by their commonly known abbreviation in R, 
 #' e.g. one of ['gamma', 'vm', 'pois', 'binom',...].
 #' The named list of parameters (one value for each parameter and for each state) have to be
-#' in suitable form, i.e. they have to respect the natural parameter boundaries of the distributions.
+#' in suitable form, i.e. a vector of the working parameters.
 #' In the likelihood computation, contemporaneus independence is assumed.
 #' 
-#' @param theta.star Named list of parameters, containing: 1) Full TPM, 2) List of 
-#'              autocorrelation parameters, one vector entry for each distribution, 
-#'              3) List with sublist for each distribution, containing named 
-#'              parameters (N entries for each parameter of each distribution)
+#' @param theta.star Vector of parameters in the following order: 1) Off-diagonal entries of TPM,
+#'                   2) Distribution parameters for each state (each distribution at a time, i.e. 
+#'                   first all parameters of dist1, then all parameters of dist2 etc.), 
+#'                   3) Autocorrelation parameters (each distribution at a time, i.e. 
+#'                   first all autocorrelation parameters of dist1, then all autocorrelation 
+#'                   parameters of dist2 etc.).
 #' @param dists Vector containing abbreviated names (in R-jargon) of the distributions 
 #'              to be considered in the Likelihood computation.
 #' @param x Data vector or matrix for which the negative Log-Likelihood should be computed.

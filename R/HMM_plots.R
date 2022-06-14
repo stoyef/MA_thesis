@@ -57,22 +57,22 @@ plot_fitted_dist <- function(data, dist, param, N, delta, title="none"){
     mu <- param[1:N]
     sigma <- param[N+1:N]
     for (i in 1:N){
-      dens[,i] = delta[i]*dgamma(x, shape=mu[i]^2/sigma[i]^2, scale=sigma[i]^2/mu[i])
+      dens[,i] = delta[i]*dgamma(x, shape=param$mu[i]^2/param$sigma[i]^2, scale=param$sigma[i]^2/param$mu[i])
     }
-  } else if (dist=='von Mises'){
+  } else if (dist=='vm'){
     mu <- param[1:N]
     kappa <- param[N+1:N]
     for (i in 1:N){
-      dens[,i] = delta[i]*dvm(x, mu[i], kappa[i])
+      dens[,i] = delta[i]*dvm(x, param$mu[i], param$kappa[i])
     }
   }
   total_dist <- apply(dens,1,sum)
   
   if (title=="none"){
-    hist(data, breaks=length(data)/25, probability = TRUE,
+    hist(data, breaks=30, probability = TRUE,
          main="", xlab="x", ylim=c(0,1.1*max(total_dist)))
   }else{
-    hist(data, breaks=length(data)/25, probability = TRUE,
+    hist(data, breaks=30, probability = TRUE,
          main=title, xlab="x", ylim=c(0,1.1*max(total_dist)))
   }
   for (i in 1:N){

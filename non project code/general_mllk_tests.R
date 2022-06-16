@@ -433,6 +433,7 @@ estimated_states = matrix(NA,nrow=n_sims,ncol=n_samples)
 
 start_time = Sys.time()
 for (i in which(is.na(estimated_gamma_mu[,1]))){
+  current_time = Sys.time()
   sim <- ar_simulation(model_sim=list(c('gamma','vm'),c(2,2)),
                             model_fit=list(c('gamma','vm'),c(2,2)),
                             N_sim=2,
@@ -447,7 +448,7 @@ for (i in which(is.na(estimated_gamma_mu[,1]))){
                             estimate_states = TRUE,
                             plot_it = TRUE
   )
-  cat(i,'/',n_sims,' (', Sys.time()-start_time,') \n',sep="")
+  cat(i,'/',n_sims,' (', Sys.time()-current_time,') \n',sep="")
   
   # error handling, skip iteration if optim() in fit function didn't work
   if(anyNA(sim)){
@@ -476,112 +477,138 @@ estimated_autocor_gamma
 estimated_autocor_vm
 
 # find rows where state 1 and 2 are swapped and swap back
-swap = which(estimated_gamma_mu[,1] > 35 & estimated_gamma_mu[,1] < 45 & estimated_gamma_mu[,2] > 15 & estimated_gamma_mu[,2] < 25)
-for (row in swap){
-  hold = estimated_gamma_mu[row,1]
-  estimated_gamma_mu[row,1]=estimated_gamma_mu[row,2]
-  estimated_gamma_mu[row,2]=hold
-  
-  hold = estimated_gamma_sigma[row,1]
-  estimated_gamma_sigma[row,1]=estimated_gamma_sigma[row,2]
-  estimated_gamma_sigma[row,2]=hold
-  
-  hold = estimated_vm_mu[row,1]
-  estimated_vm_mu[row,1]=estimated_vm_mu[row,2]
-  estimated_vm_mu[row,2]=hold
-  
-  hold = estimated_vm_kappa[row,1]
-  estimated_vm_kappa[row,1]=estimated_vm_kappa[row,2]
-  estimated_vm_kappa[row,2]=hold
-  
-  hold = estimated_autocor_gamma[row,1]
-  estimated_autocor_gamma[row,1]=estimated_autocor_gamma[row,2]
-  estimated_autocor_gamma[row,2]=hold
-  
-  hold = estimated_autocor_vm[row,1]
-  estimated_autocor_vm[row,1]=estimated_autocor_vm[row,2]
-  estimated_autocor_vm[row,2]=hold
-  
-  #  estimated_states[row,]=estimated_states[row,]+1
-  #  estimated_states[row,estimated_states[row,]==3]=1
-}
+#swap = which(estimated_gamma_mu[,1] > 35 & estimated_gamma_mu[,1] < 45 & estimated_gamma_mu[,2] > 15 & estimated_gamma_mu[,2] < 25)
+#for (row in swap){
+#  hold = estimated_gamma_mu[row,1]
+#  estimated_gamma_mu[row,1]=estimated_gamma_mu[row,2]
+#  estimated_gamma_mu[row,2]=hold
+#  
+#  hold = estimated_gamma_sigma[row,1]
+#  estimated_gamma_sigma[row,1]=estimated_gamma_sigma[row,2]
+#  estimated_gamma_sigma[row,2]=hold
+#  
+#  hold = estimated_vm_mu[row,1]
+#  estimated_vm_mu[row,1]=estimated_vm_mu[row,2]
+#  estimated_vm_mu[row,2]=hold
+#  
+#  hold = estimated_vm_kappa[row,1]
+#  estimated_vm_kappa[row,1]=estimated_vm_kappa[row,2]
+#  estimated_vm_kappa[row,2]=hold
+#  
+#  hold = estimated_autocor_gamma[row,1]
+#  estimated_autocor_gamma[row,1]=estimated_autocor_gamma[row,2]
+#  estimated_autocor_gamma[row,2]=hold
+#  
+#  hold = estimated_autocor_vm[row,1]
+#  estimated_autocor_vm[row,1]=estimated_autocor_vm[row,2]
+#  estimated_autocor_vm[row,2]=hold
+#  
+#  estimated_states[row,]=estimated_states[row,]+1
+#  estimated_states[row,estimated_states[row,]==3]=1
+#}
 
 # exclude data where the global optimum is not reached
-not_global = which(estimated_gamma_mu[,1] > 25 | estimated_gamma_mu[,2] < 35)
-if (length(not_global>0)){ # only delete if there is any to delete
-  delete = which(estimated_gamma_mu[,1] > 25 | estimated_gamma_mu[,2] < 35)
-  estimated_gamma_mu = estimated_gamma_mu[-delete,]
-  estimated_gamma_sigma = estimated_gamma_sigma[-delete,]
-  estimated_vm_mu = estimated_vm_mu[-delete,]
-  estimated_vm_kappa = estimated_vm_kappa[-delete,]
-  estimated_autocor_gamma = estimated_autocor_gamma[-delete,]
-  estimated_autocor_vm = estimated_autocor_vm[-delete,]
-} 
+not_global = which(estimated_vm_mu[,2] < -0.5 | estimated_gamma_mu[,2] < 35)
+#if (length(not_global>0)){ # only delete if there is any to delete
+#  delete = which(estimated_gamma_mu[,1] > 25 | estimated_gamma_mu[,2] < 35)
+#  estimated_gamma_mu = estimated_gamma_mu[-delete,]
+#  estimated_gamma_sigma = estimated_gamma_sigma[-delete,]
+#  estimated_vm_mu = estimated_vm_mu[-delete,]
+#  estimated_vm_kappa = estimated_vm_kappa[-delete,]
+#  estimated_autocor_gamma = estimated_autocor_gamma[-delete,]
+#  estimated_autocor_vm = estimated_autocor_vm[-delete,]
+#} 
 
 write.table(data.frame(c(length(not_global),n_sims-length(not_global)),
                        row.names = c('global optimum not reached','global optimum reached')), 
-            "/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation results/sim_250_gamma_vm_2state_ar1_ar1/sim_stats.csv",
+            "/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation results/sim_250_gamma_vm_2state_ar2_ar2/sim_stats.csv",
             col.names=FALSE, sep=",")
 write.table(estimated_gamma_mu, 
-            "/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation results/sim_250_gamma_vm_2state_ar1_ar1/estimated_gamma_mu.csv",
+            "/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation results/sim_250_gamma_vm_2state_ar2_ar2/estimated_gamma_mu.csv",
             col.names=FALSE, sep=",")
 write.table(estimated_gamma_sigma, 
-            "/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation results/sim_250_gamma_vm_2state_ar1_ar1/estimated_gamma_sigma.csv",
+            "/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation results/sim_250_gamma_vm_2state_ar2_ar2/estimated_gamma_sigma.csv",
             col.names=FALSE, sep=",")
 write.table(estimated_vm_mu, 
-            "/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation results/sim_250_gamma_vm_2state_ar1_ar1/estimated_vm_mu.csv",
+            "/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation results/sim_250_gamma_vm_2state_ar2_ar2/estimated_vm_mu.csv",
             col.names=FALSE, sep=",")
 write.table(estimated_vm_kappa, 
-            "/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation results/sim_250_gamma_vm_2state_ar1_ar1/estimated_vm_kappa.csv",
+            "/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation results/sim_250_gamma_vm_2state_ar2_ar2/estimated_vm_kappa.csv",
             col.names=FALSE, sep=",")
 write.table(estimated_autocor_gamma, 
-            "/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation results/sim_250_gamma_vm_2state_ar1_ar1/estimated_autocor_gamma.csv",
+            "/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation results/sim_250_gamma_vm_2state_ar2_ar2/estimated_autocor_gamma.csv",
             col.names=FALSE, sep=",")
 write.table(estimated_autocor_vm, 
-            "/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation results/sim_250_gamma_vm_2state_ar1_ar1/estimated_autocor_vm.csv",
+            "/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation results/sim_250_gamma_vm_2state_ar2_ar2/estimated_autocor_vm.csv",
             col.names=FALSE, sep=",")
-#write.table(true_states, 
-#            "/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation results/sim_250_gamma_vm_2state_ar1_ar1/true_states.csv",
-#            col.names=FALSE, sep=",")
-#write.table(estimated_states, 
-#            "/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation results/sim_250_gamma_vm_2state_ar1_ar1/estimated_states.csv",
-#            col.names=FALSE, sep=",")
+write.table(true_states, 
+            "/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation results/sim_250_gamma_vm_2state_ar2_ar2/true_states.csv",
+            col.names=FALSE, sep=",")
+write.table(estimated_states, 
+            "/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation results/sim_250_gamma_vm_2state_ar2_ar2/estimated_states.csv",
+            col.names=FALSE, sep=",")
 
 
 # [-delete] if necessary
-#acc = rep(NA,n_sims)#[-delete]
-#for (i in (1:n_sims)){
-#  acc[i]=sum(true_states[i,] == estimated_states[i,])/n_samples
-#}
-#par(mfrow=c(1,1))
-#boxplot(acc)
+acc = rep(NA,n_sims)#[-delete]
+for (i in (1:n_sims)){
+  acc[i]=sum(true_states[i,] == estimated_states[i,])/n_samples
+}
+par(mfrow=c(1,1))
+boxplot(acc,ylab="Accuracy", main="Boxplot of accuracies of global decoded states",
+        bty="n")
 
 
 
 par(mfrow=c(3,2))
-boxplot_params(estimated_gamma_mu[,1], name=expression(mu[1]), true_value = param_sim[1])
-boxplot_params(estimated_gamma_mu[,2], name=expression(mu[2]), true_value = param_sim[2])
+boxplot_params(estimated_gamma_mu[,1], name=expression(mu[1]), true_value = param_sim[1],
+               ylim=c(0,42),cex.lab=2,cex.axis=1.5)
+boxplot_params(estimated_gamma_mu[,2], name=expression(mu[2]), true_value = param_sim[2],
+               ylim=c(0,42),cex.lab=2,cex.axis=1.5)
 boxplot_params(estimated_gamma_sigma[,1], name=expression(sigma[1]), 
-               true_value = param_sim[3])
+               true_value = param_sim[3],ylim=c(0,8),cex.lab=2,cex.axis=1.5)
 boxplot_params(estimated_gamma_sigma[,2], name=expression(sigma[2]), 
-               true_value = param_sim[4])
-boxplot_params(estimated_autocor_gamma[,1], name=expression(phi[1]), 
-               true_value = autocor_sim[[1]][1])
-boxplot_params(estimated_autocor_gamma[,2], name=expression(phi[2]), 
-               true_value = autocor_sim[[1]][2])
+               true_value = param_sim[4],ylim=c(0,8),cex.lab=2,cex.axis=1.5)
+boxplot_params(estimated_autocor_gamma[,1:2], name=expression(phi[1]), 
+               true_value = autocor_sim[[1]][1,],ylim=c(0,1),cex.lab=2,cex.axis=1.5)
+boxplot_params(estimated_autocor_gamma[,3:4], name=expression(phi[2]), 
+               true_value = autocor_sim[[1]][2,],ylim=c(0,1),cex.lab=2,cex.axis=1.5)
 
-par(mfrow=c(1,2))
-boxplot(estimated_gamma_mu,ylim=c(19,43),xlab=expression(mu))
-abline(h=c(20,40),col=2,lwd=1.5)
-boxplot(estimated_gamma_sigma,xlab=expression(sigma))
-abline(h=c(5,7),col=2,lwd=1.5)
-title("Parameters of the gamma distribution",outer=TRUE,line=-3)
 
-boxplot(estimated_vm_mu,xlab=expression(mu))
-abline(h=c(0),col=2,lwd=1.5)
-boxplot(estimated_vm_kappa,xlab=expression(kappa))
-abline(h=c(2,12),col=2,lwd=1.5)
-title("Parameters of the von Mises distribution",outer=TRUE,line=-3)
+layout(matrix(c(1,2,3,3),ncol=2,byrow=TRUE))
+boxplot(estimated_gamma_mu,xlab=expression(mu),cex.lab=2,xaxt='n',cex.axis=1.5)
+axis(1, at=c(1,2), labels=c("",""))
+mtext(c(expression(mu[1]),expression(mu[2])),side=1,at=c(1,2),line=1.25,cex=1.5)
+abline(h=c(20,40),col=2,lwd=2)
+boxplot(estimated_gamma_sigma,xlab=expression(sigma),cex.lab=2,xaxt='n',cex.axis=1.5)
+axis(1, at=c(1,2), labels=c("",""))
+mtext(c(expression(sigma[1]),expression(sigma[2])),side=1,at=c(1,2),line=1.25,cex=1.5)
+abline(h=c(5,7),col=2,lwd=2)
+boxplot(estimated_autocor_gamma,xlab=expression(phi),cex.lab=2,cex.axis=1.5,ylim=c(0,1),
+        xaxt='n')
+axis(1, at=c(1,2,3,4), labels=c("","","",""))
+mtext(c(expression(phi["1,1"]),expression(phi["1,2"]),expression(phi["2,1"]),expression(phi["2,2"])),
+      side=1,at=c(1,2,3,4),line=1.25,cex=1.5)
+abline(h=autocor_sim[[1]],col=2,lwd=2)
+title("Estimated parameters of gamma distribution",outer=TRUE,line=-2,cex.main=2)
+
+
+layout(matrix(c(1,2,3,3),ncol=2,byrow=TRUE))
+boxplot(estimated_vm_mu,xlab=expression(mu),cex.lab=2,xaxt='n',cex.axis=1.5)
+axis(1, at=c(1,2), labels=c("",""))
+mtext(c(expression(mu[1]),expression(mu[2])),side=1,at=c(1,2),line=1.25,cex=1.5)
+abline(h=c(0),col=2,lwd=2)
+boxplot(estimated_vm_kappa,xlab=expression(kappa),cex.lab=2,xaxt='n',cex.axis=1.5)
+axis(1, at=c(1,2), labels=c("",""))
+mtext(c(expression(kappa[1]),expression(kappa[2])),side=1,at=c(1,2),line=1.25,cex=1.5)
+abline(h=c(2,12),col=2,lwd=2)
+boxplot(estimated_autocor_vm,xlab=expression(phi),cex.lab=2,cex.axis=1.5,ylim=c(0,1),
+        xaxt='n')
+axis(1, at=c(1,2,3,4), labels=c("","","",""))
+mtext(c(expression(phi["1,1"]),expression(phi["1,2"]),expression(phi["2,1"]),expression(phi["2,2"])),
+      side=1,at=c(1,2,3,4),line=1.25,cex=1.5)
+abline(h=autocor_sim[[2]],col=2,lwd=2)
+title("Estimated parameters of von Mises distribution",outer=TRUE,line=-2,cex.main=2)
 
 
 

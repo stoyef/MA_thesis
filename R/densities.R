@@ -9,6 +9,7 @@
 #' @param x Data.
 #' @param theta Named list of parameters of gamma distribution.
 #' @param autocor_ind Matrix, indices of to consider when computing the autocorrelated parameters.
+#' @param autocor Vector, j-th row of autocor matrix, with one value for each time lag considered.
 #' @param p Int, degree of autocorrelation.
 #' 
 #' @return Densities of gamma distribution.
@@ -37,7 +38,7 @@ dens_gamma <- function(x, theta, autocor_ind=0, autocor=0, p=0){
 #' @param x Data
 #' @param theta Named list of parameters of von Mises distribution.
 #' @param autocor_ind Matrix, indices of to consider when computing the autocorrelated parameters.
-#' @param autocor Vector, j-th column of autocor matrix, with one value for each time lag considered
+#' @param autocor Vector, j-th row of autocor matrix, with one value for each time lag considered.
 #' @param p Int, degree of autocorrelation.
 #' 
 #' @return Densities of von Mises distribution.
@@ -64,6 +65,7 @@ dens_vm <- function(x, theta, autocor_ind=0, autocor=0, p=0){
 #' @param x Data
 #' @param theta Named list of parameters of normal distribution.
 #' @param autocor_ind Matrix, indices of to consider when computing the autocorrelated parameters.
+#' @param autocor Vector, j-th row of autocor matrix, with one value for each time lag considered.
 #' @param p Int, degree of autocorrelation.
 #' 
 #' @return Densities of normal distribution.

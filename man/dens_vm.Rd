@@ -13,7 +13,7 @@ dens_vm(x, theta, autocor_ind = 0, autocor = 0, p = 0)
 
 \item{autocor_ind}{Matrix, indices of to consider when computing the autocorrelated parameters.}
 
-\item{autocor}{Vector, j-th column of autocor matrix, with one value for each time lag considered}
+\item{autocor}{Vector, j-th row of autocor matrix, with one value for each time lag considered.}
 
 \item{p}{Int, degree of autocorrelation.}
 }

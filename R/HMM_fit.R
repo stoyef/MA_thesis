@@ -81,16 +81,23 @@ fit_arp_model <- function(mllk, data, theta.star, N, p, dists){
   }
   
   # autocorrelation
-  ac <- plogis(mod$par[-c(1:counter)])
-  autocor = list()
-  counter = 0
-  for (dist in 1:length(dists)){
-    autocor[[dist]] = ac[counter+1:(p[dist]*N)]
-    counter <- counter+1
+  if (any(p>0)){
+    ac <- plogis(mod$par[-c(1:counter)])
+    autocor = list()
+    counter = 0
+    for (dist in 1:length(dists)){
+      autocor[[dist]] = ac[counter+1:(p[dist]*N)]
+      counter <- counter+1
+    }
   }
   
   # create return object
-  ret <- list(mod$value, Gamma, delta, params, autocor)
-  names(ret) <- c('mllk_optim', 'Gamma', 'delta', 'params', 'autocorrelation')
+  if (any(p>0)){
+    ret <- list(mod$value, Gamma, delta, params, autocor)
+    names(ret) <- c('mllk_optim', 'Gamma', 'delta', 'params', 'autocorrelation')
+  } else{
+    ret <- list(mod$value, Gamma, delta, params)
+    names(ret) <- c('mllk_optim', 'Gamma', 'delta', 'params')
+  }
   return(ret)
 }

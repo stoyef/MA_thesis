@@ -187,9 +187,10 @@ sim_full <- ar_simulation(model_sim=list(c('gamma','vm'),c(1,1)),
                             0,0,2,12),
               autocor_sim = list(matrix(c(0.3,0.7),ncol=1),
                                  matrix(c(0.4,0.7),ncol=1)),
-              estimate_states = FALSE,
+              estimate_states = TRUE,
               plot_it = TRUE
 )
+table(sim_full$viterbi_states)
 
 
 # loop -> simulation without state decoding
@@ -355,3 +356,233 @@ abline(h=c(0),col=2,lwd=1.5)
 boxplot(estimated_vm_kappa,xlab=expression(kappa))
 abline(h=c(2,12),col=2,lwd=1.5)
 title("Parameters of the von Mises distribution",outer=TRUE,line=-3)
+
+
+
+
+### Test with AR(0)
+par(mfrow=c(1,2))
+sim_full <- ar_simulation(model_sim=list(c('gamma','vm'),c(0,0)),
+                          model_fit=list(c('gamma','vm'),c(0,0)),
+                          N_sim=2,
+                          N_fit=2,
+                          n_samples=2000,
+                          Gamma_sim = matrix(c(0.9,0.1,0.1,0.9),ncol=2),
+                          delta_sim = c(0.5,0.5),
+                          param_sim = c(20,40,5,7,
+                                        0,0,2,12),
+                          autocor_sim = 0,#list(matrix(c(0.3,0.7),ncol=1),
+                                          #   matrix(c(0.4,0.7),ncol=1)),
+                          estimate_states = TRUE,
+                          plot_it = TRUE
+)
+table(sim_full$viterbi_states)
+table(sim_full$simulated_model$states)
+
+### Test with AR(1)
+sim_full <- ar_simulation(model_sim=list(c('gamma','vm'),c(1,1)),
+                          model_fit=list(c('gamma','vm'),c(1,1)),
+                          N_sim=2,
+                          N_fit=2,
+                          n_samples=2000,
+                          Gamma_sim = matrix(c(0.9,0.1,0.1,0.9),ncol=2),
+                          delta_sim = c(0.5,0.5),
+                          param_sim = c(20,40,5,7,
+                                        0,0,2,12),
+                          autocor_sim = list(matrix(c(0.3,0.7),ncol=1),
+                                             matrix(c(0.4,0.7),ncol=1)),
+                          estimate_states = TRUE,
+                          plot_it = TRUE
+)
+table(sim_full$viterbi_states)
+table(sim_full$simulated_model$states)
+
+### Test with AR(2)
+sim_full <- ar_simulation(model_sim=list(c('gamma','vm'),c(2,2)),
+                          model_fit=list(c('gamma','vm'),c(2,2)),
+                          N_sim=2,
+                          N_fit=2,
+                          n_samples=2000,
+                          Gamma_sim = matrix(c(0.9,0.1,0.1,0.9),ncol=2),
+                          delta_sim = c(0.5,0.5),
+                          param_sim = c(20,40,5,7,
+                                        0,0,2,12),
+                          autocor_sim = list(matrix(c(0.15,0.3,0.15,0.4),ncol=2,byrow=TRUE),
+                                             matrix(c(0.2,0.3,0.2,0.4),ncol=2,byrow=TRUE)),
+                          estimate_states = TRUE,
+                          plot_it = TRUE
+)
+sum(sim_full$viterbi_states == sim_full$simulated_model$states)/2000
+
+
+###############################################################################
+###############################################################################
+###############################################################################
+
+# loop -> AR(2) simulation with state decoding
+n_sims = 250
+n_samples = 2000
+estimated_gamma_mu = matrix(NA,nrow=n_sims,ncol=2)
+estimated_gamma_sigma = matrix(NA,nrow=n_sims,ncol=2)
+estimated_vm_mu = matrix(NA,nrow=n_sims,ncol=2)
+estimated_vm_kappa = matrix(NA,nrow=n_sims,ncol=2)
+estimated_autocor_gamma = matrix(NA,nrow=n_sims,ncol=4)
+estimated_autocor_vm = matrix(NA,nrow=n_sims,ncol=4)
+true_states = matrix(NA,nrow=n_sims,ncol=n_samples)
+estimated_states = matrix(NA,nrow=n_sims,ncol=n_samples)
+
+start_time = Sys.time()
+for (i in which(is.na(estimated_gamma_mu[,1]))){
+  sim <- ar_simulation(model_sim=list(c('gamma','vm'),c(2,2)),
+                            model_fit=list(c('gamma','vm'),c(2,2)),
+                            N_sim=2,
+                            N_fit=2,
+                            n_samples=2000,
+                            Gamma_sim = matrix(c(0.9,0.1,0.1,0.9),ncol=2),
+                            delta_sim = c(0.5,0.5),
+                            param_sim = c(20,40,5,7,
+                                          0,0,2,12),
+                            autocor_sim = list(matrix(c(0.15,0.3,0.15,0.4),ncol=2,byrow=TRUE),
+                                               matrix(c(0.2,0.3,0.2,0.4),ncol=2,byrow=TRUE)),
+                            estimate_states = TRUE,
+                            plot_it = TRUE
+  )
+  cat(i,'/',n_sims,' (', Sys.time()-start_time,') \n',sep="")
+  
+  # error handling, skip iteration if optim() in fit function didn't work
+  if(anyNA(sim)){
+    next
+  }
+  estimated_gamma_mu[i,] = sim$fitted_model$params[[1]]$mu
+  estimated_gamma_sigma[i,] = sim$fitted_model$params[[1]]$sigma
+  estimated_vm_mu[i,] = sim$fitted_model$params[[2]]$mu
+  estimated_vm_kappa[i,] = sim$fitted_model$params[[2]]$kappa
+  estimated_autocor_gamma[i,] = sim$fitted_model$autocorrelation[[1]]
+  estimated_autocor_vm[i,] = sim$fitted_model$autocorrelation[[2]]
+  
+  true_states[i,] = sim$simulated_model$states
+  estimated_states[i,] = sim$viterbi_states
+  
+}
+elapsed_time = Sys.time()-start_time
+elapsed_time
+
+which(is.na(estimated_gamma_mu[,1]))
+estimated_gamma_mu
+estimated_gamma_sigma
+estimated_vm_mu
+estimated_vm_kappa
+estimated_autocor_gamma
+estimated_autocor_vm
+
+# find rows where state 1 and 2 are swapped and swap back
+swap = which(estimated_gamma_mu[,1] > 35 & estimated_gamma_mu[,1] < 45 & estimated_gamma_mu[,2] > 15 & estimated_gamma_mu[,2] < 25)
+for (row in swap){
+  hold = estimated_gamma_mu[row,1]
+  estimated_gamma_mu[row,1]=estimated_gamma_mu[row,2]
+  estimated_gamma_mu[row,2]=hold
+  
+  hold = estimated_gamma_sigma[row,1]
+  estimated_gamma_sigma[row,1]=estimated_gamma_sigma[row,2]
+  estimated_gamma_sigma[row,2]=hold
+  
+  hold = estimated_vm_mu[row,1]
+  estimated_vm_mu[row,1]=estimated_vm_mu[row,2]
+  estimated_vm_mu[row,2]=hold
+  
+  hold = estimated_vm_kappa[row,1]
+  estimated_vm_kappa[row,1]=estimated_vm_kappa[row,2]
+  estimated_vm_kappa[row,2]=hold
+  
+  hold = estimated_autocor_gamma[row,1]
+  estimated_autocor_gamma[row,1]=estimated_autocor_gamma[row,2]
+  estimated_autocor_gamma[row,2]=hold
+  
+  hold = estimated_autocor_vm[row,1]
+  estimated_autocor_vm[row,1]=estimated_autocor_vm[row,2]
+  estimated_autocor_vm[row,2]=hold
+  
+  #  estimated_states[row,]=estimated_states[row,]+1
+  #  estimated_states[row,estimated_states[row,]==3]=1
+}
+
+# exclude data where the global optimum is not reached
+not_global = which(estimated_gamma_mu[,1] > 25 | estimated_gamma_mu[,2] < 35)
+if (length(not_global>0)){ # only delete if there is any to delete
+  delete = which(estimated_gamma_mu[,1] > 25 | estimated_gamma_mu[,2] < 35)
+  estimated_gamma_mu = estimated_gamma_mu[-delete,]
+  estimated_gamma_sigma = estimated_gamma_sigma[-delete,]
+  estimated_vm_mu = estimated_vm_mu[-delete,]
+  estimated_vm_kappa = estimated_vm_kappa[-delete,]
+  estimated_autocor_gamma = estimated_autocor_gamma[-delete,]
+  estimated_autocor_vm = estimated_autocor_vm[-delete,]
+} 
+
+write.table(data.frame(c(length(not_global),n_sims-length(not_global)),
+                       row.names = c('global optimum not reached','global optimum reached')), 
+            "/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation results/sim_250_gamma_vm_2state_ar1_ar1/sim_stats.csv",
+            col.names=FALSE, sep=",")
+write.table(estimated_gamma_mu, 
+            "/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation results/sim_250_gamma_vm_2state_ar1_ar1/estimated_gamma_mu.csv",
+            col.names=FALSE, sep=",")
+write.table(estimated_gamma_sigma, 
+            "/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation results/sim_250_gamma_vm_2state_ar1_ar1/estimated_gamma_sigma.csv",
+            col.names=FALSE, sep=",")
+write.table(estimated_vm_mu, 
+            "/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation results/sim_250_gamma_vm_2state_ar1_ar1/estimated_vm_mu.csv",
+            col.names=FALSE, sep=",")
+write.table(estimated_vm_kappa, 
+            "/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation results/sim_250_gamma_vm_2state_ar1_ar1/estimated_vm_kappa.csv",
+            col.names=FALSE, sep=",")
+write.table(estimated_autocor_gamma, 
+            "/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation results/sim_250_gamma_vm_2state_ar1_ar1/estimated_autocor_gamma.csv",
+            col.names=FALSE, sep=",")
+write.table(estimated_autocor_vm, 
+            "/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation results/sim_250_gamma_vm_2state_ar1_ar1/estimated_autocor_vm.csv",
+            col.names=FALSE, sep=",")
+#write.table(true_states, 
+#            "/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation results/sim_250_gamma_vm_2state_ar1_ar1/true_states.csv",
+#            col.names=FALSE, sep=",")
+#write.table(estimated_states, 
+#            "/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation results/sim_250_gamma_vm_2state_ar1_ar1/estimated_states.csv",
+#            col.names=FALSE, sep=",")
+
+
+# [-delete] if necessary
+#acc = rep(NA,n_sims)#[-delete]
+#for (i in (1:n_sims)){
+#  acc[i]=sum(true_states[i,] == estimated_states[i,])/n_samples
+#}
+#par(mfrow=c(1,1))
+#boxplot(acc)
+
+
+
+par(mfrow=c(3,2))
+boxplot_params(estimated_gamma_mu[,1], name=expression(mu[1]), true_value = param_sim[1])
+boxplot_params(estimated_gamma_mu[,2], name=expression(mu[2]), true_value = param_sim[2])
+boxplot_params(estimated_gamma_sigma[,1], name=expression(sigma[1]), 
+               true_value = param_sim[3])
+boxplot_params(estimated_gamma_sigma[,2], name=expression(sigma[2]), 
+               true_value = param_sim[4])
+boxplot_params(estimated_autocor_gamma[,1], name=expression(phi[1]), 
+               true_value = autocor_sim[[1]][1])
+boxplot_params(estimated_autocor_gamma[,2], name=expression(phi[2]), 
+               true_value = autocor_sim[[1]][2])
+
+par(mfrow=c(1,2))
+boxplot(estimated_gamma_mu,ylim=c(19,43),xlab=expression(mu))
+abline(h=c(20,40),col=2,lwd=1.5)
+boxplot(estimated_gamma_sigma,xlab=expression(sigma))
+abline(h=c(5,7),col=2,lwd=1.5)
+title("Parameters of the gamma distribution",outer=TRUE,line=-3)
+
+boxplot(estimated_vm_mu,xlab=expression(mu))
+abline(h=c(0),col=2,lwd=1.5)
+boxplot(estimated_vm_kappa,xlab=expression(kappa))
+abline(h=c(2,12),col=2,lwd=1.5)
+title("Parameters of the von Mises distribution",outer=TRUE,line=-3)
+
+
+
+

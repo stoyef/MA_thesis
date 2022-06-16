@@ -20,7 +20,8 @@ Thesis code and other things
 - [ ] Incorporate zero-inflation?
 - [x] Master mllk function for arbitrary distribution(s) $\to$ work in progress, how to distinguish parameters that are called the same in multivariate cases???
 - [x] Master fit and sample function
-- [ ] Master top to bottom simulation function
+- [x] Master top to bottom simulation function
+- [ ] Simulation for different configurations: Save results and plots
 - [ ] 3D visualization for two-dimensional data
 
 

@@ -32,7 +32,7 @@
 #'                    Has to match p, in the order \eqn{\phi_{t-p},\dots,\phi_{t-1}}
 #'                    where \eqn{\phi} is the vector of autocorrelation coefficients
 #'                   for one specific time lag (one value for each state).
-#'                   0, if no autocorrelation. Has to respect the order specified in \code{dists}.#' 
+#'                   0, if no autocorrelation. Has to respect the order specified in \code{model_sim}.
 #' @param estimate_states Bool, determines if states are estimated and returned
 #'                        using Viterbi.
 #' @param plot_it Bool, determines if resulting densities are plotted.    
@@ -68,16 +68,23 @@ ar_simulation <- function(model_sim, model_fit, N_sim, N_fit, n_samples,
     pars_dist <- starting_params_opt(data=simulated_data$data[,dist],dist=model_fit[[1]][dist],N=N_fit)
     params <- c(params,pars_dist)
   }
-  autocor <- c()
-  for (dist in 1:length(model_fit[[1]])){
-    ac <- as.numeric(acf(simulated_data$data[,dist], plot=F)$acf[2:(model_fit[[2]][dist]+1)])
-    autocor <- c(autocor, rep(ac,N_fit))
+  if (any(model_fit[[2]]>0)){
+    autocor <- c()
+    for (dist in 1:length(model_fit[[1]])){
+      ac <- as.numeric(acf(simulated_data$data[,dist], plot=F)$acf[2:(model_fit[[2]][dist]+1)])
+      autocor <- c(autocor, rep(ac,N_fit))
+    }
+    theta <- c(
+      rep(-2,N_fit*(N_fit-1)), #TPM
+      params, # dist parameters
+      autocor # autocor parameters
+    )
+  } else{
+    theta <- c(
+      rep(-2,N_fit*(N_fit-1)), #TPM
+      params # dist parameters
+    )
   }
-  theta <- c(
-    rep(-2,N_fit*(N_fit-1)), #TPM
-    params, # dist parameters
-    autocor # autocor parameters
-  )
   
   theta.star <- starize(theta=theta, N=N_fit, p=model_fit[[2]], dists=model_fit[[1]])
   
@@ -100,11 +107,11 @@ ar_simulation <- function(model_sim, model_fit, N_sim, N_fit, n_samples,
   if (plot_it){
     #cat("Generic plot function not implemented yet.")
     for (dist in 1:length(model_fit[[1]])){
-      if (dists[dist] == 'norm'){
+      if (model_fit[[1]][dist] == 'norm'){
         cat("Plot for normal distribution not implemented yet.\n")
       }
       param <- fitted_model$params[[dist]]
-      plot_fitted_dist(simulated_data$data[,dist], dists[dist], param, N_fit,
+      plot_fitted_dist(simulated_data$data[,dist], model_fit[[1]][dist], param, N_fit,
                         fitted_model$delta)
       
     }
@@ -115,26 +122,19 @@ ar_simulation <- function(model_sim, model_fit, N_sim, N_fit, n_samples,
   
   # Viterbi, if wanted
   if (estimate_states){
-    cat("Generic decoding function not implemented yet.")
-    if (model_fit[1]=='gamma'){
-      estimated_states <- viterbi_gamma_arp(simulated_data$data, fitted_model$Gamma,
-                                      fitted_model$delta, fitted_model$autocor,
-                                      fitted_model$mu, fitted_model$sigma,
-                                      N_fit, as.integer(model_fit[2]))
-      
-      ret <- list(simulated_data, fitted_model, estimated_states)
-      names(ret) <- c('simulated_model','fitted_model', 'viterbi_states')
-      return(ret)
-    } else if (model_fit[1]=='von Mises'){
-      estimated_states <- viterbi_vonMises_arp(simulated_data$data, fitted_model$Gamma,
-                                            fitted_model$delta, fitted_model$autocor,
-                                            fitted_model$mu, fitted_model$kappa,
-                                            N_fit, as.integer(model_fit[2]))
-      
-      ret <- list(simulated_data, fitted_model, estimated_states)
-      names(ret) <- c('simulated_model','fitted_model', 'viterbi_states')
-      return(ret)
-      }
+    #cat("Generic decoding function not implemented yet.")
+    estimated_states <- viterbi_arp(x=simulated_data$data, 
+                                    Gamma=fitted_model$Gamma,
+                                    delta=fitted_model$delta, 
+                                    dists=model_fit[[1]],
+                                    autocor=fitted_model$autocor,
+                                    params=fitted_model$params,
+                                    N=N_fit, 
+                                    p=model_fit[[2]])
+    
+    ret <- list(simulated_data, fitted_model, estimated_states)
+    names(ret) <- c('simulated_model','fitted_model', 'viterbi_states')
+    return(ret)
     } else{
       ret <- list(simulated_data, fitted_model)
       names(ret) <- c('simulated_model','fitted_model')

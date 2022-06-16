@@ -318,12 +318,14 @@ mllk <- function(theta.star, dists, x, N, p){
   }
   
   ### Autocorrelation parameters
-  a_params = theta.star[-c(1:counter)]
-  autocor = list()
-  counter = 0
-  for (dist in 1:n_dists){
-    autocor[[dist]] = plogis(a_params[counter+1:(p[dist]*N)])
-    counter = counter+p[dist]*N
+  if (any(p>0)){
+    a_params = theta.star[-c(1:counter)]
+    autocor = list()
+    counter = 0
+    for (dist in 1:n_dists){
+      autocor[[dist]] = plogis(a_params[counter+1:(p[dist]*N)])
+      counter = counter+p[dist]*N
+    }
   }
   
   
@@ -369,7 +371,7 @@ mllk <- function(theta.star, dists, x, N, p){
         for (i in names(theta_j)) theta_j[i][[1]] = theta_j[i][[1]][j] 
         
         allprobs[ind,j] <- allprobs[ind,j] * 
-                              match.fun(paste('dens_', dists[dist], sep=""))(x[ind,dist], theta_j, autocor_ind, autocor[[dist]], p[dist])
+                              match.fun(paste('dens_', dists[dist], sep=""))(x[ind,dist], theta_j)
       }
     }
       

@@ -60,9 +60,12 @@ starize <- function(theta,N,p,dists){
       }
     }
     
-    autocor <- qlogis(theta[param_count+1:(sum(p)*N)])
-    
-    theta.star <- c(Gamma, params, autocor)
+    if (any(p>0)){
+      autocor <- qlogis(theta[param_count+1:(sum(p)*N)])
+      theta.star <- c(Gamma, params, autocor)
+    } else{
+      theta.star <- c(Gamma, params)
+    }
     return(theta.star)
   }
 }

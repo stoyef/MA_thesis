@@ -49,7 +49,7 @@ The order of distributions has to be the same as in model_sim.}
  Has to match p, in the order \eqn{\phi_{t-p},\dots,\phi_{t-1}}
  where \eqn{\phi} is the vector of autocorrelation coefficients
 for one specific time lag (one value for each state).
-0, if no autocorrelation. Has to respect the order specified in \code{dists}.#'}
+0, if no autocorrelation. Has to respect the order specified in \code{model_sim}.}
 
 \item{estimate_states}{Bool, determines if states are estimated and returned
 using Viterbi.}

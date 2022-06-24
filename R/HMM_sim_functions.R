@@ -1,4 +1,5 @@
 # 2022-05-30, updated for general (number of) distributions on 2022-06-14
+# Updated for full simulation loop functino on 2022-06-24
 # Functions for simulating and evaluating HMMs with or without autocorrelation
 
 
@@ -142,3 +143,98 @@ ar_simulation <- function(model_sim, model_fit, N_sim, N_fit, n_samples,
     }
 }
 
+
+
+
+
+#' Simulation loop
+#'
+#' Simulate a model \code{n_runs} times and refit a certain model to the generated data.
+#' Record the estimated parameters, the accuracies of global decoding and a summary of the models.
+#' 
+#' @param simulation Function that generates one simulation.
+#' @param n_runs Number of models that should be created in the loop.
+#' @param dists_fitted Vector of distributions of fitted model in R-jargon.
+#' @param p_fitted Vector of degrees of autocorrelation of fitted models.
+#' @param n_states_fitted Number of states of the fitted models.
+#' @param n_samples_simulated Number of samples simulated in each model.
+#' @param ... Input parameters for the simulation function.
+#' 
+#' @return List of model statistics (estimated parameters, accuracies, summary of models).
+#' 
+#' @export
+#' @rdname full_sim_loop     
+#' 
+full_sim_loop <- function(simulation, n_runs, dists_fitted, p_fitted, 
+                          n_states_fitted, n_samples_simulated,...){
+  
+  # Inputs for simulation function
+  args=list(...)
+  
+  # Create matrices where the estimated parameters are stored
+  # Currently only works for distributions with 2 parameters
+  for (dist in 1:length(dists_fitted)){
+    assign(paste("estimated_",dist,"_param_1", sep=""), 
+           matrix(NA,nrow=n_runs,ncol=n_states_fitted))
+    assign(paste("estimated_",dist,"_param_2", sep=""), 
+           matrix(NA,nrow=n_runs,ncol=n_states_fitted))
+    assign(paste("estimated_",dist,"_autocor", sep=""),
+           matrix(NA,nrow=n_runs,ncol=n_states_fitted*p_fitted[dist]))
+  }
+  true_states = matrix(NA,nrow=n_runs,ncol=n_samples_simulated)
+  estimated_states = matrix(NA,nrow=n_runs,ncol=n_samples_simulated)
+  
+  start_time = Sys.time()
+  while(length(which(is.na(estimated_1_param_1[,1])))>0){ # run as long as all models are fitted
+    for (i in which(is.na(estimated_1_param_1[,1]))){ # re-run only models that failed last time
+      current_time = Sys.time()
+      sim <- do.call(ar_simulation,args)
+      cat(i,'/',n_runs,' (', Sys.time()-current_time,') \n',sep="")
+      
+      # error handling, skip iteration if optim() in fit function didn't work
+      if(anyNA(sim)){
+        next
+      }
+      
+      # insert estimated parameters in matrices by only accessing string values
+      # -> weird workaround with get() and temporary matrix
+      for (dist in 1:length(dists_fitted)){
+        # 1st parameter
+        h = get(paste("estimated_",dist,"_param_1", sep=""))
+        h[i,] = sim$fitted_model$params[[dist]][[1]]
+        assign(paste("estimated_",dist,"_param_1", sep=""), h)
+        # 2nd parameter
+        h = get(paste("estimated_",dist,"_param_2", sep=""))
+        h[i,] = sim$fitted_model$params[[dist]][[2]]
+        assign(paste("estimated_",dist,"_param_2", sep=""), h)
+        # autocorrelation
+        h = get(paste("estimated_",dist,"_autocor", sep=""))
+        h[i,] = sim$fitted_model$autocorrelation[[dist]]
+        assign(paste("estimated_",dist,"_autocor", sep=""), h)
+      }
+      true_states[i,] = sim$simulated_model$states
+      estimated_states[i,] = sim$viterbi_states
+    }
+  }
+  
+  elapsed_time = Sys.time()-start_time
+  cat("Total simulation time:", elapsed_time, "\n")
+  
+  # accuracies
+  acc = rep(NA,n_runs)
+  for (i in (1:n_runs)){
+    acc[i]=sum(true_states[i,] == estimated_states[i,])/n_samples_simulated
+  }
+  
+  param_estimates <- list()
+  autocor_estimates <- list()
+  for (dist in 1:length(dists_fitted)){
+    param_estimates[[paste("estimated_",dist,"_param_1", sep="")]] = get(paste("estimated_",dist,"_param_1", sep=""))
+    param_estimates[[paste("estimated_",dist,"_param_2", sep="")]] = get(paste("estimated_",dist,"_param_2", sep=""))
+    autocor_estimates[[paste("estimated_",dist,"_autocor", sep="")]] = get(paste("estimated_",dist,"_autocor", sep=""))
+  }
+  
+  ret = list(param_estimates, autocor_estimates, acc)
+  names(ret) = c("estimated_parameters", "estimated_autocorrelation", "decoding_accuracies")
+  return(ret)
+}

@@ -128,7 +128,9 @@ mllk <- function(theta.star, dists, x, N, p){
   l <- log(sum(foo))
   phi <- foo/sum(foo)
   for (t in 2:dim(x)[1]){
-    foo <- phi%*%Gamma%*%diag(allprobs[t,])
+    foo <- phi%*%Gamma%*%diag(allprobs[t,]) # here it can happen that 
+                                            # allprobs[t,] = c(0,0) due to numeric issues. 
+                                            # Then the function fails
     l <- l+log(sum(foo))
     phi <- foo/sum(foo)
   }

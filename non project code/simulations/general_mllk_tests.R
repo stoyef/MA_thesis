@@ -414,6 +414,24 @@ sim_full <- ar_simulation(model_sim=list(c('gamma','vm'),c(2,2)),
 )
 sum(sim_full$viterbi_states == sim_full$simulated_model$states)/2000
 
+### Test with simAR(1)/fitAR(3)
+sim_full <- ar_simulation(model_sim=list(c('gamma','vm'),c(1,1)),
+                          model_fit=list(c('gamma','vm'),c(3,3)),
+                          N_sim=2,
+                          N_fit=2,
+                          n_samples=2000,
+                          Gamma_sim = matrix(c(0.9,0.1,0.1,0.9),ncol=2),
+                          delta_sim = c(0.5,0.5),
+                          param_sim = c(20,40,5,7,
+                                        0,0,2,12),
+                          autocor_sim = list(matrix(c(0.3,0.7),ncol=1),
+                                             matrix(c(0.4,0.7),ncol=1)),
+                          estimate_states = TRUE,
+                          plot_it = TRUE
+)
+table(sim_full$viterbi_states)
+table(sim_full$simulated_model$states)
+
 
 ###############################################################################
 ###############################################################################
@@ -521,31 +539,31 @@ not_global = which(estimated_vm_mu[,2] < -0.5 | estimated_gamma_mu[,2] < 35)
 
 write.table(data.frame(c(length(not_global),n_sims-length(not_global)),
                        row.names = c('global optimum not reached','global optimum reached')), 
-            "/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation results/sim_250_gamma_vm_2state_ar2_ar2/sim_stats.csv",
+            "/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation_results/sim_250_gamma_vm_2state_ar2_ar2/sim_stats.csv",
             col.names=FALSE, sep=",")
 write.table(estimated_gamma_mu, 
-            "/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation results/sim_250_gamma_vm_2state_ar2_ar2/estimated_gamma_mu.csv",
+            "/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation_results/sim_250_gamma_vm_2state_ar2_ar2/estimated_gamma_mu.csv",
             col.names=FALSE, sep=",")
 write.table(estimated_gamma_sigma, 
-            "/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation results/sim_250_gamma_vm_2state_ar2_ar2/estimated_gamma_sigma.csv",
+            "/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation_results/sim_250_gamma_vm_2state_ar2_ar2/estimated_gamma_sigma.csv",
             col.names=FALSE, sep=",")
 write.table(estimated_vm_mu, 
-            "/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation results/sim_250_gamma_vm_2state_ar2_ar2/estimated_vm_mu.csv",
+            "/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation_results/sim_250_gamma_vm_2state_ar2_ar2/estimated_vm_mu.csv",
             col.names=FALSE, sep=",")
 write.table(estimated_vm_kappa, 
-            "/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation results/sim_250_gamma_vm_2state_ar2_ar2/estimated_vm_kappa.csv",
+            "/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation_results/sim_250_gamma_vm_2state_ar2_ar2/estimated_vm_kappa.csv",
             col.names=FALSE, sep=",")
 write.table(estimated_autocor_gamma, 
-            "/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation results/sim_250_gamma_vm_2state_ar2_ar2/estimated_autocor_gamma.csv",
+            "/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation_results/sim_250_gamma_vm_2state_ar2_ar2/estimated_autocor_gamma.csv",
             col.names=FALSE, sep=",")
 write.table(estimated_autocor_vm, 
-            "/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation results/sim_250_gamma_vm_2state_ar2_ar2/estimated_autocor_vm.csv",
+            "/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation_results/sim_250_gamma_vm_2state_ar2_ar2/estimated_autocor_vm.csv",
             col.names=FALSE, sep=",")
 write.table(true_states, 
-            "/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation results/sim_250_gamma_vm_2state_ar2_ar2/true_states.csv",
+            "/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation_results/sim_250_gamma_vm_2state_ar2_ar2/true_states.csv",
             col.names=FALSE, sep=",")
 write.table(estimated_states, 
-            "/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation results/sim_250_gamma_vm_2state_ar2_ar2/estimated_states.csv",
+            "/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation_results/sim_250_gamma_vm_2state_ar2_ar2/estimated_states.csv",
             col.names=FALSE, sep=",")
 
 

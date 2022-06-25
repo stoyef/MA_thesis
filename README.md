@@ -22,6 +22,7 @@ Thesis code and other things
 
 ## ToDo Simulations
 - [ ] Look over Viterbi function: How can we make sure that the order of the decoded states match the order of the simulated data? 
+- [ ] What to do against numerical issues in likelihood computation? If due to bad starting values or unlikely values due to autocorrelation paired with multiplication in multivariate cases there appears a 0 in allprobs, the function return NaN. This leads to a failure in the optimization function...
 - [ ] What makes sense for von Mises distribution: Model autocorrelation in $\mu$, $\kappa$ or both?
       ```
       Current code uses only autocorrelation in the parameter mu. For sigma probably another autocorrelation parameter should be used

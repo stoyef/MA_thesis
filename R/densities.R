@@ -19,9 +19,10 @@
 dens_gamma <- function(x, theta, autocor_ind=0, autocor=0, p=0){
   cv = theta$sigma/theta$mu
   if (p>0){
-    mu_auto <- c(#rep(NA,p), # AR(p)
+    # attention: mu and sigma must stay > 0
+    mu_auto <- pmax(1e-10, c(#rep(NA,p), # AR(p)
                  ((1-sum(autocor))*theta$mu + 
-                    as.vector(autocor_ind%*%autocor))) # matmul of values with autocor coefficient
+                    as.vector(autocor_ind%*%autocor)))) # matmul of values with autocor coefficient
     sigma_auto <- cv*mu_auto # calculate sigma using ccv
     
     return(dgamma(x, shape = mu_auto^2/sigma_auto^2, scale = sigma_auto^2/mu_auto))

@@ -8,6 +8,7 @@ Thesis code and other things
 
 ## ToDo Theory
 - [ ] Literature overview
+
       - HMMs in general
       - Markov switching regression 
       - HMMs for animal movement data
@@ -39,6 +40,7 @@ Thesis code and other things
 
 ## ToDo Data Example
 - [ ] Look for appropriate data
+
       - One dimensional acceleraation data $\to$ gamma distribution
       - Two dimensional step length and turning angle data $\to$ gamma and von Mises distribution
       - Other more sophisticated features

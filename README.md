@@ -8,10 +8,10 @@ Thesis code and other things
 
 ## ToDo Theory
 - [ ] Literature overview
-      - [ ] HMMs in general
-      - [ ] Markov switching regression 
-      - [ ] HMMs for animal movement data
-      - [ ] HMMs for high resolution data (animal movement and other stuff)
+      - HMMs in general
+      - Markov switching regression 
+      - HMMs for animal movement data
+      - HMMs for high resolution data (animal movement and other stuff)
 - [ ] Theory of HMMs
 - [ ] Theory of Markov switching regression
 - [ ] Model formulation, in general or animal movement specific?
@@ -39,9 +39,9 @@ Thesis code and other things
 
 ## ToDo Data Example
 - [ ] Look for appropriate data
-      - [ ] One dimensional acceleraation data $\to$ gamma distribution
-      - [ ] Two dimensional step length and turning angle data $\to$ gamma and von Mises distribution
-      - [ ] Other more sophisticated features
+      - One dimensional acceleraation data $\to$ gamma distribution
+      - Two dimensional step length and turning angle data $\to$ gamma and von Mises distribution
+      - Other more sophisticated features
 - [ ] Apply different AR(p) HMM models and compare models graphically
 - [ ] Model selection: Decide on meaningful criteria/methods
 

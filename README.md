@@ -9,8 +9,9 @@ Thesis code and other things
 ## ToDo Theory
 - [ ] Literature overview
 
-      - HMMs in general
+      - HMMs in general $\to$ Origins of HMMs
       - Markov switching regression 
+      - Markov switching autoregression
       - HMMs for animal movement data
       - HMMs for high resolution data (animal movement and other stuff)
 - [ ] Theory of HMMs

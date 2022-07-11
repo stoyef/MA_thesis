@@ -11,6 +11,7 @@ full_sim_loop(
   p_fitted,
   n_states_fitted,
   n_samples_simulated,
+  multicore = FALSE,
   ...
 )
 }
@@ -26,6 +27,9 @@ full_sim_loop(
 \item{n_states_fitted}{Number of states of the fitted models.}
 
 \item{n_samples_simulated}{Number of samples simulated in each model.}
+
+\item{multicore}{bool, indicates if the loop should be computed using parallelization.
+This has only be tested in MacOS and probably does not work using Windows.}
 
 \item{...}{Input parameters for the simulation function.}
 }

@@ -158,6 +158,8 @@ ar_simulation <- function(model_sim, model_fit, N_sim, N_fit, n_samples,
 #' @param p_fitted Vector of degrees of autocorrelation of fitted models.
 #' @param n_states_fitted Number of states of the fitted models.
 #' @param n_samples_simulated Number of samples simulated in each model.
+#' @param multicore bool, indicates if the loop should be computed using parallelization.
+#'                  This has only be tested in MacOS and probably does not work using Windows.
 #' @param ... Input parameters for the simulation function.
 #' 
 #' @return List of model statistics (estimated parameters, accuracies, summary of models).
@@ -166,7 +168,7 @@ ar_simulation <- function(model_sim, model_fit, N_sim, N_fit, n_samples,
 #' @rdname full_sim_loop     
 #' 
 full_sim_loop <- function(simulation, n_runs, dists_fitted, p_fitted, 
-                          n_states_fitted, n_samples_simulated,...){
+                          n_states_fitted, n_samples_simulated, multicore=FALSE,...){
   
   # Inputs for simulation function
   args=list(...)
@@ -185,38 +187,88 @@ full_sim_loop <- function(simulation, n_runs, dists_fitted, p_fitted,
   estimated_states = matrix(NA,nrow=n_runs,ncol=n_samples_simulated)
   
   start_time = Sys.time()
-  while(length(which(is.na(estimated_1_param_1[,1])))>0){ # run as long as all models are fitted
-    for (i in which(is.na(estimated_1_param_1[,1]))){ # re-run only models that failed last time
-      current_time = Sys.time()
+  
+  ## separate code for single and multicore computations
+  if (multicore){
+    require(parallel)
+    n_cores=detectCores()
+    # we need a wrapper function for mclapply
+    sim_wrap <- function(iteration){
+      current_time=Sys.time()
       sim <- do.call(ar_simulation,args)
-      cat(i,'/',n_runs,' (', Sys.time()-current_time,') \n',sep="")
+      #cat(iteration,' (', Sys.time()-current_time,') \n',sep="")
+      return(sim)
+    }
+    while(length(which(is.na(estimated_1_param_1[,1])))>0){ # run as long as all models are fitted
+      iterations = which(is.na(estimated_1_param_1[,1]))
+      results <- mclapply(iterations,
+                          sim_wrap,
+                          mc.cores = n_cores
+      )
       
-      # error handling, skip iteration if optim() in fit function didn't work
-      if(anyNA(sim)){
-        next
+      iterations_this_time = rep(FALSE,n_runs)
+      for (iteration in 1:n_runs){
+        if (length(results[[iteration]])>1){
+          iterations_this_time[iteration] = TRUE
+        }
       }
       
-      # insert estimated parameters in matrices by only accessing string values
-      # -> weird workaround with get() and temporary matrix
-      for (dist in 1:length(dists_fitted)){
-        # 1st parameter
-        h = get(paste("estimated_",dist,"_param_1", sep=""))
-        h[i,] = sim$fitted_model$params[[dist]][[1]]
-        assign(paste("estimated_",dist,"_param_1", sep=""), h)
-        # 2nd parameter
-        h = get(paste("estimated_",dist,"_param_2", sep=""))
-        h[i,] = sim$fitted_model$params[[dist]][[2]]
-        assign(paste("estimated_",dist,"_param_2", sep=""), h)
-        # autocorrelation
-        h = get(paste("estimated_",dist,"_autocor", sep=""))
-        h[i,] = sim$fitted_model$autocorrelation[[dist]]
-        assign(paste("estimated_",dist,"_autocor", sep=""), h)
+      for (i in (1:n_runs)[iterations_this_time]){
+        # insert estimated parameters in matrices by only accessing string values
+        # -> weird workaround with get() and temporary matrix
+        for (dist in 1:length(dists_fitted)){
+          # 1st parameter
+          h = get(paste("estimated_",dist,"_param_1", sep=""))
+          h[i,] = results[[i]]$fitted_model$params[[dist]][[1]]
+          assign(paste("estimated_",dist,"_param_1", sep=""), h)
+          # 2nd parameter
+          h = get(paste("estimated_",dist,"_param_2", sep=""))
+          h[i,] = results[[i]]$fitted_model$params[[dist]][[2]]
+          assign(paste("estimated_",dist,"_param_2", sep=""), h)
+          # autocorrelation
+          h = get(paste("estimated_",dist,"_autocor", sep=""))
+          h[i,] = results[[i]]$fitted_model$autocorrelation[[dist]]
+          assign(paste("estimated_",dist,"_autocor", sep=""), h)
+        }
+      true_states[i,] = results[[i]]$simulated_model$states
+      estimated_states[i,] = results[[i]]$viterbi_states
       }
-      true_states[i,] = sim$simulated_model$states
-      estimated_states[i,] = sim$viterbi_states
+    }
+    
+  } else{ # single core
+    while(length(which(is.na(estimated_1_param_1[,1])))>0){ # run as long as all models are fitted
+      for (i in which(is.na(estimated_1_param_1[,1]))){ # re-run only models that failed last time
+        current_time = Sys.time()
+        sim <- do.call(ar_simulation,args)
+        cat(i,'/',n_runs,' (', Sys.time()-current_time,') \n',sep="")
+        
+        # error handling, skip iteration if optim() in fit function didn't work
+        if(anyNA(sim)){
+          next
+        }
+        
+        # insert estimated parameters in matrices by only accessing string values
+        # -> weird workaround with get() and temporary matrix
+        for (dist in 1:length(dists_fitted)){
+          # 1st parameter
+          h = get(paste("estimated_",dist,"_param_1", sep=""))
+          h[i,] = sim$fitted_model$params[[dist]][[1]]
+          assign(paste("estimated_",dist,"_param_1", sep=""), h)
+          # 2nd parameter
+          h = get(paste("estimated_",dist,"_param_2", sep=""))
+          h[i,] = sim$fitted_model$params[[dist]][[2]]
+          assign(paste("estimated_",dist,"_param_2", sep=""), h)
+          # autocorrelation
+          h = get(paste("estimated_",dist,"_autocor", sep=""))
+          h[i,] = sim$fitted_model$autocorrelation[[dist]]
+          assign(paste("estimated_",dist,"_autocor", sep=""), h)
+        }
+        true_states[i,] = sim$simulated_model$states
+        estimated_states[i,] = sim$viterbi_states
+      }
     }
   }
-  
+    
   elapsed_time = Sys.time()-start_time
   cat("Total simulation time:", elapsed_time, "\n")
   
@@ -238,3 +290,4 @@ full_sim_loop <- function(simulation, n_runs, dists_fitted, p_fitted,
   names(ret) = c("estimated_parameters", "estimated_autocorrelation", "decoding_accuracies")
   return(ret)
 }
+

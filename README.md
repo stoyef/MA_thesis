@@ -42,6 +42,7 @@ Thesis code and other things
 - [x] Simulation for different configurations: Save results and plots
 - [ ] 3D visualization for two-dimensional data
 - [ ] Think about additional meaningful research prospects for simulations
+- [x] Faster computation using multiple cores with ```parallel``` package
 
 ## ToDo Data Example
 - [ ] Look for appropriate data

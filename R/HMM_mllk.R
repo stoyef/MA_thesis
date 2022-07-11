@@ -35,46 +35,11 @@ mllk <- function(theta.star, dists, x, N, p){
   
   # First: Working to natural parameters, list structure for better handling
   # We currently only use distributions with 2 parameters, once we use Poisson distribution etc, we need a re-write
-  
-  ### TPM
-  Gamma <- diag(N)
-  Gamma[!Gamma] <- exp(theta.star[1:((N-1)*N)])
-  Gamma <- Gamma/rowSums(Gamma) 
-  delta <- solve(t(diag(N)-Gamma+1),rep(1,N))
-  
-  ### distribution parameters
-  n_dists <- length(dists)
-  n_dist_params <- 2*n_dists*N
-  params = list()
-  counter = N*(N-1)
-  for (dist in 1:n_dists){
-    if (dists[dist]=='gamma'){
-      params[[dist]] = list(mu=exp(theta.star[counter+1:N]),
-                          sigma=exp(theta.star[counter+N+1:N]))
-    } else if (dists[dist]=='vm'){
-      params[[dist]] = list(mu = Arg(theta.star[counter+1:N]+1i*theta.star[counter+N+1:N]),
-                            kappa = sqrt(theta.star[counter+1:N]^2+theta.star[counter+N+1:N]^2))
-      
-    } else if (dists[dist]=='norm'){
-      params[[dist]] = list(mu=theta.star[counter+1:N],
-                            sigma=exp(theta.star[counter+N+1:N]))
-    } else{
-      return(paste("ERROR: The distribution", dists[dist], "is not implemented."))
-    }
-    counter = counter+2*N
-  }
-  
-  ### Autocorrelation parameters
-  if (any(p>0)){
-    a_params = theta.star[-c(1:counter)]
-    autocor = list()
-    counter = 0
-    for (dist in 1:n_dists){
-      autocor[[dist]] = plogis(a_params[counter+1:(p[dist]*N)])
-      counter = counter+p[dist]*N
-    }
-  }
-  
+  all_params = unstarize(theta.star=theta.star, N=N, p=p, dists=dists)
+  Gamma = all_params$Gamma
+  delta = all_params$delta
+  autocor = all_params$autocor
+  params = all_params$params
   
   # transform data to matrix, if necessary
   if (is.vector(x)) x <- matrix(x, nrow=length(x))

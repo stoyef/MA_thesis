@@ -28,6 +28,7 @@ Thesis code and other things
       ```
       Current code uses only autocorrelation in the parameter mu. For sigma probably another autocorrelation parameter should be used
       ```
+- [ ] von Mises distribution: Re-think the weighting of parameter $\mu$ (in the calculation of the Likelihood). Project $[-\pi,\pi]$ onto $\mathbb{R}$ and back?
 - [ ] Alternative plots with densities of AR(0), AR(1), AR(2), AR(3) fit for the same data in one plot?
 - [ ] Comparison of ACFs of simulated and fitted models
 - [ ] Model selection: Visually, AIC, BIC
@@ -38,14 +39,14 @@ Thesis code and other things
 - [x] Master top to bottom simulation function $\to$ for gamma, von Mises, normal distributions
 - [x] Master simulation loop function $\to$ for gamma, von Mises, normal distributions
 - [ ] Incorporate zero-inflation?
-- [ ] Simulation for different configurations: Save results and plots
+- [x] Simulation for different configurations: Save results and plots
 - [ ] 3D visualization for two-dimensional data
 - [ ] Think about additional meaningful research prospects for simulations
 
 ## ToDo Data Example
 - [ ] Look for appropriate data
 
-      - One dimensional acceleraation data $\to$ gamma distribution
+      - One dimensional acceleration data $\to$ gamma distribution
       - Two dimensional step length and turning angle data $\to$ gamma and von Mises distribution
       - Other more sophisticated features
 - [ ] Apply different AR(p) HMM models and compare models graphically

@@ -24,7 +24,7 @@ nice_params <- function(Gamma, autocor, ...){
 
 #' Natural parameters to working parameters (theta->theta.star)
 #'
-#' Make the natural parameters of HMMs to their working parameters for optimization (theta -> theta.star).
+#' Transform the natural parameters of HMMs to their working parameters for optimization (theta -> theta.star).
 #' Currently only works for distributions with exactly two parameters.
 #' 
 #' @param theta Vector of natural parameters.
@@ -69,6 +69,71 @@ starize <- function(theta,N,p,dists){
     return(theta.star)
   }
 }
+
+
+
+#' Working parameters to natural parameters (theta.star->theta)
+#'
+#' Transform the working parameters of HMMs to their natural parameters for optimization (theta.star -> theta).
+#' Currently only works for distributions with exactly two parameters.
+#' 
+#' @param theta.star Vector of working parameters.
+#' @param N Number of states of the HMM.
+#' @param p Vector of degree of autocorrelation within the distributions.
+#' @param dists Vector of the distributions in the HMM.
+#' 
+#' @return List of natural parameters of the HMM.
+#' 
+#' @export
+#' @rdname unstarize
+unstarize <- function(theta.star,N,p,dists){
+  all_params = list()
+  
+  ### TPM
+  Gamma <- diag(N)
+  Gamma[!Gamma] <- exp(theta.star[1:((N-1)*N)])
+  all_params$Gamma <- Gamma/rowSums(Gamma) 
+  all_params$delta <- solve(t(diag(N)-all_params$Gamma+1),rep(1,N))
+  
+  ### distribution parameters
+  n_dists <- length(dists)
+  n_dist_params <- 2*n_dists*N
+  counter = N*(N-1)
+  params = list()
+  for (dist in 1:n_dists){
+    if (dists[dist]=='gamma'){
+      params[[dist]] = list(mu=exp(theta.star[counter+1:N]),
+                            sigma=exp(theta.star[counter+N+1:N]))
+    } else if (dists[dist]=='vm'){
+      params[[dist]] = list(mu = Arg(theta.star[counter+1:N]+1i*theta.star[counter+N+1:N]),
+                            kappa = sqrt(theta.star[counter+1:N]^2+theta.star[counter+N+1:N]^2))
+      
+    } else if (dists[dist]=='norm'){
+      params[[dist]] = list(mu=theta.star[counter+1:N],
+                            sigma=exp(theta.star[counter+N+1:N]))
+    } else{
+      return(paste("ERROR: The distribution", dists[dist], "is not implemented."))
+    }
+    counter = counter+2*N
+  }
+  all_params$params = params
+  
+  ### Autocorrelation parameters
+  if (any(p>0)){
+    auto_params = theta.star[-c(1:counter)]
+    autocor = list()
+    counter = 0
+    for (dist in 1:n_dists){
+      autocor[[dist]] = plogis(auto_params[counter+1:(p[dist]*N)])
+      counter = counter+p[dist]*N
+    }
+    all_params$autocor = autocor
+  }
+  
+  return(all_params)
+}
+
+
 
 
 #' Generate starting parameters for a distribution

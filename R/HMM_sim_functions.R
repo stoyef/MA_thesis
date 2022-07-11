@@ -90,9 +90,9 @@ ar_simulation <- function(model_sim, model_fit, N_sim, N_fit, n_samples,
   theta.star <- starize(theta=theta, N=N_fit, p=model_fit[[2]], dists=model_fit[[1]])
   
   # fit the model
-  fitted_model <- fit_arp_model(mllk, 
-                    simulated_data$data, 
-                    theta.star, 
+  fitted_model <- fit_arp_model(mllk=mllk, 
+                    data=simulated_data$data, 
+                    theta.star=theta.star, 
                     N=N_fit, 
                     p=model_fit[[2]], 
                     dists=model_fit[[1]])

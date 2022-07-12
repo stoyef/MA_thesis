@@ -15,7 +15,7 @@ estimated_autocor_gamma = read.table("/Users/stoye/sciebo/Studium/31-M-Thesis Ma
             row.names=1, sep=",")
 estimated_autocor_vm = read.table("/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation_results/full_sim_33/estimated_autocor_vm.csv",
             row.names=1, sep=",")
-decoding_accuracies_33 = read.table("/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation_results/full_sim_33/decoding_accuracies.csv",
+decoding_accuracies_20 = read.table("/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation_results/full_sim_20/decoding_accuracies.csv",
             row.names=1, sep=",")
 
 
@@ -87,7 +87,7 @@ title("Estimated parameters of von Mises distribution",outer=TRUE,line=-2,cex.ma
 
 
 # Accuracies fit
-#par(mfrow=c(2,2))
+par(mfrow=c(2,2))
 boxplot(c(decoding_accuracies_03, decoding_accuracies_13,
           decoding_accuracies_23, decoding_accuracies_33),ylab="Mean accuracy", 
         main="Accuracies of global decoded states (fitted: AR(3) HMM)",
@@ -98,6 +98,27 @@ mtext(c("AR(0)","AR(1)","AR(2)","AR(3)"),side=1,at=c(1,2,3,4),line=1,cex=1)
 
 # Accuracies sim
 #par(mfrow=c(2,2))
+boxplot(c(decoding_accuracies_00, decoding_accuracies_01,
+          decoding_accuracies_02, decoding_accuracies_03),ylab="Mean accuracy", 
+        main="Accuracies of global decoded states (simulated: Normal HMM)",
+        bty="n",
+        ylim=c(0,1),xaxt='n',xlab='Fitted model')
+axis(1, at=c(1,2,3,4), labels=c("","","",""))
+mtext(c("AR(0)","AR(1)","AR(2)","AR(3)"),side=1,at=c(1,2,3,4),line=1,cex=1)
+boxplot(c(decoding_accuracies_10, decoding_accuracies_11,
+          decoding_accuracies_12, decoding_accuracies_13),ylab="Mean accuracy", 
+        main="Accuracies of global decoded states (simulated: AR(1) HMM)",
+        bty="n",
+        ylim=c(0,1),xaxt='n',xlab='Fitted model')
+axis(1, at=c(1,2,3,4), labels=c("","","",""))
+mtext(c("AR(0)","AR(1)","AR(2)","AR(3)"),side=1,at=c(1,2,3,4),line=1,cex=1)
+boxplot(c(decoding_accuracies_20, decoding_accuracies_21,
+          decoding_accuracies_22, decoding_accuracies_23),ylab="Mean accuracy", 
+        main="Accuracies of global decoded states (simulated: AR(2) HMM)",
+        bty="n",
+        ylim=c(0,1),xaxt='n',xlab='Fitted model')
+axis(1, at=c(1,2,3,4), labels=c("","","",""))
+mtext(c("AR(0)","AR(1)","AR(2)","AR(3)"),side=1,at=c(1,2,3,4),line=1,cex=1)
 boxplot(c(decoding_accuracies_30, decoding_accuracies_31,
           decoding_accuracies_32, decoding_accuracies_33),ylab="Mean accuracy", 
         main="Accuracies of global decoded states (simulated: AR(3) HMM)",

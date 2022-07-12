@@ -199,39 +199,42 @@ full_sim_loop <- function(simulation, n_runs, dists_fitted, p_fitted,
       #cat(iteration,' (', Sys.time()-current_time,') \n',sep="")
       return(sim)
     }
+    
+    n_its = 0 # counter of successful iterations
     while(length(which(is.na(estimated_1_param_1[,1])))>0){ # run as long as all models are fitted
-      iterations = which(is.na(estimated_1_param_1[,1]))
+      iterations = 1:length(which(is.na(estimated_1_param_1[,1]))) # missing iterations
+      # parallelization with mclapply:
       results <- mclapply(iterations,
                           sim_wrap,
                           mc.cores = n_cores
       )
       
-      iterations_this_time = rep(FALSE,n_runs)
-      for (iteration in 1:n_runs){
-        if (length(results[[iteration]])>1){
-          iterations_this_time[iteration] = TRUE
-        }
-      }
+      # check which iterations were successful
+      successful_iterations_this_time = unlist(lapply(results, function(it) length(it)>1))
+      successful_results_this_time = results[successful_iterations_this_time]
       
-      for (i in (1:n_runs)[iterations_this_time]){
-        # insert estimated parameters in matrices by only accessing string values
-        # -> weird workaround with get() and temporary matrix
-        for (dist in 1:length(dists_fitted)){
-          # 1st parameter
-          h = get(paste("estimated_",dist,"_param_1", sep=""))
-          h[i,] = results[[i]]$fitted_model$params[[dist]][[1]]
-          assign(paste("estimated_",dist,"_param_1", sep=""), h)
-          # 2nd parameter
-          h = get(paste("estimated_",dist,"_param_2", sep=""))
-          h[i,] = results[[i]]$fitted_model$params[[dist]][[2]]
-          assign(paste("estimated_",dist,"_param_2", sep=""), h)
-          # autocorrelation
-          h = get(paste("estimated_",dist,"_autocor", sep=""))
-          h[i,] = results[[i]]$fitted_model$autocorrelation[[dist]]
-          assign(paste("estimated_",dist,"_autocor", sep=""), h)
+      if (sum(successful_iterations_this_time)>0){ # execute loop only, if some fits were successful
+        for (i in n_its+1:sum(successful_iterations_this_time)){ # fill up the matrices top to bottom
+          # insert estimated parameters in matrices by only accessing string values
+          # -> weird workaround with get() and temporary matrix
+          for (dist in 1:length(dists_fitted)){
+            # 1st parameter
+            h = get(paste("estimated_",dist,"_param_1", sep=""))
+            h[i,] = successful_results_this_time[[i-n_its]]$fitted_model$params[[dist]][[1]]
+            assign(paste("estimated_",dist,"_param_1", sep=""), h)
+            # 2nd parameter
+            h = get(paste("estimated_",dist,"_param_2", sep=""))
+            h[i,] = successful_results_this_time[[i-n_its]]$fitted_model$params[[dist]][[2]]
+            assign(paste("estimated_",dist,"_param_2", sep=""), h)
+            # autocorrelation
+            h = get(paste("estimated_",dist,"_autocor", sep=""))
+            h[i,] = successful_results_this_time[[i-n_its]]$fitted_model$autocorrelation[[dist]]
+            assign(paste("estimated_",dist,"_autocor", sep=""), h)
+          }
+          true_states[i,] = successful_results_this_time[[i-n_its]]$simulated_model$states
+          estimated_states[i,] = successful_results_this_time[[i-n_its]]$viterbi_states
         }
-      true_states[i,] = results[[i]]$simulated_model$states
-      estimated_states[i,] = results[[i]]$viterbi_states
+        n_its = n_its+sum(successful_iterations_this_time)
       }
     }
     

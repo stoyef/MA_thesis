@@ -9,6 +9,7 @@ Thesis code and other things
 ## ToDo Theory
 - [ ] Literature overview
 
+      - How should I view Markov switching models? Cappe et al (2005) say, Markov switching models are a generalization of HMMs. This would make my model a Markov switching model and not an HMM...
       - HMMs in general $\to$ Origins of HMMs
       - Markov switching regression 
       - Markov switching autoregression

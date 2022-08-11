@@ -21,7 +21,7 @@ Thesis code and other things
 - [ ] Model formulation, in general and also in animal movement context
 - [ ] Are there any theoretical results for Markov switching regression with AR(p)? Who has done this in the past?
 - [ ] Model properties: Number of parameters etc.
-- [ ] Literature source for the constant coefficient of variation (some paper??) $\to$ Location: Implementation of AR(p) in gamma distribution
+- [x] Literature source for the constant coefficient of variation (some paper??) $\to$ Location: Implementation of AR(p) in gamma distribution
 
 ## ToDo Simulations
 - [x] Look over Viterbi function: How can we make sure that the order of the decoded states match the order of the simulated data? $\to$ Solution: We just check it manually afterwards. Not pretty, but works

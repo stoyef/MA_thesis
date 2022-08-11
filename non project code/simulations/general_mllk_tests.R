@@ -127,7 +127,7 @@ data = sample_arp(n_samples=1000,
                   N=2,
                   params=c(-1,1,10,15, -1,1,10,15),
                   autocor=0,#list(matrix(c(0.1,0.2,0.3,0.2),ncol=2,byrow=TRUE)),
-                  p=0,
+                  p=c(0,0),
                   dists=c('vm','vm'))
 data$states
 library(plot3D)
@@ -144,7 +144,7 @@ data = sample_arp(n_samples=1000,
                   params=c(-1,1,10,15, 20,40,2,3.5),
                   autocor=list(matrix(c(0.1,0.2,0.2,0.3),ncol=2,byrow=TRUE),
                                matrix(c(0.2,0.3,0.1,0.1),ncol=2,byrow=TRUE)),
-                  p=2,
+                  p=c(2,2),
                   dists=c('vm','gamma'))
 data$states
 hist(data$data[,1])
@@ -165,7 +165,7 @@ data = sample_arp(n_samples=1000,
                   autocor=list(matrix(c(0.1,0.2,0.2,0.3),ncol=2,byrow=TRUE),
                                matrix(c(0.2,0.3,0.1,0.1),ncol=2,byrow=TRUE),
                                matrix(c(0.2,0.3,0.1,0.1),ncol=2,byrow=TRUE)),
-                  p=2,
+                  p=c(2,2,2),
                   dists=c('vm','gamma','vm'))
 data$states
 hist(data$data[,1],breaks=20)

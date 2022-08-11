@@ -7,7 +7,7 @@ library(parallel)
 n_cores = detectCores()
 n_cores
 ## My machine:
-## Apple M1 Max SOC
+## Apple M1 Max SOC, 32 GB shared LPDDR5 memory
 ## 10 Core CPU
 
 ## For each model we need a wrapper functions, otherwise the function
@@ -40,7 +40,6 @@ results <- mclapply(iterations,
 
 
 ## let's try the whole deal
-# funzt noch nicht so
 
 ################################################################################
 

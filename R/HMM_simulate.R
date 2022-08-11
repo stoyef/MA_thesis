@@ -82,8 +82,15 @@ sample_arp <- function(n_samples, delta, Gamma, N, params, autocor, p, dists){
         param1=params[(2*(dist-1)*N)+1:N] # first parameter
         param2=params[(2*(dist-1)*N)+N+1:N] # second parameter
         ar_matrix <- autocor[[dist]]
-        param1_ar <- sum(ar_matrix[states[t],]*data[(t-p[dist]):(t-1),dist]) + 
+        
+        if (dists[dist]=='vm'){ # compute mean value on a circle
+          param1_ar_auto <- sum(ar_matrix[states[t],]*exp(complex(imaginary=data[(t-p[dist]):(t-1),dist])))
+          param1_ar_fixed <- (1-sum(ar_matrix[states[t],]))*exp(complex(imaginary=param1[states[t]]))
+          param1_ar <- Arg(param1_ar_auto + param1_ar_fixed)
+        } else{
+          param1_ar <- sum(ar_matrix[states[t],]*data[(t-p[dist]):(t-1),dist]) + 
           (1-sum(ar_matrix[states[t],]))*param1[states[t]]
+        }
         
         if (dists[dist]=='gamma'){ # respect ccv
           param2_ar=cv[N*(dist-1)+1:N] * param1_ar

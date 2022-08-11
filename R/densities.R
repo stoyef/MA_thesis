@@ -58,6 +58,7 @@ dens_vm <- function(x, theta, autocor_ind=0, autocor=0, p=0){
       (1-sum(autocor))*exp(1i*theta$mu) + 
         as.vector(exp(1i*autocor_ind)%*%autocor)
       )
+    # should work like this
   return(dvm(x, mu_auto, theta$kappa))
   } else{
     return(dvm(x, theta$mu, theta$kappa))

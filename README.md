@@ -26,11 +26,8 @@ Thesis code and other things
 ## ToDo Simulations
 - [x] Look over Viterbi function: How can we make sure that the order of the decoded states match the order of the simulated data? $\to$ Solution: We just check it manually afterwards. Not pretty, but works
 - [x] What to do against numerical issues in likelihood computation? If due to bad starting values or unlikely values due to autocorrelation paired with multiplication in multivariate cases there appears a 0 in allprobs, the function return NaN. This leads to a failure in the optimization function... $\to$ This propably is simply a downside. Many errors came from the fact that in theory (due to the weighted mean between autocorrelation and global mean) the $\mu$ value of the gamma distribution could be $<0$. This has been dealt with.
-- [ ] What makes sense for von Mises distribution: Model autocorrelation in $\mu$, $\kappa$ or both? $\to$ $\mu$ should be modeled in any case, $\kappa$ optionally. IMPLEMENT
-      ```
-      Current code uses only autocorrelation in the parameter mu. For sigma probably another autocorrelation parameter should be used
-      ```
-- [ ] von Mises distribution: Re-think the weighting of parameter $\mu$ (in the calculation of the Likelihood). Project $[-\pi,\pi]$ onto $\mathbb{R}$ and back? $\to$ Think again if this has already been done in ```starize/unstarize```. Otherwise IMPLEMENT
+- [x] What makes sense for von Mises distribution: Model autocorrelation in $\mu$, $\kappa$ or both? $\to$ $\mu$ should be modeled in any case, $\kappa$ optionally? $\to$ Modeling $\kappa$ does not make much sense at all. How would we incorporate the autocorrelation? We would have to estimate it from past $\kappa$. This seems kind of weird.
+- [x] von Mises distribution: Re-think the weighting of parameter $\mu$ (in the calculation of the Likelihood). Project $[-\pi,\pi]$ onto $\mathbb{R}$ and back? $\to$ Think again if this has already been done in ```starize/unstarize```. Otherwise IMPLEMENT $\to$ Implemented in simulation and density calculation
 - [ ] Alternative plots with densities of AR(0), AR(1), AR(2), AR(3) fit for the same data in one plot? IMPLEMENT
 - [ ] Comparison of ACFs of simulated and fitted models IMPLEMENT
 - [ ] Model selection: Visually, AIC, BIC IMPLEMENT
@@ -44,6 +41,7 @@ Thesis code and other things
 - [ ] 3D visualization for two-dimensional data IMPLEMENT
 - [ ] Think about additional meaningful research prospects for simulations
 - [x] Faster computation using multiple cores with ```parallel``` package
+- [ ] Re-run simulation with updated data simulation for von Moses distribution
 
 ## ToDo Data Example
 - [ ] Look for appropriate data

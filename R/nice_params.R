@@ -50,8 +50,8 @@ starize <- function(theta,N,p,dists){
         params <- c(params, log(theta[param_count+1:(2*N)]))
         param_count <- param_count+2*N
       } else if (dists[dist] == 'vm'){
-        params <- c(params, theta[param_count+1:N] * cos(theta[param_count+N+1:N]))
-        params <- c(params, theta[param_count+1:N] * sin(theta[param_count+N+1:N]))
+        params <- c(params, theta[param_count+N+1:N] * cos(theta[param_count+1:N]))
+        params <- c(params, theta[param_count+N+1:N] * sin(theta[param_count+1:N]))
         param_count <- param_count+2*N
       } else if (dists[dist] == 'norm'){
         params <- c(params, theta[param_count+1:N])

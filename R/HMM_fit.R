@@ -86,8 +86,10 @@ fit_arp_model <- function(mllk, data, theta.star, N, p, dists){
     autocor = list()
     counter = 0
     for (dist in 1:length(dists)){
-      autocor[[dist]] = ac[counter+1:(p[dist]*N)]
-      counter <- counter+1
+      if (p[dist]>0){
+        autocor[[dist]] = ac[counter+1:(p[dist]*N)]
+        counter <- counter+(p[dist]*N)
+      }
     }
   }
   

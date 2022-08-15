@@ -51,7 +51,7 @@ plot_fitted_dist <- function(data, dist, param, N, delta, title="none"){
   require(RColorBrewer)
   pal <- brewer.pal(N+1, 'Dark2')
   dens <- matrix(NA, nrow=10000,ncol=N)
-  x <- seq(min(data),max(data),length=10000)
+  x <- seq(min(data, na.rm=TRUE),max(data, na.rm=TRUE),length=10000)
   
   if (dist=='gamma'){
     mu <- param[1:N]
@@ -70,10 +70,10 @@ plot_fitted_dist <- function(data, dist, param, N, delta, title="none"){
   
   if (title=="none"){
     hist(data, breaks=30, probability = TRUE,
-         main="", xlab="x", ylim=c(0,1.1*max(total_dist)))
+         main="", xlab="x", ylim=c(0,1.1*max(total_dist, na.rm=TRUE)))
   }else{
     hist(data, breaks=30, probability = TRUE,
-         main=title, xlab="x", ylim=c(0,1.1*max(total_dist)))
+         main=title, xlab="x", ylim=c(0,1.1*max(total_dist, na.rm=TRUE)))
   }
   for (i in 1:N){
     lines(x,dens[,i],col=pal[i], lwd=2)

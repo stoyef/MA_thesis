@@ -30,6 +30,10 @@ schwalbe_80 = prepData(schwalbe_80)
 head(schwalbe_80)
 plot(schwalbe_80$x, schwalbe_80$y, type='l')
 
+schwalbe_77 = prepData(schwalbe_77)
+head(schwalbe_77)
+plot(schwalbe_77$x, schwalbe_77$y, type='l')
+
 
 library(MasterThesis)
 
@@ -43,7 +47,7 @@ plot(mod_move)
 theta=c(0.90,0.90,15,30,9,3,0,0,500,1000)
 theta.star=starize(theta, N=2,p=c(0,0),dists=c('gamma','vm'))
 mod=fit_arp_model(mllk=mllk, data=cbind(schwalbe_80$step, schwalbe_80$angle), 
-              theta.star=theta.star, N=2, p=c(0,0),dists=c('gamma','vm'))
+              theta.star=theta.star, N=2, p_auto=c(0,0),dists=c('gamma','vm'))
 mod
 plot_fitted_dist(data=schwalbe_80$step,
                  dist='gamma', param=list(mu=mod$params[[1]]$mu,sigma=mod$params[[1]]$sigma),
@@ -56,7 +60,7 @@ plot_fitted_dist(data=schwalbe_80$angle,
 theta=c(0.9,0.9,15,28,7,3,0,0,500,1000,0.3,0.3)
 theta.star=starize(theta, N=2,p=c(1,0),dists=c('gamma','vm'))
 mod=fit_arp_model(mllk=mllk, data=cbind(schwalbe_80$step, schwalbe_80$angle), 
-              theta.star=theta.star, N=2, p=c(1,0),dists=c('gamma','vm'))
+              theta.star=theta.star, N=2, p_auto=c(1,0),dists=c('gamma','vm'))
 mod
 plot_fitted_dist(data=schwalbe_80$step,
                  dist='gamma', param=list(mu=mod$params[[1]]$mu,sigma=mod$params[[1]]$sigma),
@@ -69,7 +73,7 @@ plot_fitted_dist(data=schwalbe_80$angle,
 theta=c(0.9,0.9,15,30,7,3,0,0,500,1000,0.3,0.3)
 theta.star=starize(theta, N=2,p=c(0,1),dists=c('gamma','vm'))
 mod=fit_arp_model(mllk=mllk, data=cbind(schwalbe_80$step, schwalbe_80$angle), 
-              theta.star=theta.star, N=2, p=c(0,1),dists=c('gamma','vm'))
+              theta.star=theta.star, N=2, p_auto=c(0,1),dists=c('gamma','vm'))
 mod
 plot_fitted_dist(data=schwalbe_80$step,
                  dist='gamma', param=list(mu=mod$params[[1]]$mu,sigma=mod$params[[1]]$sigma),
@@ -82,7 +86,7 @@ plot_fitted_dist(data=schwalbe_80$angle,
 theta=c(0.9,0.9,15,30,7,3,0,0,500,1000,0.2,0.3,0.2,0.3)
 theta.star=starize(theta, N=2,p=c(1,1),dists=c('gamma','vm'))
 mod=fit_arp_model(mllk=mllk, data=cbind(schwalbe_80$step, schwalbe_80$angle), 
-              theta.star=theta.star, N=2, p=c(1,1),dists=c('gamma','vm'))
+              theta.star=theta.star, N=2, p_auto=c(1,1),dists=c('gamma','vm'))
 mod
 plot_fitted_dist(data=schwalbe_80$step,
                  dist='gamma', param=list(mu=mod$params[[1]]$mu,sigma=mod$params[[1]]$sigma),
@@ -95,7 +99,7 @@ plot_fitted_dist(data=schwalbe_80$angle,
 theta=c(0.9,0.9,15,30,20,10,0,0,500,1500,0.2,0.1,0.2,0.1,0.05,0.05,0.05,0.05)
 theta.star=starize(theta, N=2,p=c(2,2),dists=c('gamma','vm'))
 mod=fit_arp_model(mllk=mllk, data=cbind(schwalbe_80$step, schwalbe_80$angle), 
-              theta.star=theta.star, N=2, p=c(2,2),dists=c('gamma','vm'))
+              theta.star=theta.star, N=2, p_auto=c(2,2),dists=c('gamma','vm'))
 mod
 plot_fitted_dist(data=schwalbe_80$step,
                  dist='gamma', param=list(mu=mod$params[[1]]$mu,sigma=mod$params[[1]]$sigma),

@@ -16,29 +16,53 @@
 #'                   Attention: -Inf values (resulting e.g. from supplying autocorrelation = 0) are not possible
 #'                   for the optimization function. 
 #' @param N Number of states.
-#' @param p Vector of degree of autocorrelation for each distribution, 0=no autocorrelation.
+#' @param p_auto Vector of degree of autocorrelation for each distribution, 0=no autocorrelation.
 #' @param dists Vector containing abbreviated names (in R-jargon) of the distributions 
 #'              to be considered in the Likelihood computation.
+#' @param opt_fun string - Function that should be used for optimization (default: optim).
 #'            
 #' @return List, containing minimal value of negative log-Likelihood, Gamma, 
 #'         delta, (autocorrelation, depending on degree), mu, sigma.
 #' 
 #' @export
 #' @rdname fit_arp_model
-fit_arp_model <- function(mllk, data, theta.star, N, p, dists){
-  # Error handling: sometimes the optim function does not work, because of some
-  # error. We want to be notified that there is an error, but the execution should 
-  # not be interrupted (important for for loops that use this function)
+fit_arp_model <- function(mllk, data, theta.star, N, p_auto, dists, opt_fun='optim'){
   skip = FALSE
+  
+  if (opt_fun=='optim'){
     tryCatch(
+      # Error handling: sometimes the optim function does not work, because of some
+      # error. We want to be notified that there is an error, but the execution should 
+      # not be interrupted (important for for loops that use this function)
       mod <- optim(par=theta.star, fn=mllk, method='L-BFGS-B',
-                   N=N,p=p,x=data, dists=dists),
+                   N=N,p_auto=p_auto,x=data, dists=dists),
       error=function(e){cat("ERROR: optim() failed. Did you supply autocorrelation parameters = 0?\n
                             Continue to next iteration.\n")
         skip <<- TRUE
       }
-      
     )
+  } else if (opt_fun=='nlm'){
+    tryCatch(
+      mod <- nlm(f=mllk, p=theta.star, iterlim=500,
+                   N=N,p_auto=p_auto,x=data, dists=dists),
+      error=function(e){cat("ERROR: nlm() failed.\n
+                            Continue to next iteration.\n")
+        skip <<- TRUE
+      }
+    )
+  } else if (opt_fun=="ga"){
+    require("rgenoud")
+    tryCatch(
+      mod <- genoud(fn=mllk, nvars=length(theta.star), pop.size=1000, max.generations=100,
+                    starting.values = theta.star,
+                    N=N,p_auto=p_auto,
+                    dists=dists,x=data),
+      error=function(e){cat("ERROR: rgenoud() failed.\n
+                            Continue to next iteration.\n")
+        skip <<- TRUE
+      }
+    )
+  }
   
   # leave function, if optim() didn't work
   if (skip){
@@ -86,9 +110,9 @@ fit_arp_model <- function(mllk, data, theta.star, N, p, dists){
     autocor = list()
     counter = 0
     for (dist in 1:length(dists)){
-      if (p[dist]>0){
-        autocor[[dist]] = ac[counter+1:(p[dist]*N)]
-        counter <- counter+(p[dist]*N)
+      if (p_auto[dist]>0){
+        autocor[[dist]] = ac[counter+1:(p_auto[dist]*N)]
+        counter <- counter+(p_auto[dist]*N)
       }
     }
   }

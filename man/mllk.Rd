@@ -4,7 +4,7 @@
 \alias{mllk}
 \title{Compute negative Log-Likelihood}
 \usage{
-mllk(theta.star, dists, x, N, p)
+mllk(theta.star, dists, x, N, p_auto)
 }
 \arguments{
 \item{theta.star}{Vector of parameters in the following order: 1) Off-diagonal entries of TPM,
@@ -21,7 +21,7 @@ to be considered in the Likelihood computation.}
 
 \item{N}{Number of states.}
 
-\item{p}{Vector of degree of autocorrelation for each distribution, 0=no autocorrelation.}
+\item{p_auto}{Vector of degree of autocorrelation for each distribution, 0=no autocorrelation.}
 }
 \value{
 Negative Log-Likelihood.

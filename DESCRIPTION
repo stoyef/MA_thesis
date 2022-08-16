@@ -5,9 +5,8 @@ Title: Master Thesis
 Description: Master Thesis about autocorrelation in HMMs.
 Authors@R: person("Ferdinand", "Stoye", email = "ferdinand.stoye@uni-bielefeld.de", 
   role = c("aut","cre"))
-RoxygenNote: 7.2.0
+RoxygenNote: 7.2.1
 Encoding: UTF-8
 License: GPL-3
 LazyData: true
 ByteCompile: true
-

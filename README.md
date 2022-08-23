@@ -50,6 +50,7 @@ Thesis code and other things
       - Two dimensional step length and turning angle data $\to$ gamma and von Mises distribution
       - Other more sophisticated features
 - [ ] Apply different AR(p) HMM models and compare models graphically
+- [ ] Parametric Bootstrap for confidence intervals of the parameters? Would be extremely time consuming. Maybe only for one example? (Technique Re-fit Bootstrap samples that are generated from HMM with MLE parameters, do this a lot of times)
 - [ ] Model selection: Decide on meaningful criteria/methods
 
 

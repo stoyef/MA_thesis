@@ -84,28 +84,37 @@ plot_fitted_dist <- function(data, dist, param, N, delta, title="none"){
 }
 
 
-#' Plot data 
+#' Plot decoded data 
 #'
-#' Plot a data vector
+#' Plot a data vector, colored with regard to the Viterbi decoded states.
 #' 
-#' @param data Data vector to be plotted
-#' @param name optional, y-axis label, if "none" than "data"
-#' @param title optional, title of the plot, if "none", then no title
+#' @param data Data vector to be plotted.
+#' @param col Color of the states.
+#' @param name optional, y-axis label, if "none" than "data".
+#' @param title optional, title of the plot, if "none", then no title.
 #' 
 #' @export
-#' @rdname plot_data
-plot_data <- function(data, name="none", title="none"){
+#' @rdname plot_decoded_data
+plot_decoded_data <- function(data, col, name="none", title="none"){
   if (name=="none"){
-    plot(data, typ='l',xlab="Index", ylab="Data",bty='n')
+    plot(NULL,xlim=c(0,length(data)),ylim=c(min(data,na.rm=TRUE),max(data,na.rm=TRUE)),
+         ylab='data',xlab='time',bty='n')
   } else{
-    plot(data, typ='l',xlab="Index", ylab=name,bty='n')
+    plot(NULL,xlim=c(0,length(data)),ylim=c(min(data,na.rm=TRUE),max(data,na.rm=TRUE)),
+         ylab=name,xlab='time',bty='n')
   }
+  segments(x0 = 1:(length(data) - 1), y0 = data[-length(data)],
+           x1 = 2:length(data), y1 = data[-1],
+           col = col[decoded_states[-length(data)]], lwd = 1.5)
   if (title=="none"){
     title(main="")
   } else{
     title(main=title)
   }
-  
+  legend('topright',
+         c('state 1', 'state 2'),
+         col=col,lwd=1.5,
+         bty='n')
 }
 
 

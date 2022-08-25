@@ -41,7 +41,7 @@ starize <- function(theta,N,p,dists){
   if (length(theta) != (N*(N-1)+2*N*length(dists)+sum(p)*N)){
     return("ERROR: Wrong number of parameters supplied.")
   } else{
-    Gamma <- theta[1:N*(N-1)]
+    Gamma <- theta[1:(N*(N-1))]
     param_count <- N*(N-1)
     
     params <- c()

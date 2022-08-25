@@ -56,7 +56,9 @@ fit_arp_model <- function(mllk, data, theta.star, N, p_auto, dists, opt_fun='opt
       mod <- genoud(fn=mllk, nvars=length(theta.star), pop.size=1000, max.generations=100,
                     starting.values = theta.star,
                     N=N,p_auto=p_auto,
-                    dists=dists,x=data),
+                    dists=dists,x=data#,
+                    #Domains=matrix(rep(c(-Inf,Inf),length(theta.star)),ncol=2,byrow=T)
+                    ),
       error=function(e){cat("ERROR: rgenoud() failed.\n
                             Continue to next iteration.\n")
         skip <<- TRUE
@@ -105,7 +107,7 @@ fit_arp_model <- function(mllk, data, theta.star, N, p_auto, dists, opt_fun='opt
   }
   
   # autocorrelation
-  if (any(p>0)){
+  if (any(p_auto>0)){
     ac <- plogis(mod$par[-c(1:counter)])
     autocor = list()
     counter = 0
@@ -118,7 +120,7 @@ fit_arp_model <- function(mllk, data, theta.star, N, p_auto, dists, opt_fun='opt
   }
   
   # create return object
-  if (any(p>0)){
+  if (any(p_auto>0)){
     ret <- list(mod$value, Gamma, delta, params, autocor)
     names(ret) <- c('mllk_optim', 'Gamma', 'delta', 'params', 'autocorrelation')
   } else{

@@ -24,7 +24,11 @@
 #' @rdname viterbi_arp
 viterbi_arp <-function(x, Gamma, delta, dists, autocor=0, 
                              params, N, p){
-  n <- dim(x)[1]
+  if (length(dists)>1){
+    n <- dim(x)[1]
+  } else{
+    n <- length(x)
+  }
   allprobs <- matrix(1,n,N)
   
   for (dist in 1:length(dists)){
@@ -40,8 +44,12 @@ viterbi_arp <-function(x, Gamma, delta, dists, autocor=0,
       }
     } else{ # p!=0, autocorrelation
       
-      ind <- which(!is.na(x[,dist]))[-c(1:p[dist])] # change: we omit first step 
-      # in order to always have the step in t-1
+      if (length(dists)>1){
+        ind <- which(!is.na(x[,dist]))[-c(1:p[dist])] # change: we omit first step 
+        # in order to always have the step in t-1
+      } else{
+        ind <- which(!is.na(x))[-c(1:p[dist])]
+      }
       
       autocor_m <- matrix(autocor[[dist]], ncol=p[dist], byrow=TRUE) # autocorrelation matrix for easier handling later on
       
@@ -49,19 +57,33 @@ viterbi_arp <-function(x, Gamma, delta, dists, autocor=0,
       for (i in 1:p[dist]){
         autocor_ind[,i] <- ind-p[dist]+i-1
       }
-      autocor_ind <- apply(autocor_ind, 2, function(a)x[a,dist]) # substitute indices with values
+      
+      if (length(dists)>1){
+        autocor_ind <- apply(autocor_ind, 2, function(a)x[a,dist]) # substitute indices with values
+      } else{
+        autocor_ind <- apply(autocor_ind, 2, function(a)x[a])
+      }
       
       for (j in 1:N){
         params_j <- params[[dist]]
         # params_j consists the parameters of state j for each parameter in params[[dist]]
         for (i in names(params_j)) params_j[i][[1]] = params_j[i][[1]][j] 
         
-        allprobs[ind,j] <- allprobs[ind,j] * 
-          match.fun(paste('dens_', dists[dist], sep=""))(x[ind,dist], 
+        if (length(dists)>1){
+          allprobs[ind,j] <- allprobs[ind,j] * 
+            match.fun(paste('dens_', dists[dist], sep=""))(x[ind,dist], 
                                                          params_j,
                                                          autocor_ind=autocor_ind,
                                                          autocor=autocor_m[j,],
                                                          p=p[dist])
+        } else{
+          allprobs[ind,j] <- allprobs[ind,j] * 
+            match.fun(paste('dens_', dists[dist], sep=""))(x[ind], 
+                                                           params_j,
+                                                           autocor_ind=autocor_ind,
+                                                           autocor=autocor_m[j,],
+                                                           p=p[dist])
+        }
       }
     }
   }

@@ -5,8 +5,6 @@
 \title{Plot data}
 \usage{
 plot_data(data, name = "none", title = "none")
-
-plot_data(data, name = "none", title = "none")
 }
 \arguments{
 \item{data}{Data vector to be plotted}
@@ -16,7 +14,5 @@ plot_data(data, name = "none", title = "none")
 \item{title}{optional, title of the plot, if "none", then no title}
 }
 \description{
-Plot a data vector
-
 Plot a data vector
 }

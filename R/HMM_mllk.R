@@ -26,16 +26,18 @@
 #' @param x Data vector or matrix for which the negative Log-Likelihood should be computed.
 #' @param N Number of states.
 #' @param p_auto Vector of degree of autocorrelation for each distribution, 0=no autocorrelation.
+#' @param scale_kappa Default 1, Scaling factor for kappa to avoid numerical issues in optimization for large kappa.
+
 #' 
 #' @return Negative Log-Likelihood.
 #' 
 #' @export
 #' @rdname mllk
-mllk <- function(theta.star, dists, x, N, p_auto){
+mllk <- function(theta.star, dists, x, N, p_auto, scale_kappa=1){
   
   # First: Working to natural parameters, list structure for better handling
   # We currently only use distributions with 2 parameters, once we use Poisson distribution etc, we need a re-write
-  all_params = unstarize(theta.star=theta.star, N=N, p=p_auto, dists=dists)
+  all_params = unstarize(theta.star=theta.star, N=N, p=p_auto, dists=dists, scale_kappa = scale_kappa)
   Gamma = all_params$Gamma
   delta = all_params$delta
   autocor = all_params$autocor

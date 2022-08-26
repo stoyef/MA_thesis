@@ -20,13 +20,15 @@
 #' @param dists Vector containing abbreviated names (in R-jargon) of the distributions 
 #'              to be considered in the Likelihood computation.
 #' @param opt_fun string - Function that should be used for optimization (default: optim).
+#' @param scale_kappa Default 1, Scaling factor for kappa to avoid numerical issues in optimization for large kappa.
+
 #'            
 #' @return List, containing minimal value of negative log-Likelihood, Gamma, 
 #'         delta, (autocorrelation, depending on degree), mu, sigma.
 #' 
 #' @export
 #' @rdname fit_arp_model
-fit_arp_model <- function(mllk, data, theta.star, N, p_auto, dists, opt_fun='optim'){
+fit_arp_model <- function(mllk, data, theta.star, N, p_auto, dists, opt_fun='optim', scale_kappa=1){
   skip = FALSE
   
   if (opt_fun=='optim'){
@@ -35,7 +37,7 @@ fit_arp_model <- function(mllk, data, theta.star, N, p_auto, dists, opt_fun='opt
       # error. We want to be notified that there is an error, but the execution should 
       # not be interrupted (important for for loops that use this function)
       mod <- optim(par=theta.star, fn=mllk, method='L-BFGS-B',
-                   N=N,p_auto=p_auto,x=data, dists=dists),
+                   N=N,p_auto=p_auto,x=data, dists=dists, scale_kappa=scale_kappa),
       error=function(e){cat("ERROR: optim() failed. Did you supply autocorrelation parameters = 0?\n
                             Continue to next iteration.\n")
         skip <<- TRUE
@@ -93,8 +95,8 @@ fit_arp_model <- function(mllk, data, theta.star, N, p_auto, dists, opt_fun='opt
       counter = counter+2*N
     } else if (dists[dist]=='vm'){
       # mu and kappa 
-      mu <- Arg(mod$par[counter+1:N]+1i*mod$par[counter+N+1:N])
-      kappa <- sqrt(mod$par[counter+1:N]^2+mod$par[counter+N+1:N]^2)
+      mu <- Arg((mod$par[counter+1:N])*scale_kappa+1i*(mod$par[counter+N+1:N]*scale_kappa))
+      kappa <- sqrt((mod$par[counter+1:N]*scale_kappa)^2+(mod$par[counter+N+1:N]*scale_kappa)^2)
       params[[dist]] = list(mu=mu, kappa=kappa)
       counter = counter+2*N
     } else if (dists[dist]=='norm'){

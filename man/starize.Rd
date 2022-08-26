@@ -4,7 +4,7 @@
 \alias{starize}
 \title{Natural parameters to working parameters (theta->theta.star)}
 \usage{
-starize(theta, N, p, dists)
+starize(theta, N, p, dists, scale_kappa = 1)
 }
 \arguments{
 \item{theta}{Vector of natural parameters.}
@@ -14,6 +14,8 @@ starize(theta, N, p, dists)
 \item{p}{Vector of degree of autocorrelation within the distributions.}
 
 \item{dists}{Vector of the distributions in the HMM.}
+
+\item{scale_kappa}{Default 1, Scaling factor for kappa to avoid numerical issues in optimization for large kappa.}
 }
 \value{
 Vector of working parameters of the HMM.

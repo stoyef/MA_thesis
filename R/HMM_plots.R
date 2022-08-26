@@ -36,17 +36,18 @@ plot_states <- function(states, names="none", title=TRUE){
 #'
 #' Plots the estimted distributions along with a histogram of the values.
 #' 
-#' @param data Input data for histogram
+#' @param data Input data for histogram.
 #' @param dist string, indicates the kind of distribution, one of ['gamma', 'von Mises'].
 #' @param param Vector of distribution parameters, in customary form, e.g. for 2 state gamma
 #'              HMM: c(\eqn{\mu1,\mu2,\sigma1,\sigma2}).
 #' @param N int, number of states (or weighted distributions) to be plotted.
-#' @param delta Input vector for parameter delta
-#' @param title optional, title of the plot, if "none", then no title
+#' @param delta Input vector for parameter delta.
+#' @param title optional, title of the plot, if "none", then no title.
+#' @param breaks optional, specify number of breaks of the histogram.
 #' 
 #' @export
 #' @rdname plot_fitted_dist
-plot_fitted_dist <- function(data, dist, param, N, delta, title="none"){
+plot_fitted_dist <- function(data, dist, param, N, delta, title="none", breaks=30){
   require(CircStats)
   require(RColorBrewer)
   pal <- brewer.pal(N+1, 'Dark2')
@@ -69,11 +70,11 @@ plot_fitted_dist <- function(data, dist, param, N, delta, title="none"){
   total_dist <- apply(dens,1,sum)
   
   if (title=="none"){
-    hist(data, breaks=30, probability = TRUE,
-         main="", xlab="x", ylim=c(0,1.1*max(total_dist, na.rm=TRUE)))
+    hist(data, breaks=breaks, probability = TRUE,
+         main="", xlab="x")#, ylim=c(0,max(total_dist, na.rm=TRUE)))
   }else{
-    hist(data, breaks=30, probability = TRUE,
-         main=title, xlab="x", ylim=c(0,1.1*max(total_dist, na.rm=TRUE)))
+    hist(data, breaks=breaks, probability = TRUE,
+         main=title, xlab="x")#, ylim=c(0,max(total_dist, na.rm=TRUE)))
   }
   for (i in 1:N){
     lines(x,dens[,i],col=pal[i], lwd=2)
@@ -89,13 +90,15 @@ plot_fitted_dist <- function(data, dist, param, N, delta, title="none"){
 #' Plot a data vector, colored with regard to the Viterbi decoded states.
 #' 
 #' @param data Data vector to be plotted.
+#' @param states Vector of ecoded states.
 #' @param col Color of the states.
 #' @param name optional, y-axis label, if "none" than "data".
 #' @param title optional, title of the plot, if "none", then no title.
+#' @param legend optional, bool, specifies if there should be a legend.
 #' 
 #' @export
 #' @rdname plot_decoded_data
-plot_decoded_data <- function(data, col, name="none", title="none"){
+plot_decoded_data <- function(data, states, col, name="none", title="none", legend=TRUE){
   if (name=="none"){
     plot(NULL,xlim=c(0,length(data)),ylim=c(min(data,na.rm=TRUE),max(data,na.rm=TRUE)),
          ylab='data',xlab='time',bty='n')
@@ -105,16 +108,18 @@ plot_decoded_data <- function(data, col, name="none", title="none"){
   }
   segments(x0 = 1:(length(data) - 1), y0 = data[-length(data)],
            x1 = 2:length(data), y1 = data[-1],
-           col = col[decoded_states[-length(data)]], lwd = 1.5)
+           col = col[states[-length(data)]], lwd = 1.5)
   if (title=="none"){
     title(main="")
   } else{
     title(main=title)
   }
-  legend('topright',
-         c('state 1', 'state 2'),
-         col=col,lwd=1.5,
-         bty='n')
+  if (legend){
+    legend('topright',
+           c('state 1', 'state 2'),
+           col=col,lwd=1.5,
+           bty='n')
+  }  
 }
 
 

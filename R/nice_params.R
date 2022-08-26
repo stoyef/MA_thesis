@@ -31,12 +31,13 @@ nice_params <- function(Gamma, autocor, ...){
 #' @param N Number of states of the HMM.
 #' @param p Vector of degree of autocorrelation within the distributions.
 #' @param dists Vector of the distributions in the HMM.
+#' @param scale_kappa Default 1, Scaling factor for kappa to avoid numerical issues in optimization for large kappa.
 #' 
 #' @return Vector of working parameters of the HMM.
 #' 
 #' @export
 #' @rdname starize
-starize <- function(theta,N,p,dists){
+starize <- function(theta,N,p,dists, scale_kappa=1){
   # check for right number of parameters
   if (length(theta) != (N*(N-1)+2*N*length(dists)+sum(p)*N)){
     return("ERROR: Wrong number of parameters supplied.")
@@ -50,8 +51,8 @@ starize <- function(theta,N,p,dists){
         params <- c(params, log(theta[param_count+1:(2*N)]))
         param_count <- param_count+2*N
       } else if (dists[dist] == 'vm'){
-        params <- c(params, theta[param_count+N+1:N] * cos(theta[param_count+1:N]))
-        params <- c(params, theta[param_count+N+1:N] * sin(theta[param_count+1:N]))
+        params <- c(params, (theta[param_count+N+1:N] * cos(theta[param_count+1:N]))/scale_kappa)
+        params <- c(params, (theta[param_count+N+1:N] * sin(theta[param_count+1:N]))/scale_kappa)
         param_count <- param_count+2*N
       } else if (dists[dist] == 'norm'){
         params <- c(params, theta[param_count+1:N])
@@ -81,12 +82,13 @@ starize <- function(theta,N,p,dists){
 #' @param N Number of states of the HMM.
 #' @param p Vector of degree of autocorrelation within the distributions.
 #' @param dists Vector of the distributions in the HMM.
+#' @param scale_kappa Default 1, Scaling factor for kappa to avoid numerical issues in optimization for large kappa.
 #' 
 #' @return List of natural parameters of the HMM.
 #' 
 #' @export
 #' @rdname unstarize
-unstarize <- function(theta.star,N,p,dists){
+unstarize <- function(theta.star,N,p,dists, scale_kappa=1){
   all_params = list()
   
   ### TPM
@@ -105,8 +107,9 @@ unstarize <- function(theta.star,N,p,dists){
       params[[dist]] = list(mu=exp(theta.star[counter+1:N]),
                             sigma=exp(theta.star[counter+N+1:N]))
     } else if (dists[dist]=='vm'){
-      params[[dist]] = list(mu = Arg(theta.star[counter+1:N]+1i*theta.star[counter+N+1:N]),
-                            kappa = sqrt(theta.star[counter+1:N]^2+theta.star[counter+N+1:N]^2))
+      params[[dist]] = list(mu = Arg((theta.star[counter+1:N]*scale_kappa)+1i*(theta.star[counter+N+1:N]*scale_kappa)),
+                            kappa = sqrt((theta.star[counter+1:N]*scale_kappa)^2+(theta.star[counter+N+1:N]*scale_kappa)^2)
+                            )
       
     } else if (dists[dist]=='norm'){
       params[[dist]] = list(mu=theta.star[counter+1:N],

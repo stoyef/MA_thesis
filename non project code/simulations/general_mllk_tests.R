@@ -193,6 +193,26 @@ sim_full <- ar_simulation(model_sim=list(c('gamma','vm'),c(1,1)),
 table(sim_full$viterbi_states)
 
 
+
+sim_full <- ar_simulation(model_sim=list(c('gamma','vm'),c(3,3)),
+                          model_fit=list(c('gamma','vm'),c(3,3)),
+                          N_sim=2,
+                          N_fit=2,
+                          n_samples=2000,
+                          Gamma_sim = matrix(c(0.9,0.1,0.1,0.9),ncol=2),
+                          delta_sim = c(0.5,0.5),
+                          param_sim = c(20,40,5,7,
+                                        0,0,2,12),
+                          autocor_sim = list(matrix(c(0.1,0.2,0.25,0.2,0.3,0.3),ncol=3,byrow=T),
+                                             matrix(c(0.1,0.2,0.25,0.2,0.3,0.3),ncol=3,byrow=T)),
+                          estimate_states = TRUE,
+                          plot_it = TRUE
+)
+table(sim_full$viterbi_states)
+
+
+
+
 # loop -> simulation without state decoding
 n_sims = 250
 n_samples = 2000

@@ -4,16 +4,27 @@
 \alias{plot_decoded_data}
 \title{Plot decoded data}
 \usage{
-plot_decoded_data(data, col, name = "none", title = "none")
+plot_decoded_data(
+  data,
+  states,
+  col,
+  name = "none",
+  title = "none",
+  legend = TRUE
+)
 }
 \arguments{
 \item{data}{Data vector to be plotted.}
+
+\item{states}{Vector of ecoded states.}
 
 \item{col}{Color of the states.}
 
 \item{name}{optional, y-axis label, if "none" than "data".}
 
 \item{title}{optional, title of the plot, if "none", then no title.}
+
+\item{legend}{optional, bool, specifies if there should be a legend.}
 }
 \description{
 Plot a data vector, colored with regard to the Viterbi decoded states.

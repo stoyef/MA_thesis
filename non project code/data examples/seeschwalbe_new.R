@@ -43,18 +43,28 @@ mod_move=fitHMM(schwalbe_77,
        c(0,0,0,20,50,200))
 plot(mod_move)
 
+# trick 17 for seeschwalbe:
+# change resolution of kappa parameter in von Mises distribution to avoid numerical 
+# issues in optimization function
+# -> theta.star for kappa in input of optim function should be smaller
+# -> re-work for starize and unstarize
+# -> we have to change mllk so that the updated starize/unstarize functions are used
+
+# ok, done. Let's see...joa geht :)
+
 # no autocorrelation
-theta=c(rep(-2,6),15,25,30,9,4,3,0,0,0,20,50,200)
-theta.star=starize(theta, N=3,p=c(0,0),dists=c('gamma','vm'))
+theta=c(rep(-2,6),15,25,30,9,4,3,0,0,0,200,500,1000)
+theta.star=starize(theta, N=3,p=c(0,0),dists=c('gamma','vm'), scale_kappa = 20)
 mod_ar0=fit_arp_model(mllk=mllk, data=cbind(schwalbe_77$step, schwalbe_77$angle), 
-              theta.star=theta.star, N=3, p_auto=c(0,0),dists=c('gamma','vm'))
+              theta.star=theta.star, N=3, p_auto=c(0,0),dists=c('gamma','vm'),scale_kappa = 20)
 mod_ar0
 plot_fitted_dist(data=schwalbe_77$step,
                  dist='gamma', param=list(mu=mod_ar0$params[[1]]$mu,sigma=mod_ar0$params[[1]]$sigma),
-                 N=3,delta=mod_ar0$delta, title='schwalbe_77 w/o autocorrelation')
+                 N=3,delta=mod_ar0$delta, title='schwalbe_77 w/o autocorrelation',breaks=100)
 plot_fitted_dist(data=schwalbe_77$angle,
                  dist='vm', param=list(mu=mod_ar0$params[[2]]$mu,kappa=mod_ar0$params[[2]]$kappa),
-                 N=3,delta=mod_ar0$delta, title='schwalbe_77 w/o autocorrelation')
+                 N=3,delta=mod_ar0$delta, title='schwalbe_77 w/o autocorrelation',breaks=100)
+
 
 # just for the kicks: Genetic algorithm
 theta=c(rep(-2,2),15,250,9,3,0,0,500,1000)
@@ -66,15 +76,14 @@ mod_ga
 # doesn't work
 
 # nur turning angle
-# AR(1) in step length (not turning angle) -> doesn't work
 theta=c(rep(-2,6),0,0,0,100,300,800)
-theta.star=starize(theta, N=3,p=c(0),dists=c('vm'))
+theta.star=starize(theta, N=3,p=c(0),dists=c('vm'),scale_kappa = 10)
 mod=fit_arp_model(mllk=mllk, data=schwalbe_77$angle, 
-                  theta.star=theta.star, N=3, p_auto=c(0),dists=c('vm'))
+                  theta.star=theta.star, N=3, p_auto=c(0),dists=c('vm'),scale_kappa = 10)
 mod
 plot_fitted_dist(data=schwalbe_77$angle,
-                 dist='vm', param=list(mu=mod_ar1turn$params[[2]]$mu,kappa=mod_ar1turn$params[[2]]$kappa),
-                 N=3,delta=mod_ar1turn$delta, title='schwalbe_77 w/ AR(1)')
+                 dist='vm', param=list(mu=mod$params[[1]]$mu,kappa=mod$params[[1]]$kappa),
+                 N=3,delta=mod$delta, title='schwalbe_77 w/ AR(1)',breaks=200)
 
 
 

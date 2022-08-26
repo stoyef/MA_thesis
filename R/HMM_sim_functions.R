@@ -73,8 +73,14 @@ ar_simulation <- function(model_sim, model_fit, N_sim, N_fit, n_samples,
     autocor <- c()
     for (dist in 1:length(model_fit[[1]])){
       ac <- as.numeric(acf(simulated_data$data[,dist], plot=F)$acf[2:(model_fit[[2]][dist]+1)])
+      # Attention: The sum of the autoregression coefficients must not be >1 for a state
+      # Otherwise, in the Gamma distribution negative values would be possible for mu
+      # which leads to an error
+      # Therefore, we standardize ac to avoid this
+      ac = ac/(sum(ac)+1)
       autocor <- c(autocor, rep(ac,N_fit))
     }
+    
     theta <- c(
       rep(-2,N_fit*(N_fit-1)), #TPM
       params, # dist parameters

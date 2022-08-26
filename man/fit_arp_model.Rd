@@ -4,7 +4,16 @@
 \alias{fit_arp_model}
 \title{Fit an AR(p) HMM to data}
 \usage{
-fit_arp_model(mllk, data, theta.star, N, p_auto, dists, opt_fun = "optim")
+fit_arp_model(
+  mllk,
+  data,
+  theta.star,
+  N,
+  p_auto,
+  dists,
+  opt_fun = "optim",
+  scale_kappa = 1
+)
 }
 \arguments{
 \item{mllk}{Negative log-Likelihood function that should be minimized.}
@@ -23,6 +32,8 @@ for the optimization function.}
 to be considered in the Likelihood computation.}
 
 \item{opt_fun}{string - Function that should be used for optimization (default: optim).}
+
+\item{scale_kappa}{Default 1, Scaling factor for kappa to avoid numerical issues in optimization for large kappa.}
 }
 \value{
 List, containing minimal value of negative log-Likelihood, Gamma, 

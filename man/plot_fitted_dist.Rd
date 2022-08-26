@@ -4,10 +4,10 @@
 \alias{plot_fitted_dist}
 \title{Density plot of estimated distributions}
 \usage{
-plot_fitted_dist(data, dist, param, N, delta, title = "none")
+plot_fitted_dist(data, dist, param, N, delta, title = "none", breaks = 30)
 }
 \arguments{
-\item{data}{Input data for histogram}
+\item{data}{Input data for histogram.}
 
 \item{dist}{string, indicates the kind of distribution, one of ['gamma', 'von Mises'].}
 
@@ -16,9 +16,11 @@ HMM: c(\eqn{\mu1,\mu2,\sigma1,\sigma2}).}
 
 \item{N}{int, number of states (or weighted distributions) to be plotted.}
 
-\item{delta}{Input vector for parameter delta}
+\item{delta}{Input vector for parameter delta.}
 
-\item{title}{optional, title of the plot, if "none", then no title}
+\item{title}{optional, title of the plot, if "none", then no title.}
+
+\item{breaks}{optional, specify number of breaks of the histogram.}
 }
 \description{
 Plots the estimted distributions along with a histogram of the values.

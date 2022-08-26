@@ -41,7 +41,7 @@ Thesis code and other things
 - [ ] 3D visualization for two-dimensional data IMPLEMENT
 - [ ] Think about additional meaningful research prospects for simulations
 - [x] Faster computation using multiple cores with ```parallel``` package
-- [ ] Re-run simulation with updated data simulation for von Moses distribution
+- [ ] Re-run simulation with updated data simulation for von Mises distribution
 
 ## ToDo Data Example
 - [ ] Look for appropriate data
@@ -52,6 +52,7 @@ Thesis code and other things
 - [ ] Apply different AR(p) HMM models and compare models graphically
 - [ ] Parametric Bootstrap for confidence intervals of the parameters? Would be extremely time consuming. Maybe only for one example? (Technique Re-fit Bootstrap samples that are generated from HMM with MLE parameters, do this a lot of times)
 - [ ] Model selection: Decide on meaningful criteria/methods
+- [ ] Check models with pseudo residuals $\to$ Progress in goodness of fit can be displayed here
 
 
 ## Future prospects

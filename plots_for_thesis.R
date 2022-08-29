@@ -78,6 +78,34 @@ legend('top',c('state 1','state 2'), col=pal[1:2],lwd=1.5,bty='n',
 dev.off()
 
 
+# Ground truth of the distributions sampled from (no autocorrelation)
+par(mfrow=c(1,2))
+curve(0.5*dgamma(x,shape=20^2/5^2, scale=5^2/20),col=pal[1],lwd=2,add=F,
+      from=0,to=80,n=1000,bty='n',xlab='step length', ylab='Density')
+curve(0.5*dgamma(x,shape=40^2/7^2, scale=7^2/40),col=pal[2],lwd=2,add=T,
+      from=0,to=80,n=1000)
+curve(0.5*dgamma(x,shape=20^2/5^2, scale=5^2/20)+
+        0.5*dgamma(x,shape=40^2/7^2, scale=7^2/40), col=pal[3],lwd=2,add=T,
+      from=0,to=80,n=1000)
+legend('topright',
+       c('state 1', 'state 2', 'marginal'),
+       col=pal,
+       lwd=2,bty='n')
+library(CircStats)
+curve(0.5*dvm(x,mu=0, kappa=2),col=pal[1],lwd=2,add=F,
+      from=-pi,to=pi,n=1000,bty='n',xlab='turning angle', ylab='Density',
+      ylim=c(0,1))
+curve(0.5*dvm(x,mu=0, kappa=12),col=pal[2],lwd=2,add=T,
+      from=-pi,to=pi,n=1000)
+curve(0.5*dvm(x,mu=0, kappa=2)+ 0.5*dvm(x,mu=0, kappa=12), 
+      col=pal[3],lwd=2,add=T,
+      from=-pi,to=pi,n=1000)
+legend('topright',
+       c('state 1', 'state 2', 'marginal'),
+       col=pal,
+       lwd=2,bty='n')
+
+
 
 # Comparison of distributions and histograms
 data$data
@@ -89,6 +117,13 @@ curve(0.5*dgamma(x,shape=20^2/5^2, scale=5^2/20),col=pal[1],lwd=2,add=T,
       from=0,to=80,n=1000)
 curve(0.5*dgamma(x,shape=40^2/7^2, scale=7^2/40),col=pal[2],lwd=2,add=T,
       from=0,to=80,n=1000)
+curve(0.5*dgamma(x,shape=20^2/5^2, scale=5^2/20)+
+        0.5*dgamma(x,shape=40^2/7^2, scale=7^2/40), col=pal[3],lwd=2,add=T,
+      from=0,to=80,n=1000)
+legend('topright',
+       c('state 1', 'state 2', 'marginal'),
+       col=pal,
+       lwd=2,bty='n')
 
 ## Chapter 4 - Case Study 1
 

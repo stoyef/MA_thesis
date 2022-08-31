@@ -116,15 +116,15 @@ plot_fitted_dist(data=schwalbe_77$angle,
 
 # AR(1)
 theta=c(rep(-2,6),15,25,30,9,4,3,0,0,0,200,500,1000,rep(0.1,6))
-theta.star=starize(theta, N=3,p=c(1,1),dists=c('gamma','vm'))
+theta.star=starize(theta, N=3,p=c(1,1),dists=c('gamma','vm'), scale_kappa = 1)
 mod_ar1both=fit_arp_model(mllk=mllk, data=cbind(schwalbe_77$step, schwalbe_77$angle), 
-              theta.star=theta.star, N=3, p_auto=c(1,1),dists=c('gamma','vm'))
+              theta.star=theta.star, N=3, p_auto=c(1,1),dists=c('gamma','vm'), scale_kappa = 1)
 mod_ar1both
 plot_fitted_dist(data=schwalbe_77$step,
                  dist='gamma', param=list(mu=mod_ar1both$params[[1]]$mu,sigma=mod_ar1both$params[[1]]$sigma),
                  N=3,delta=mod_ar1both$delta, title='schwalbe_77 w/o autocorrelation')
 plot_fitted_dist(data=schwalbe_77$angle,
-                 dist='vm', param=list(mu=mod$params[[2]]$mu,kappa=mod$params[[2]]$kappa),
+                 dist='vm', param=list(mu=mod_ar1both$params[[2]]$mu,kappa=mod_ar1both$params[[2]]$kappa),
                  N=3,delta=mod$delta, title='schwalbe_77 w/o autocorrelation')
 ## AR(1) in step length funzt einfach nicht...
 
@@ -206,4 +206,95 @@ mod_ar3
 plot_fitted_dist(data=schwalbe_77$tortuosity,
                  dist='gamma', param=list(mu=mod_ar3$params[[1]]$mu,sigma=mod_ar3$params[[1]]$sigma),
                  N=2,delta=mod_ar3$delta, title='schwalbe_77 tortuosity AR(3)')
+
+
+##
+## Das sind jetzt nicht so gute Ergebnisse
+## Next try: downsamplen zu 1Hz Daten
+##
+
+# read in again, to get raw data
+schwalben = read_schwalbe("/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/MA_thesis/datasets/seeschwalbe/slick2-h1-h2.csv")
+
+head(schwalben)
+
+count=1
+for (i in unique(schwalben$ID)){
+  assign(paste("schwalbe_", count, sep=""), select_schwalbe(i, count))
+  count=count+1
+}
+
+head(schwalbe_77)
+head(schwalbe_77$t,40) # 30Hz Daten
+library(zoo)
+schwalbe_77_1hz = rollapply(schwalbe_77[,2:dim(schwalbe_77)[2]], 30, mean)
+head(schwalbe_77_1hz)
+schwalbe_77_1hz = as.data.frame(schwalbe_77_1hz[seq(1, nrow(schwalbe_77_1hz), 30),]) # make data 1hz
+plot(schwalbe_77_1hz$x,schwalbe_77_1hz$y,type='l')
+schwalbe_77_1hz = prepData(schwalbe_77_1hz)
+plot(schwalbe_77_1hz)
+
+# this should be better to handle :)
+
+##
+## N=2
+##
+
+##
+## N=3
+##
+mod_move=fitHMM(schwalbe_77_1hz,
+                3,
+                c(350,700,850,300,200,100),
+                c(0,0,0,1,2,6))
+plot(mod_move)
+mod_move
+pseudo_residuals = pseudoRes(mod_move)
+qqnorm(pseudo_residuals$stepRes)
+qqnorm(pseudo_residuals$angleRes)
+
+
+# no autocorrelation
+theta=c(rep(-2,6),350,700,850,300,200,100,0,0,0,1,2,6)
+theta.star=starize(theta, N=3,p=c(0,0),dists=c('gamma','vm'), scale_kappa = 1)
+mod_ar0=fit_arp_model(mllk=mllk, data=cbind(schwalbe_77_1hz$step, schwalbe_77_1hz$angle), 
+                      theta.star=theta.star, N=3, p_auto=c(0,0),dists=c('gamma','vm'),scale_kappa = 1)
+mod_ar0
+plot_fitted_dist(data=schwalbe_77_1hz$step,
+                 dist='gamma', param=list(mu=mod_ar0$params[[1]]$mu,sigma=mod_ar0$params[[1]]$sigma),
+                 N=3,delta=mod_ar0$delta, title='schwalbe_77 w/o autocorrelation',breaks=20)
+plot_fitted_dist(data=schwalbe_77_1hz$angle,
+                 dist='vm', param=list(mu=mod_ar0$params[[2]]$mu,kappa=mod_ar0$params[[2]]$kappa),
+                 N=3,delta=mod_ar0$delta, title='schwalbe_77 w/o autocorrelation',breaks=20)
+
+# AR(1)
+theta=c(rep(-2,6),350,700,850,300,200,100,0,0,0,1,2,6, rep(0.1,6))
+theta.star=starize(theta, N=3,p=c(1,1),dists=c('gamma','vm'), scale_kappa = 1)
+mod_ar1both=fit_arp_model(mllk=mllk, data=cbind(schwalbe_77_1hz$step, schwalbe_77_1hz$angle), 
+                          theta.star=theta.star, N=3, p_auto=c(1,1),dists=c('gamma','vm'), scale_kappa = 1)
+mod_ar1both
+plot_fitted_dist(data=schwalbe_77_1hz$step,
+                 dist='gamma', param=list(mu=mod_ar1both$params[[1]]$mu,sigma=mod_ar1both$params[[1]]$sigma),
+                 N=3,delta=mod_ar1both$delta, title='schwalbe_77 w/ AR(1)', breaks=20)
+plot_fitted_dist(data=schwalbe_77_1hz$angle,
+                 dist='vm', param=list(mu=mod_ar1both$params[[2]]$mu,kappa=mod_ar1both$params[[2]]$kappa),
+                 N=3,delta=mod$delta, title='schwalbe_77 w/ AR(1)', breaks=20)
+# -> AR(1) for 3 states leads to overfitting
+
+# AR(2)
+# AR(1)
+theta=c(rep(-2,6),350,700,850,300,200,100,0,0,0,1,2,6, rep(0.1,12))
+theta.star=starize(theta, N=3,p=c(2,2),dists=c('gamma','vm'), scale_kappa = 1)
+mod_ar1both=fit_arp_model(mllk=mllk, data=cbind(schwalbe_77_1hz$step, schwalbe_77_1hz$angle), 
+                          theta.star=theta.star, N=3, p_auto=c(2,2),dists=c('gamma','vm'), scale_kappa = 1)
+mod_ar1both
+plot_fitted_dist(data=schwalbe_77_1hz$step,
+                 dist='gamma', param=list(mu=mod_ar1both$params[[1]]$mu,sigma=mod_ar1both$params[[1]]$sigma),
+                 N=3,delta=mod_ar1both$delta, title='schwalbe_77 w/ AR(2)', breaks=20)
+plot_fitted_dist(data=schwalbe_77_1hz$angle,
+                 dist='vm', param=list(mu=mod_ar1both$params[[2]]$mu,kappa=mod_ar1both$params[[2]]$kappa),
+                 N=3,delta=mod$delta, title='schwalbe_77 w/ AR(2)', breaks=20)
+
+
+
 

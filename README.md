@@ -52,7 +52,7 @@ Thesis code and other things
 - [ ] Apply different AR(p) HMM models and compare models graphically
 - [ ] Parametric Bootstrap for confidence intervals of the parameters? Would be extremely time consuming. Maybe only for one example? (Technique Re-fit Bootstrap samples that are generated from HMM with MLE parameters, do this a lot of times)
 - [ ] Model selection: Decide on meaningful criteria/methods
-- [ ] Check models with pseudo residuals $\to$ Progress in goodness of fit can be displayed here
+- [ ] Check models with pseudo residuals $\to$ Progress in goodness of fit can be displayed here $\to$ look up how to compute them in source code of moveHMM
 
 
 ## Future prospects

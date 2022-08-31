@@ -52,14 +52,21 @@ mllk <- function(theta.star, dists, x, N, p_auto, scale_kappa=1){
     if (p_auto[dist]>0){
       autocor_m <- matrix(autocor[[dist]], ncol=p_auto[dist], byrow=TRUE) # matrix for easier handling later on
       
-      ind <- which(!is.na(x[,dist]))[-c(1:p_auto[dist])] # change: we omit first p steps 
+      # we remove data that is exactly equal to 0. This can't be handled by the gamma distribution
+      ind <- which(!is.na(x[,dist]) & x[,dist]!=0)[-c(1:p_auto[dist])] # change: we omit first p steps 
       # in order to always have the step in t-p
       autocor_ind <- matrix(NA,nrow=length(ind),ncol=p_auto[dist]) # matrix for indices of autocor data
       
       for (i in 1:p_auto[dist]){
         autocor_ind[,i] <- ind-p_auto[dist]+i-1
       }
-      autocor_ind <- apply(autocor_ind, 2, function(a)x[a,dist]) # substitute indices with values
+      
+      x_wo_na = x
+      x_wo_na[which(is.na(x_wo_na[,dist])),dist] = mean(x_wo_na[,dist],na.rm = TRUE)
+      autocor_ind <- apply(autocor_ind, 2, function(a)x_wo_na[a,dist]) # substitute indices with values
+      # replace NA values in x that are put into autocor_ind with mean value 
+      # (so that the data that has NA in previous time steps does not have to be deleted)
+      
       
       for (j in 1:N){
         # here comes the autocorrelation! -> computed inside the dens_<...> functions, considering the 
@@ -76,7 +83,7 @@ mllk <- function(theta.star, dists, x, N, p_auto, scale_kappa=1){
         # we have an individual mu for each data point
       }
     } else{
-      ind <- which(!is.na(x[,dist]))
+      ind <- which(!is.na(x[,dist]) & x[,dist]!=0)
       
       for (j in 1:N){
         

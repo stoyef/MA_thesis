@@ -18,6 +18,7 @@
 #' @rdname dens_gamma
 dens_gamma <- function(x, theta, autocor_ind=0, autocor=0, p=0){
   cv = theta$sigma/theta$mu
+  
   if (p>0){
     # attention: mu and sigma must stay > 0 -> but this is the case by construction
     # this is the autoregression structure

@@ -42,6 +42,7 @@ Thesis code and other things
 - [ ] Think about additional meaningful research prospects for simulations
 - [x] Faster computation using multiple cores with ```parallel``` package
 - [ ] Re-run simulation with updated data simulation for von Mises distribution
+- [ ] Table for computation speed should display relative speed compared to normal HMM to avoid user bias (absolute values in appendix)
 
 ## ToDo Data Example
 - [ ] Look for appropriate data

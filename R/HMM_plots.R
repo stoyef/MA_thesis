@@ -277,7 +277,104 @@ boxplot_sim_params <- function(gamma_mu, gamma_sigma, vm_mu, vm_kappa, gamma_aut
 
 
 
+#' Circular KDE and density of von Mises distribution
+#'
+#' Generate a circular visualization of the density of one or several von Mises
+#' distributed variables. Also, if data is supplied, generate the kernel density
+#' estimator of the data for comparison.
+#' 
+#' @param mu Vector of parameter mu for von Mises distribution.
+#' @param kappa Vector of parameter mu for von Mises distribution.
+#' @param delta Optional, weights of the distributions (equal to delta in HMMs).
+#' @param data Optional, provide data vector, KDE of this data will be plotted.
+#' @param sum_dist Optional, sum weighted distributions.
+#' @param leg Optional, include legend.
+#'                        
+#' @export
+#' @rdname circ_vm_viz
+#' 
+circ_vm_viz <- function(mu, kappa, delta=1, data=NULL, sum_dist=FALSE, leg=FALSE){
+  require(CircStats)
+  require(RColorBrewer)
+  
+  # create unit circle
+  radius = 1
+  low=-pi
+  up=pi
+  n=1000
+  x=seq(low,up,length=n)
+  
+  # transform polar coordinates to cartesian coordinates
+  polar2cart <- function(r, theta) {
+    data.frame(x = r * cos(theta), y = r * sin(theta))
+  }
+  
+  # von mises pdf
+  number_dists = length(mu)
+  vm_pdfs = matrix(NA,nrow=n,ncol=number_dists)
+  vm_pdf.cart.data.x = matrix(NA,nrow=n,ncol=number_dists)
+  vm_pdf.cart.data.y = matrix(NA,nrow=n,ncol=number_dists)
+  for (dist in 1:number_dists){
+    vm_pdf=dvm(x,mu[dist],kappa[dist])
+    vm_pdfs[,dist] = delta[dist]*vm_pdf
+    polar.data = polar2cart(radius+vm_pdfs[,dist],x)
+    vm_pdf.cart.data.x[,dist]=polar.data[,1]
+    vm_pdf.cart.data.y[,dist]=polar.data[,2]
+  }
+  total_dist = rowSums(vm_pdfs)
+  total.data = polar2cart(radius+total_dist,x)
 
+  # plot unit circle
+  center_x = 0
+  center_y = 0
+  theta = seq(0, 2 * pi, length = 200)
+  plot(c(min(-1.3,min(total.data[,1])), max(1.3,max(total.data[,1]))), c(min(-1.3,min(total.data[,2])), max(1.3,max(total.data[,2]))), 
+       type = "n",bty='n',xaxt='n',yaxt='n',xlab='',ylab='')
+  lines(x = radius * cos(theta) + center_x, y = radius * sin(theta) + center_y,
+        lwd=3)
+  lines(c(-1.1,1.1),c(0,0))
+  lines(c(0,0),c(-1.1,1.1))
+  text(1.2,0, '0')
+  text(-1.2,0, expression(pi))
+  text(0, 1.2, expression(pi/2))
+  text(0, -1.2, expression(-pi/2))
+  
+  # plot densities
+  cols=brewer.pal(number_dists+2, 'Dark2')
+  for (dist in 1:number_dists){
+    points(vm_pdf.cart.data.x[,dist], vm_pdf.cart.data.y[,dist], type='l',col=cols[dist],
+           lwd=1.5)
+  }
+  
+  if (sum_dist){
+    points(total.data, type='l',col=cols[number_dists+1],
+           lwd=1.5)
+  }
+  
+  if (!is.null(data)){
+    require(circular)
+    # kde of data
+    circ.dens = density.circular(x=data, from=circular(-pi), to=circular(pi), bw=bw.nrd.circular(data),
+                                 na.rm=TRUE)
+    points(polar2cart(radius+circ.dens$y,circ.dens$x),type='l',col=tail(cols,1),
+           lwd=1.5)
+  }
+  
+  # legend
+  if (leg){
+    if (sum_dist){
+      legend('topright',
+             c(paste('state',1:number_dists),'marginal', 'KDE'),
+             lwd=1.5,bty='n',
+             col=cols)
+    } else{
+      legend('topright',
+             c(paste('state',1:number_dists),'sampled data'),
+             lwd=1.5,bty='n',
+             col=cols)
+    }
+  }
+}
 
 
 

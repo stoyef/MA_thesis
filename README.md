@@ -55,6 +55,8 @@ Thesis code and other things
 - [ ] Model selection: Decide on meaningful criteria/methods
 - [ ] Check models with pseudo residuals $\to$ Progress in goodness of fit can be displayed here $\to$ look up how to compute them in source code of moveHMM
 
+## ToDo At the end
+- [ ] Look through thesis with focus on dimension. Is the bold face for vectors consistently used? Write at the first time it happens that we most often only handle the univariate case
 
 ## Future prospects
 

@@ -44,10 +44,12 @@ plot_states <- function(states, names="none", title=TRUE){
 #' @param delta Input vector for parameter delta.
 #' @param title optional, title of the plot, if "none", then no title.
 #' @param breaks optional, specify number of breaks of the histogram.
+#' @param xlab optional, label of x-axis.
+#' @param legend optional, plot legend (default: TRUE).
 #' 
 #' @export
 #' @rdname plot_fitted_dist
-plot_fitted_dist <- function(data, dist, param, N, delta, title="none", breaks=30){
+plot_fitted_dist <- function(data, dist, param, N, delta, title="none", breaks=30, xlab='x', legend=TRUE){
   require(CircStats)
   require(RColorBrewer)
   pal <- brewer.pal(N+1, 'Dark2')
@@ -71,17 +73,22 @@ plot_fitted_dist <- function(data, dist, param, N, delta, title="none", breaks=3
   
   if (title=="none"){
     hist(data, breaks=breaks, probability = TRUE,
-         main="", xlab="x")#, ylim=c(0,max(total_dist, na.rm=TRUE)))
+         main="", xlab=xlab, ylim=c(0,max(max(hist(data,plot=F,breaks=breaks)$density), 
+                                         max(total_dist, na.rm=TRUE))))
   }else{
     hist(data, breaks=breaks, probability = TRUE,
-         main=title, xlab="x")#, ylim=c(0,max(total_dist, na.rm=TRUE)))
+         main=title, xlab=xlab, ylim=c(0,max(max(hist(data,plot=F,breaks=breaks)$density), 
+                                            max(total_dist, na.rm=TRUE))))
   }
   for (i in 1:N){
     lines(x,dens[,i],col=pal[i], lwd=2)
   }
   lines(x,total_dist,col=pal[N+1],lwd=2)
+  
+  if(legend){
   legend('topright', c(paste("State",1:N),"Total"), bty='n', lwd=2,
          col=pal)
+  }
 }
 
 

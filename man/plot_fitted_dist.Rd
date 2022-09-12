@@ -4,7 +4,17 @@
 \alias{plot_fitted_dist}
 \title{Density plot of estimated distributions}
 \usage{
-plot_fitted_dist(data, dist, param, N, delta, title = "none", breaks = 30)
+plot_fitted_dist(
+  data,
+  dist,
+  param,
+  N,
+  delta,
+  title = "none",
+  breaks = 30,
+  xlab = "x",
+  legend = TRUE
+)
 }
 \arguments{
 \item{data}{Input data for histogram.}
@@ -21,6 +31,10 @@ HMM: c(\eqn{\mu1,\mu2,\sigma1,\sigma2}).}
 \item{title}{optional, title of the plot, if "none", then no title.}
 
 \item{breaks}{optional, specify number of breaks of the histogram.}
+
+\item{xlab}{optional, label of x-axis.}
+
+\item{legend}{optional, plot legend (default: TRUE).}
 }
 \description{
 Plots the estimted distributions along with a histogram of the values.

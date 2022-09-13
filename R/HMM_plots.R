@@ -46,15 +46,17 @@ plot_states <- function(states, names="none", title=TRUE){
 #' @param breaks optional, specify number of breaks of the histogram.
 #' @param xlab optional, label of x-axis.
 #' @param legend optional, plot legend (default: TRUE).
+#' @param xlim optional, set a limit for x-axis for better visibility of the data.
 #' 
 #' @export
 #' @rdname plot_fitted_dist
-plot_fitted_dist <- function(data, dist, param, N, delta, title="none", breaks=30, xlab='x', legend=TRUE){
+plot_fitted_dist <- function(data, dist, param, N, delta, title="none", breaks=30, xlab='x', legend=TRUE,
+                             xlim='none'){
   require(CircStats)
   require(RColorBrewer)
   pal <- brewer.pal(N+1, 'Dark2')
   dens <- matrix(NA, nrow=10000,ncol=N)
-  x <- seq(min(data, na.rm=TRUE),max(data, na.rm=TRUE),length=10000)
+  x <- seq(min(data[data!=0], na.rm=TRUE),max(data, na.rm=TRUE),length=10000)
   
   if (dist=='gamma'){
     mu <- param[1:N]
@@ -72,13 +74,25 @@ plot_fitted_dist <- function(data, dist, param, N, delta, title="none", breaks=3
   total_dist <- apply(dens,1,sum)
   
   if (title=="none"){
-    hist(data, breaks=breaks, probability = TRUE,
-         main="", xlab=xlab, ylim=c(0,max(max(hist(data,plot=F,breaks=breaks)$density), 
+    if (xlim[1] != 'none'){
+      hist(data, breaks=breaks, probability = TRUE,
+         main="", xlab=xlab, xlim=xlim, ylim=c(0,max(max(hist(data,plot=F,breaks=breaks)$density), 
                                          max(total_dist, na.rm=TRUE))))
+    } else{
+      hist(data, breaks=breaks, probability = TRUE,
+           main="", xlab=xlab, ylim=c(0,max(max(hist(data,plot=F,breaks=breaks)$density), 
+                                            max(total_dist, na.rm=TRUE))))
+    }
   }else{
-    hist(data, breaks=breaks, probability = TRUE,
+    if (xlim[1] != 'none'){
+      hist(data, breaks=breaks, probability = TRUE,
+           main="", xlab=xlab, xlim=xlim, ylim=c(0,max(max(hist(data,plot=F,breaks=breaks)$density), 
+                                                       max(total_dist, na.rm=TRUE))))
+    } else{
+      hist(data, breaks=breaks, probability = TRUE,
          main=title, xlab=xlab, ylim=c(0,max(max(hist(data,plot=F,breaks=breaks)$density), 
                                             max(total_dist, na.rm=TRUE))))
+    }
   }
   for (i in 1:N){
     lines(x,dens[,i],col=pal[i], lwd=2)

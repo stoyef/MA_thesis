@@ -13,7 +13,8 @@ plot_fitted_dist(
   title = "none",
   breaks = 30,
   xlab = "x",
-  legend = TRUE
+  legend = TRUE,
+  xlim = "none"
 )
 }
 \arguments{
@@ -35,6 +36,8 @@ HMM: c(\eqn{\mu1,\mu2,\sigma1,\sigma2}).}
 \item{xlab}{optional, label of x-axis.}
 
 \item{legend}{optional, plot legend (default: TRUE).}
+
+\item{xlim}{optional, set a limit for x-axis for better visibility of the data.}
 }
 \description{
 Plots the estimted distributions along with a histogram of the values.

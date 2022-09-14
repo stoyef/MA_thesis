@@ -33,7 +33,7 @@ viterbi_arp <-function(x, Gamma, delta, dists, autocor=0,
   
   for (dist in 1:length(dists)){
   if (p[dist]==0){
-      ind <- which(!is.na(x[,dist]))
+      ind <- which(!is.na(x[,dist]) & x[,dist]!=0)
       
       for (j in 1:N){
         params_j <- params[[dist]]
@@ -45,10 +45,10 @@ viterbi_arp <-function(x, Gamma, delta, dists, autocor=0,
     } else{ # p!=0, autocorrelation
       
       if (length(dists)>1){
-        ind <- which(!is.na(x[,dist]))[-c(1:p[dist])] # change: we omit first step 
+        ind <- which(!is.na(x[,dist]) & x[,dist]!=0)[-c(1:p[dist])] # change: we omit first step 
         # in order to always have the step in t-1
       } else{
-        ind <- which(!is.na(x))[-c(1:p[dist])]
+        ind <- which(!is.na(x) & x!=0)[-c(1:p[dist])]
       }
       
       autocor_m <- matrix(autocor[[dist]], ncol=p[dist], byrow=TRUE) # autocorrelation matrix for easier handling later on
@@ -58,10 +58,14 @@ viterbi_arp <-function(x, Gamma, delta, dists, autocor=0,
         autocor_ind[,i] <- ind-p[dist]+i-1
       }
       
+      x_wo_na = x
+      x_wo_na[which(is.na(x_wo_na[,dist])),dist] = mean(x_wo_na[,dist],na.rm = TRUE)
+      # replace NA values in x that are put into autocor_ind with mean value 
+      # (so that the data that has NA in previous time steps does not have to be deleted)
       if (length(dists)>1){
-        autocor_ind <- apply(autocor_ind, 2, function(a)x[a,dist]) # substitute indices with values
+        autocor_ind <- apply(autocor_ind, 2, function(a)x_wo_na[a,dist]) # substitute indices with values
       } else{
-        autocor_ind <- apply(autocor_ind, 2, function(a)x[a])
+        autocor_ind <- apply(autocor_ind, 2, function(a)x_wo_na[a])
       }
       
       for (j in 1:N){

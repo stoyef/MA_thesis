@@ -390,3 +390,16 @@ legend('top', c(paste("State",1:N)), bty='n', lwd=2,
 
 1-sum(states_00==states_31)/dim(data_s_77_1hz)[1]
 
+# Plot that compares step lengths exclusively:
+par(mfrow=c(2,1))
+plot(data_s_77_1hz[,1],type='l',bty='n',xlab='time',ylab='step length')
+segments(x0 = 1:(dim(data_s_77_1hz)[1] - 1), y0 = data_s_77_1hz[-dim(data_s_77_1hz)[1],1],
+         x1 = 2:dim(data_s_77_1hz)[1], y1 = data_s_77_1hz[-1,1],
+         col = pal[states_00[-(dim(data_s_77_1hz)[1])]], lwd = 1.5)
+plot(data_s_77_1hz[,1],type='l',bty='n',xlab='time',ylab='step length')
+segments(x0 = 1:(dim(data_s_77_1hz)[1] - 1), y0 = data_s_77_1hz[-dim(data_s_77_1hz)[1],1],
+         x1 = 2:dim(data_s_77_1hz)[1], y1 = data_s_77_1hz[-1,1],
+         col = pal[states_31[-(dim(data_s_77_1hz)[1])]], lwd = 1.5)
+legend('top', c(paste("State",1:N)), bty='n', lwd=2,
+       col=pal[1:2],inset=c(0,-0.75),xpd='NA',horiz=T)# N=3: inset=c(0.25,-0.1)
+

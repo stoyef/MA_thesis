@@ -2,28 +2,22 @@
 # Functions that decode the states of different HMMs
 
 
-
-
-#' Global decoding for AR(p) HMM using Viterbi
+#' Matrix of all probabilities
 #' 
-#' Global decoding for an AR(p) HMM with or without autocorrelation 
-#' using the Viterbi algorithm.
+#' Calculate matrix of all probabilities for an AR(p) HMM with or without autocorrelation.
 #' 
 #' @param x Data matrix the model was fitted to.
-#' @param Gamma Transition probability matrix (full matrix, not only off diagonal entries).
-#' @param delta Stationary distribution.
 #' @param dists Vector of distributions in R-jargon.
 #' @param autocor list of autocorrelation vectors, respecting order of dists.
 #' @param params List of optimized parameters, returned by fitting the HMM.
 #' @param N Number of states.
 #' @param p Vector of degree of autocorrelation for each distribution (0 = no autocorrelation).
 #' 
-#' @return Estimated states using Viterbi.
+#' @return Matrix of all probabilities.
 #' 
 #' @export
-#' @rdname viterbi_arp
-viterbi_arp <-function(x, Gamma, delta, dists, autocor=0, 
-                             params, N, p){
+#' @rdname allprobs
+allprobs <- function(x, dists, autocor=0, params, N, p){
   if (length(dists)>1){
     n <- dim(x)[1]
   } else{
@@ -32,7 +26,7 @@ viterbi_arp <-function(x, Gamma, delta, dists, autocor=0,
   allprobs <- matrix(1,n,N)
   
   for (dist in 1:length(dists)){
-  if (p[dist]==0){
+    if (p[dist]==0){
       ind <- which(!is.na(x[,dist]) & x[,dist]!=0)
       
       for (j in 1:N){
@@ -76,10 +70,10 @@ viterbi_arp <-function(x, Gamma, delta, dists, autocor=0,
         if (length(dists)>1){
           allprobs[ind,j] <- allprobs[ind,j] * 
             match.fun(paste('dens_', dists[dist], sep=""))(x[ind,dist], 
-                                                         params_j,
-                                                         autocor_ind=autocor_ind,
-                                                         autocor=autocor_m[j,],
-                                                         p=p[dist])
+                                                           params_j,
+                                                           autocor_ind=autocor_ind,
+                                                           autocor=autocor_m[j,],
+                                                           p=p[dist])
         } else{
           allprobs[ind,j] <- allprobs[ind,j] * 
             match.fun(paste('dens_', dists[dist], sep=""))(x[ind], 
@@ -91,6 +85,33 @@ viterbi_arp <-function(x, Gamma, delta, dists, autocor=0,
       }
     }
   }
+  return(allprobs)
+}
+
+
+#' Global decoding for AR(p) HMM using Viterbi
+#' 
+#' Global decoding for an AR(p) HMM with or without autocorrelation 
+#' using the Viterbi algorithm.
+#' 
+#' @param x Data matrix the model was fitted to.
+#' @param Gamma Transition probability matrix (full matrix, not only off diagonal entries).
+#' @param delta Stationary distribution.
+#' @param dists Vector of distributions in R-jargon.
+#' @param autocor list of autocorrelation vectors, respecting order of dists.
+#' @param params List of optimized parameters, returned by fitting the HMM.
+#' @param N Number of states.
+#' @param p Vector of degree of autocorrelation for each distribution (0 = no autocorrelation).
+#' 
+#' @return Estimated states using Viterbi.
+#' 
+#' @export
+#' @rdname viterbi_arp
+viterbi_arp <-function(x, Gamma, delta, dists, autocor=0, 
+                             params, N, p){
+
+  allprobs = allprobs(x=x, dists=dists, autocor=autocor, params=params, N=N, p=p)
+  
   xi <- matrix(0,n,N)
   foo <- delta*allprobs[1,]
   xi[1,] <- foo/sum(foo)

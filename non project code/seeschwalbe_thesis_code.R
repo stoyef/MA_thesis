@@ -322,6 +322,9 @@ aics
 bics
 mllks
 mods
+best_mod_00 = mods[[which.min(bics)]]
+best_mod_31 = mods[[which.min(bics)]]
+
 
 par(mfrow=c(1,2))
 plot_fitted_dist(data=data_s_77_1hz[,1],
@@ -402,4 +405,28 @@ segments(x0 = 1:(dim(data_s_77_1hz)[1] - 1), y0 = data_s_77_1hz[-dim(data_s_77_1
          col = pal[states_31[-(dim(data_s_77_1hz)[1])]], lwd = 1.5)
 legend('top', c(paste("State",1:N)), bty='n', lwd=2,
        col=pal[1:2],inset=c(0,-0.75),xpd='NA',horiz=T)# N=3: inset=c(0.25,-0.1)
+
+
+par(mfrow=c(2,2))
+## Pseudo residuals
+pres_00 = pseudores_arp(mod=best_mod_00,data=data_s_77_1hz,N=2,p=c(0,0))
+qqnorm(pres_00$stepRes, bty='n',pch=19,xlim=c(-2.75,2.75),ylim=c(-2.5,2.5),
+       main='Basic HMM')
+abline(a=0,b=1,lwd=2)
+
+
+pres_31 = pseudores_arp(mod=best_mod_31,data=data_s_77_1hz,N=2,p=c(3,1))
+qqnorm(pres_31$stepRes, bty='n',pch=19,xlim=c(-2.75,2.75),ylim=c(-2.5,2.5),
+       main='AR(3,1)-HMM')
+abline(a=0,b=1,lwd=2)
+
+
+plot(density(pres_00$stepRes[pres_00$stepRes!=-Inf],na.rm=T),
+     bty='n',main='',xlab='x',lwd=1.5,xlim=c(-5,5))
+curve(dnorm(x),-5,5,lty=2,add=T,col=4,lwd=1.5)
+plot(density(pres_31$stepRes[pres_31$stepRes!=-Inf],na.rm=T),
+     bty='n',main='',lwd=1.5,xlab='x',xlim=c(-5,5))
+curve(dnorm(x),-5,5,lty=2,add=T,lwd=1.5,col=4)
+legend('topleft',c('KDE of pseudo residuals','N(0,1)'),col=c(1,4),xpd='NA',bty='n',lwd=1.5,
+       horiz=T,lty=1,inset=c(-0.7,-0.3))
 

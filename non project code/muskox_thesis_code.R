@@ -15,15 +15,15 @@ head(muskox)
 
 ## N=2
 mod_move=fitHMM(muskox,
-                3,
-                c(25,60,150,20,50,200,rep(0.01,3)), # account for zeromass 
-                c(pi,-pi,0,0.5,0.5,0.5),
+                2,
+                c(25,150,20,200,rep(0.01,2)), # account for zeromass 
+                c(pi,0,0.5,0.5),
                 stationary = TRUE) 
 plot(mod_move)
 mod_move
 pseudo_residuals = pseudoRes(mod_move)
 qqnorm(pseudo_residuals$stepRes)
-
+curve(1*x,-4,4,add=T)
 
 
 # no autocorrelation
@@ -91,7 +91,7 @@ library(parallel)
 n_cores = detectCores()
 
 N=3
-p=c(3,3)
+p=c(0,0)
 muskox_wrap <- function(iteration){
   # starting values - N=2
   #step_init = c(runif(1,15,30),runif(1,100,200),
@@ -156,6 +156,9 @@ aics
 bics
 mllks
 mods
+best_mod_00 = mods[[which.min(bics)]]
+best_mod_11 = mods[[which.min(bics)]]
+
 
 par(mfrow=c(1,2))
 plot_fitted_dist(data=muskox$step,
@@ -257,4 +260,25 @@ legend('top', c(paste("State",1:N)), bty='n', lwd=2,
 
 
 
+par(mfrow=c(2,2))
+## Pseudo residuals
+pres_00 = pseudores_arp(mod=best_mod_00,data=cbind(muskox$step, muskox$angle),N=3,p=c(0,0))
+qqnorm(pres_00$stepRes[pres_00$stepRes!=-Inf], bty='n',pch=19,
+       xlim=c(-4.25,4.25),ylim=c(-3,4.5),main='Basic HMM')
+abline(a=0,b=1,lwd=2)
+
+
+pres_11 = pseudores_arp(mod=best_mod_11,data=cbind(muskox$step, muskox$angle),N=3,p=c(1,1))
+qqnorm(pres_11$stepRes[pres_11$stepRes!=-Inf], bty='n',pch=19,
+       xlim=c(-4.25,4.25),ylim=c(-3,4.5),main='AR(1,1)-HMM')
+abline(a=0,b=1,lwd=2)
+
+plot(density(pres_00$stepRes[pres_00$stepRes!=-Inf],na.rm=T),
+     bty='n',main='',xlab='x',lwd=1.5,xlim=c(-5,5))
+curve(dnorm(x),-5,5,lty=2,add=T,col=4,lwd=1.5)
+plot(density(pres_11$stepRes[pres_11$stepRes!=-Inf],na.rm=T),
+     bty='n',main='',lwd=1.5,xlab='x',xlim=c(-5,5))
+curve(dnorm(x),-5,5,lty=2,add=T,lwd=1.5,col=4)
+legend('topleft',c('KDE of pseudo residuals','N(0,1)'),col=c(1,4),xpd='NA',bty='n',lwd=1.5,
+       horiz=T,lty=1,inset=c(-0.7,-0.3))
 

@@ -177,7 +177,11 @@ schwalbe_77_1hz = as.data.frame(schwalbe_77_1hz[seq(1, nrow(schwalbe_77_1hz), 30
 data_s_77_1hz = prepData(schwalbe_77_1hz)
 data_s_77_1hz = cbind(data_s_77_1hz$step,data_s_77_1hz$angle)[2:(nrow(data_s_77_1hz)-1),]
 
-
+par(mfrow=c(1,2))
+hist(data_s_77_1hz[,1],probability = T,xlab='step length',breaks=10,
+     main='')
+hist(data_s_77_1hz[,2],probability = T,xlab='turning angle',breaks=10,
+     main='')
 
 
 
@@ -262,7 +266,7 @@ legend('topright', c(paste("State",1:N),"Total"), bty='n', lwd=2,
 # 1Hz
 
 N=2
-p=c(0,0)
+p=c(10,10)
 schwalbe_wrap <- function(iteration){
   # starting values
   step_init = c(runif(1,300,500),runif(1,700,850),
@@ -295,7 +299,7 @@ results_ar00 <- mclapply(iterations,
                          mc.cores = n_cores
 )
 #results_ar00
-#work=c(1,2,3,4,5,6,7,10)
+#work=c(1,2,4,5,6,7,8,9,10)
 #work=c(work,work+10,work+20,work+30,work+40)
 #work
 
@@ -308,7 +312,7 @@ bics = rep(NA, length(iterations))
 mllks = rep(NA, length(iterations))
 mods = list()
 c=1
-for (i in iterations){
+for (i in work){
   mods[[i]] = results_ar00[i][[1]]$mod
   comps[i] = results_ar00[i][[1]]$time
   aics[i] = results_ar00[i][[1]]$aic

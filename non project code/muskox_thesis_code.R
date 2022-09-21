@@ -251,6 +251,8 @@ states_11 = viterbi_arp(x=cbind(muskox$step, muskox$angle),
 states_11
 
 par(mfrow=c(2,1))
+plot(muskox$step[1:300],type='p',bty='n',xlab='time',ylab='step length',
+     pch=19,cex=0.5,col=pal[states_00])
 plot(muskox$step[1:300],type='l',bty='n',xlab='time',ylab='step length')
 segments(x0 = 1:(300 - 1), y0 = muskox$step[1:(300-1)],
          x1 = 2:300, y1 = muskox$step[2:300],

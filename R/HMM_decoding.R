@@ -110,7 +110,13 @@ allprobs <- function(x, dists, autocor=0, params, N, p){
 viterbi_arp <-function(x, Gamma, delta, dists, autocor=0, 
                              params, N, p){
 
-  allprobs = allprobs(x=x, dists=dists, autocor=autocor, params=params, N=N, p=p)
+  allprobs = allprobs(x=x, dists=dists, autocor=autocor, params=params, N=N, p=p)  
+  if (length(dists)>1){
+    n <- dim(x)[1]
+  } else{
+    n <- length(x)
+  }
+  
   
   xi <- matrix(0,n,N)
   foo <- delta*allprobs[1,]

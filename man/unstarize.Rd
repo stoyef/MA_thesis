@@ -4,7 +4,7 @@
 \alias{unstarize}
 \title{Working parameters to natural parameters (theta.star->theta)}
 \usage{
-unstarize(theta.star, N, p, dists, scale_kappa = 1)
+unstarize(theta.star, N, p, dists, scale_kappa = 1, zero_inf = FALSE)
 }
 \arguments{
 \item{theta.star}{Vector of working parameters.}
@@ -16,6 +16,8 @@ unstarize(theta.star, N, p, dists, scale_kappa = 1)
 \item{dists}{Vector of the distributions in the HMM.}
 
 \item{scale_kappa}{Default 1, Scaling factor for kappa to avoid numerical issues in optimization for large kappa.}
+
+\item{zero_inf}{Default FALSE, indicates if the gamma distributed variables should incorporate zero-inflation.}
 }
 \value{
 List of natural parameters of the HMM.

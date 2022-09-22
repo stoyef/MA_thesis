@@ -100,7 +100,7 @@ ar_simulation <- function(model_sim, model_fit, N_sim, N_fit, n_samples,
                     data=simulated_data$data, 
                     theta.star=theta.star, 
                     N=N_fit, 
-                    p=model_fit[[2]], 
+                    p_auto=model_fit[[2]], 
                     dists=model_fit[[1]])
   
   

@@ -266,7 +266,7 @@ legend('topright', c(paste("State",1:N),"Total"), bty='n', lwd=2,
 # 1Hz
 
 N=2
-p=c(10,10)
+p=c(1,1)
 schwalbe_wrap <- function(iteration){
   # starting values
   step_init = c(runif(1,300,500),runif(1,700,850),
@@ -312,7 +312,7 @@ bics = rep(NA, length(iterations))
 mllks = rep(NA, length(iterations))
 mods = list()
 c=1
-for (i in work){
+for (i in iterations){
   mods[[i]] = results_ar00[i][[1]]$mod
   comps[i] = results_ar00[i][[1]]$time
   aics[i] = results_ar00[i][[1]]$aic

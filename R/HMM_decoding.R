@@ -27,7 +27,7 @@ allprobs <- function(x, dists, autocor=0, params, N, p){
   
   for (dist in 1:length(dists)){
     if (p[dist]==0){
-      ind <- which(!is.na(x[,dist]) & x[,dist]!=0)
+      ind <- which(!is.na(x[,dist]))
       
       for (j in 1:N){
         params_j <- params[[dist]]
@@ -39,10 +39,10 @@ allprobs <- function(x, dists, autocor=0, params, N, p){
     } else{ # p!=0, autocorrelation
       
       if (length(dists)>1){
-        ind <- which(!is.na(x[,dist]) & x[,dist]!=0)[-c(1:p[dist])] # change: we omit first step 
+        ind <- which(!is.na(x[,dist]))[-c(1:p[dist])] # change: we omit first step 
         # in order to always have the step in t-1
       } else{
-        ind <- which(!is.na(x) & x!=0)[-c(1:p[dist])]
+        ind <- which(!is.na(x))[-c(1:p[dist])]
       }
       
       autocor_m <- matrix(autocor[[dist]], ncol=p[dist], byrow=TRUE) # autocorrelation matrix for easier handling later on
@@ -67,21 +67,12 @@ allprobs <- function(x, dists, autocor=0, params, N, p){
         # params_j consists the parameters of state j for each parameter in params[[dist]]
         for (i in names(params_j)) params_j[i][[1]] = params_j[i][[1]][j] 
         
-        if (length(dists)>1){
-          allprobs[ind,j] <- allprobs[ind,j] * 
+        allprobs[ind,j] <- allprobs[ind,j] * 
             match.fun(paste('dens_', dists[dist], sep=""))(x[ind,dist], 
                                                            params_j,
                                                            autocor_ind=autocor_ind,
                                                            autocor=autocor_m[j,],
                                                            p=p[dist])
-        } else{
-          allprobs[ind,j] <- allprobs[ind,j] * 
-            match.fun(paste('dens_', dists[dist], sep=""))(x[ind], 
-                                                           params_j,
-                                                           autocor_ind=autocor_ind,
-                                                           autocor=autocor_m[j,],
-                                                           p=p[dist])
-        }
       }
     }
   }

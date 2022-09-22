@@ -32,16 +32,23 @@ nice_params <- function(Gamma, autocor, ...){
 #' @param p Vector of degree of autocorrelation within the distributions.
 #' @param dists Vector of the distributions in the HMM.
 #' @param scale_kappa Default 1, Scaling factor for kappa to avoid numerical issues in optimization for large kappa.
+#' @param zero_inf Default FALSE, indicates if the gamma distributed variables should incorporate zero-inflation.
 #' 
 #' @return Vector of working parameters of the HMM.
 #' 
 #' @export
 #' @rdname starize
-starize <- function(theta,N,p,dists, scale_kappa=1){
+starize <- function(theta,N,p,dists, scale_kappa=1, zero_inf=FALSE){
   # check for right number of parameters
-  if (length(theta) != (N*(N-1)+2*N*length(dists)+sum(p)*N)){
+  if (zero_inf){
+    right_number = N*(N-1)+2*N*length(dists)+sum(p)*N+sum(dists=='gamma')*N
+  } else{
+    right_number = N*(N-1)+2*N*length(dists)+sum(p)*N
+  }
+  if (length(theta) != right_number){
     return("ERROR: Wrong number of parameters supplied.")
   } else{
+    
     Gamma <- theta[1:(N*(N-1))]
     param_count <- N*(N-1)
     
@@ -67,6 +74,11 @@ starize <- function(theta,N,p,dists, scale_kappa=1){
     } else{
       theta.star <- c(Gamma, params)
     }
+    if (zero_inf){
+      zero_inf <- qlogis(theta[-(1:(param_count+sum(p)*N))])
+      theta.star <- c(theta.star, zero_inf)
+    }
+
     return(theta.star)
   }
 }
@@ -83,12 +95,13 @@ starize <- function(theta,N,p,dists, scale_kappa=1){
 #' @param p Vector of degree of autocorrelation within the distributions.
 #' @param dists Vector of the distributions in the HMM.
 #' @param scale_kappa Default 1, Scaling factor for kappa to avoid numerical issues in optimization for large kappa.
+#' @param zero_inf Default FALSE, indicates if the gamma distributed variables should incorporate zero-inflation.
 #' 
 #' @return List of natural parameters of the HMM.
 #' 
 #' @export
 #' @rdname unstarize
-unstarize <- function(theta.star,N,p,dists, scale_kappa=1){
+unstarize <- function(theta.star,N,p,dists, scale_kappa=1, zero_inf=FALSE){
   all_params = list()
   
   ### TPM
@@ -101,11 +114,19 @@ unstarize <- function(theta.star,N,p,dists, scale_kappa=1){
   n_dists <- length(dists)
   n_dist_params <- 2*n_dists*N
   counter = N*(N-1)
+  counter_zero_inf = 0
   params = list()
   for (dist in 1:n_dists){
     if (dists[dist]=='gamma'){
-      params[[dist]] = list(mu=exp(theta.star[counter+1:N]),
-                            sigma=exp(theta.star[counter+N+1:N]))
+      if (zero_inf){
+        params[[dist]] = list(mu=exp(theta.star[counter+1:N]),
+                              sigma=exp(theta.star[counter+N+1:N]),
+                              zero_inf=plogis(theta.star[(N*(N-1)+n_dist_params+sum(p)*N+counter_zero_inf+1:N)]))
+        counter_zero_inf=counter_zero_inf+N # workaround for number of zero inflation params
+      } else{
+        params[[dist]] = list(mu=exp(theta.star[counter+1:N]),
+                              sigma=exp(theta.star[counter+N+1:N]))
+      }
     } else if (dists[dist]=='vm'){
       params[[dist]] = list(mu = Arg((theta.star[counter+1:N]*scale_kappa)+1i*(theta.star[counter+N+1:N]*scale_kappa)),
                             kappa = sqrt((theta.star[counter+1:N]*scale_kappa)^2+(theta.star[counter+N+1:N]*scale_kappa)^2)
@@ -123,12 +144,16 @@ unstarize <- function(theta.star,N,p,dists, scale_kappa=1){
   
   ### Autocorrelation parameters
   if (any(p>0)){
-    auto_params = theta.star[-c(1:counter)]
+    auto_params = theta.star[counter+1:(sum(p)*N)]
     autocor = list()
     counter = 0
     for (dist in 1:n_dists){
-      autocor[[dist]] = plogis(auto_params[counter+1:(p[dist]*N)])
-      counter = counter+p[dist]*N
+      if (p[dist]>0){
+        autocor[[dist]] = plogis(auto_params[counter+1:(p[dist]*N)])
+        counter = counter+p[dist]*N
+      } else{
+        autocor[[dist]] = NA
+      }
     }
     all_params$autocor = autocor
   }

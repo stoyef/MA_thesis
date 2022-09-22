@@ -12,7 +12,8 @@ fit_arp_model(
   p_auto,
   dists,
   opt_fun = "optim",
-  scale_kappa = 1
+  scale_kappa = 1,
+  zero_inf = FALSE
 )
 }
 \arguments{
@@ -34,6 +35,8 @@ to be considered in the Likelihood computation.}
 \item{opt_fun}{string - Function that should be used for optimization (default: optim).}
 
 \item{scale_kappa}{Default 1, Scaling factor for kappa to avoid numerical issues in optimization for large kappa.}
+
+\item{zero_inf}{Default FALSE, indicates if the gamma distributed variables should incorporate zero-inflation.}
 }
 \value{
 List, containing minimal value of negative log-Likelihood, Gamma, 

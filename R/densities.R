@@ -18,6 +18,11 @@
 #' @rdname dens_gamma
 dens_gamma <- function(x, theta, autocor_ind=0, autocor=0, p=0){
   cv = theta$sigma/theta$mu
+  if (length(theta)==3){ # zero inflation included
+    zero_inf = theta$zero_inf
+  } else{
+    zero_inf = 0
+  }
   
   if (p>0){
     # attention: mu and sigma must stay > 0 -> but this is the case by construction
@@ -29,9 +34,15 @@ dens_gamma <- function(x, theta, autocor_ind=0, autocor=0, p=0){
          as.vector(autocor_ind%*%autocor) # matmul of values with autocor coefficient
     sigma_auto <- cv*mu_auto # calculate sigma using ccv
     
-    return(dgamma(x, shape = mu_auto^2/sigma_auto^2, scale = sigma_auto^2/mu_auto))
+    res = ifelse(x>0, # take zero_inf for values equal to zero
+           (1-zero_inf)*dgamma(x, shape = mu_auto^2/sigma_auto^2, scale = sigma_auto^2/mu_auto),
+           zero_inf)
+    return(res)
   } else{
-    return(dgamma(x, shape = theta$mu^2/theta$sigma^2, scale = theta$sigma^2/theta$mu))
+    res = ifelse(x>0, # take zero_inf for values equal to zero
+                 (1-zero_inf)*dgamma(x, shape = theta$mu^2/theta$sigma^2, scale = theta$sigma^2/theta$mu),
+                 zero_inf)
+    return(res)
   }
 }
 

@@ -21,14 +21,14 @@
 #'              to be considered in the Likelihood computation.
 #' @param opt_fun string - Function that should be used for optimization (default: optim).
 #' @param scale_kappa Default 1, Scaling factor for kappa to avoid numerical issues in optimization for large kappa.
-
+#' @param zero_inf Default FALSE, indicates if the gamma distributed variables should incorporate zero-inflation.
 #'            
 #' @return List, containing minimal value of negative log-Likelihood, Gamma, 
 #'         delta, (autocorrelation, depending on degree), mu, sigma.
 #' 
 #' @export
 #' @rdname fit_arp_model
-fit_arp_model <- function(mllk, data, theta.star, N, p_auto, dists, opt_fun='optim', scale_kappa=1){
+fit_arp_model <- function(mllk, data, theta.star, N, p_auto, dists, opt_fun='optim', scale_kappa=1, zero_inf=FALSE){
   skip = FALSE
   
   if (opt_fun=='optim'){
@@ -37,7 +37,7 @@ fit_arp_model <- function(mllk, data, theta.star, N, p_auto, dists, opt_fun='opt
       # error. We want to be notified that there is an error, but the execution should 
       # not be interrupted (important for for loops that use this function)
       mod <- optim(par=theta.star, fn=mllk, method='L-BFGS-B',
-                   N=N,p_auto=p_auto,x=data, dists=dists, scale_kappa=scale_kappa),
+                   N=N,p_auto=p_auto,x=data, dists=dists, scale_kappa=scale_kappa, zero_inf=zero_inf),
       error=function(e){cat("ERROR: optim() failed. Did you supply autocorrelation parameters = 0?\n
                             Continue to next iteration.\n")
         skip <<- TRUE
@@ -46,7 +46,7 @@ fit_arp_model <- function(mllk, data, theta.star, N, p_auto, dists, opt_fun='opt
   } else if (opt_fun=='nlm'){
     tryCatch(
       mod <- nlm(f=mllk, p=theta.star, iterlim=500,
-                   N=N,p_auto=p_auto,x=data, dists=dists),
+                   N=N,p_auto=p_auto,x=data, dists=dists, scale_kappa=scale_kappa, zero_inf=zero_inf),
       error=function(e){cat("ERROR: nlm() failed.\n
                             Continue to next iteration.\n")
         skip <<- TRUE
@@ -57,7 +57,7 @@ fit_arp_model <- function(mllk, data, theta.star, N, p_auto, dists, opt_fun='opt
     tryCatch(
       mod <- genoud(fn=mllk, nvars=length(theta.star), pop.size=1000, max.generations=100,
                     starting.values = theta.star,
-                    N=N,p_auto=p_auto,
+                    N=N,p_auto=p_auto,scale_kappa=scale_kappa,zero_inf=zero_inf,
                     dists=dists,x=data#,
                     #Domains=matrix(rep(c(-Inf,Inf),length(theta.star)),ncol=2,byrow=T)
                     ),
@@ -108,16 +108,26 @@ fit_arp_model <- function(mllk, data, theta.star, N, p_auto, dists, opt_fun='opt
     }
   }
   
+  counter_auto = 0
   # autocorrelation
   if (any(p_auto>0)){
-    ac <- plogis(mod$par[-c(1:counter)])
+    ac <- plogis(mod$par[counter+1:(sum(p)*N)])
     autocor = list()
-    counter = 0
     for (dist in 1:length(dists)){
       if (p_auto[dist]>0){
-        autocor[[dist]] = ac[counter+1:(p_auto[dist]*N)]
-        counter <- counter+(p_auto[dist]*N)
+        autocor[[dist]] = ac[counter_auto+1:(p_auto[dist]*N)]
+        counter_auto <- counter_auto+(p_auto[dist]*N)
       }
+    }
+  }
+  
+  if (zero_inf){
+    gamma_dists = which(dists=='gamma')
+    zero_inf <- plogis(mod$par[-c(1:(counter+counter_auto))])
+    counter_zero_inf = 0
+    for (dist in gamma_dists){
+      params[[dist]]['zero_inf'] = list(zero_inf[counter_zero_inf+1:N])
+      counter_zero_inf = counter_zero_inf+N
     }
   }
   

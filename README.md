@@ -7,20 +7,12 @@ Thesis code and other things
 
 
 ## ToDo Theory
-- [ ] Literature overview
-
-      - How should I view Markov switching models? Cappe et al (2005) say, Markov switching models are a generalization of HMMs. 
-      - This would make my model a Markov switching model and not an HMM...
-      - HMMs in general -> Origins of HMMs
-      - Markov switching regression 
-      - Markov switching autoregression
-      - HMMs for animal movement data
-      - HMMs for high resolution data (animal movement and other stuff)
-- [ ] Theory of HMMs
-- [ ] Theory of Markov switching (auto-)regression
-- [ ] Model formulation, in general and also in animal movement context
-- [ ] Are there any theoretical results for Markov switching regression with AR(p)? Who has done this in the past?
-- [ ] Model properties: Number of parameters etc.
+- [x] Literature overview
+- [x] Theory of HMMs
+- [x] Theory of Markov switching (auto-)regression
+- [x] Model formulation, in general and also in animal movement context
+- [x] Are there any theoretical results for Markov switching regression with AR(p)? Who has done this in the past?
+- [x] Model properties: Number of parameters etc.
 - [x] Literature source for the constant coefficient of variation (some paper??) $\to$ Location: Implementation of AR(p) in gamma distribution
 
 ## ToDo Simulations
@@ -29,8 +21,9 @@ Thesis code and other things
 - [x] What makes sense for von Mises distribution: Model autocorrelation in $\mu$, $\kappa$ or both? $\to$ $\mu$ should be modeled in any case, $\kappa$ optionally? $\to$ Modeling $\kappa$ does not make much sense at all. How would we incorporate the autocorrelation? We would have to estimate it from past $\kappa$. This seems kind of weird
 - [x] von Mises distribution: Re-think the weighting of parameter $\mu$ (in the calculation of the Likelihood). Project $[-\pi,\pi]$ onto $\mathbb{R}$ and back? $\to$ Think again if this has already been done in ```starize/unstarize```. Otherwise IMPLEMENT $\to$ Implemented in simulation and density calculation
 - [ ] Alternative plots with densities of AR(0), AR(1), AR(2), AR(3) fit for the same data in one plot? IMPLEMENT
-- [ ] Comparison of ACFs of simulated and fitted models IMPLEMENT
-- [ ] Model selection: Visually, AIC, BIC IMPLEMENT
+- [ ] Model selection: AIC, BIC IMPLEMENT
+- [ ] Model evaluation using Pseudo residuals? $\to$ Only if this adds interesting info, otherwise too much
+- [ ] Re-run of everything, before writing :)
 - [x] Re-run of the gamma distribution simulation with 250 runs for updated functions (inclusion of $\sigma$)
 - [x] Simulation with 250 runs for von Mises distribution (only autocorrelation in $\mu$), for AR(1), AR(2), AR(3)
 - [x] Master mllk function for arbitrary distribution(s) $\to$ work in progress, how to distinguish parameters that are called the same in multivariate cases???
@@ -38,22 +31,16 @@ Thesis code and other things
 - [x] Master top to bottom simulation function $\to$ for gamma, von Mises, normal distributions
 - [x] Master simulation loop function $\to$ for gamma, von Mises, normal distributions
 - [x] Simulation for different configurations: Save results and plots
-- [ ] 3D visualization for two-dimensional data IMPLEMENT
 - [ ] Think about additional meaningful research prospects for simulations
 - [x] Faster computation using multiple cores with ```parallel``` package
-- [ ] Re-run simulation with updated data simulation for von Mises distribution
 - [ ] Table for computation speed should display relative speed compared to normal HMM to avoid user bias (absolute values in appendix)
 
 ## ToDo Data Example
-- [ ] Look for appropriate data
-
-      - One dimensional acceleration data $\to$ gamma distribution
-      - Two dimensional step length and turning angle data $\to$ gamma and von Mises distribution
-      - Other more sophisticated features
-- [ ] Apply different AR(p) HMM models and compare models graphically
+- [x] Look for appropriate data
+- [x] Apply different AR(p) HMM models and compare models graphically
 - [ ] Parametric Bootstrap for confidence intervals of the parameters? Would be extremely time consuming. Maybe only for one example? (Technique Re-fit Bootstrap samples that are generated from HMM with MLE parameters, do this a lot of times)
-- [ ] Model selection: Decide on meaningful criteria/methods
-- [ ] Check models with pseudo residuals $\to$ Progress in goodness of fit can be displayed here $\to$ look up how to compute them in source code of moveHMM
+- [x] Model selection: Decide on meaningful criteria/methods
+- [x] Check models with pseudo residuals $\to$ Progress in goodness of fit can be displayed here $\to$ look up how to compute them in source code of moveHMM
 
 ## ToDo At the end
 - [ ] Look through thesis with focus on dimension. Is the bold face for vectors consistently used? Write at the first time it happens that we most often only handle the univariate case

@@ -14,6 +14,7 @@ Thesis code and other things
 - [x] Are there any theoretical results for Markov switching regression with AR(p)? Who has done this in the past?
 - [x] Model properties: Number of parameters etc.
 - [x] Literature source for the constant coefficient of variation (some paper??) $\to$ Location: Implementation of AR(p) in gamma distribution
+- [ ] Better ending for chapter 2, maybe a short summary?
 
 ## ToDo Simulations
 - [x] Look over Viterbi function: How can we make sure that the order of the decoded states match the order of the simulated data? $\to$ Solution: We just check it manually afterwards. Not pretty, but works

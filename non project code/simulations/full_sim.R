@@ -30,7 +30,7 @@ full_sim_00 <- full_sim_loop(
   autocor_sim = 0,#list(matrix(c(0.15,0.3,0.15,0.4),ncol=2,byrow=TRUE),
   #   matrix(c(0.2,0.3,0.2,0.4),ncol=2,byrow=TRUE)),
   estimate_states = TRUE,
-  plot_it = TRUE
+  plot_it = FALSE
 )
 
 #full_sim_00
@@ -39,8 +39,10 @@ full_sim_00 <- full_sim_loop(
 ################################################################################
 
 par(mfrow=c(1,2))
-
 total_begin = Sys.time()
+# delete later: stores computation times
+comps = rep(NA,16)
+c=1
 
 # sim0, fit0
 full_sim_00 <- full_sim_loop(
@@ -63,7 +65,7 @@ full_sim_00 <- full_sim_loop(
   autocor_sim = 0,#list(matrix(c(0.15,0.3,0.15,0.4),ncol=2,byrow=TRUE),
                   #   matrix(c(0.2,0.3,0.2,0.4),ncol=2,byrow=TRUE)),
   estimate_states = TRUE,
-  plot_it = TRUE
+  plot_it = FALSE
 )
 
 #full_sim_00
@@ -91,7 +93,7 @@ full_sim_01 <- full_sim_loop(
   autocor_sim = 0,#list(matrix(c(0.15,0.3,0.15,0.4),ncol=2,byrow=TRUE),
   #   matrix(c(0.2,0.3,0.2,0.4),ncol=2,byrow=TRUE)),
   estimate_states = TRUE,
-  plot_it = TRUE
+  plot_it = FALSE
 )
 
 #full_sim_01
@@ -119,7 +121,7 @@ full_sim_02 <- full_sim_loop(
   autocor_sim = 0,#list(matrix(c(0.15,0.3,0.15,0.4),ncol=2,byrow=TRUE),
   #   matrix(c(0.2,0.3,0.2,0.4),ncol=2,byrow=TRUE)),
   estimate_states = TRUE,
-  plot_it = TRUE
+  plot_it = FALSE
 )
 
 #full_sim_02
@@ -147,7 +149,7 @@ full_sim_03 <- full_sim_loop(
   autocor_sim = 0,#list(matrix(c(0.15,0.3,0.15,0.4),ncol=2,byrow=TRUE),
   #   matrix(c(0.2,0.3,0.2,0.4),ncol=2,byrow=TRUE)),
   estimate_states = TRUE,
-  plot_it = TRUE
+  plot_it = FALSE
 )
 
 #full_sim_03
@@ -175,7 +177,7 @@ full_sim_10 <- full_sim_loop(
   autocor_sim = list(matrix(c(0.45,0.55),ncol=1,byrow=TRUE),
                      matrix(c(0.5,0.6),ncol=1,byrow=TRUE)),
   estimate_states = TRUE,
-  plot_it = TRUE
+  plot_it = FALSE
 )
 
 #full_sim_10
@@ -203,16 +205,12 @@ full_sim_11 <- full_sim_loop(
   autocor_sim = list(matrix(c(0.45,0.55),ncol=1,byrow=TRUE),
                      matrix(c(0.5,0.6),ncol=1,byrow=TRUE)),
   estimate_states = TRUE,
-  plot_it = TRUE
+  plot_it = FALSE
 )
 
 #full_sim_11
 
 ################################################################################
-total_begin = Sys.time()
-# delete later: stores computation times
-comps = rep(NA,10)
-c=1
 
 # sim1, fit2
 t=Sys.time()
@@ -236,7 +234,7 @@ full_sim_12 <- full_sim_loop(
   autocor_sim = list(matrix(c(0.45,0.55),ncol=1,byrow=TRUE),
                      matrix(c(0.5,0.6),ncol=1,byrow=TRUE)),
   estimate_states = TRUE,
-  plot_it = TRUE
+  plot_it = FALSE
 )
 
 comps[c]=Sys.time()-t
@@ -268,7 +266,7 @@ full_sim_13 <- full_sim_loop(
   autocor_sim = list(matrix(c(0.45,0.55),ncol=1,byrow=TRUE),
                      matrix(c(0.5,0.6),ncol=1,byrow=TRUE)),
   estimate_states = TRUE,
-  plot_it = TRUE
+  plot_it = FALSE
 )
 
 comps[c]=Sys.time()-t
@@ -300,7 +298,7 @@ full_sim_20 <- full_sim_loop(
   autocor_sim = list(matrix(c(0.15,0.3,0.15,0.4),ncol=2,byrow=TRUE),
                      matrix(c(0.2,0.3,0.2,0.4),ncol=2,byrow=TRUE)),
   estimate_states = TRUE,
-  plot_it = TRUE
+  plot_it = FALSE
 )
 
 comps[c]=Sys.time()-t
@@ -332,7 +330,7 @@ full_sim_21 <- full_sim_loop(
   autocor_sim = list(matrix(c(0.15,0.3,0.15,0.4),ncol=2,byrow=TRUE),
                      matrix(c(0.2,0.3,0.2,0.4),ncol=2,byrow=TRUE)),
   estimate_states = TRUE,
-  plot_it = TRUE
+  plot_it = FALSE
 )
 
 comps[c]=Sys.time()-t
@@ -364,7 +362,7 @@ full_sim_22 <- full_sim_loop(
   autocor_sim = list(matrix(c(0.15,0.3,0.15,0.4),ncol=2,byrow=TRUE),
                      matrix(c(0.2,0.3,0.2,0.4),ncol=2,byrow=TRUE)),
   estimate_states = TRUE,
-  plot_it = TRUE
+  plot_it = FALSE
 )
 
 comps[c]=Sys.time()-t
@@ -396,7 +394,7 @@ full_sim_23 <- full_sim_loop(
   autocor_sim = list(matrix(c(0.15,0.3,0.15,0.4),ncol=2,byrow=TRUE),
                      matrix(c(0.2,0.3,0.2,0.4),ncol=2,byrow=TRUE)),
   estimate_states = TRUE,
-  plot_it = TRUE
+  plot_it = FALSE
 )
 
 comps[c]=Sys.time()-t
@@ -428,7 +426,7 @@ full_sim_30 <- full_sim_loop(
   autocor_sim = list(matrix(c(0.1,0.1,0.25,0.1,0.1,0.35),ncol=3,byrow=TRUE),
                      matrix(c(0.1,0.1,0.3,0.1,0.1,0.4),ncol=3,byrow=TRUE)),
   estimate_states = TRUE,
-  plot_it = TRUE
+  plot_it = FALSE
 )
 
 comps[c]=Sys.time()-t
@@ -460,7 +458,7 @@ full_sim_31 <- full_sim_loop(
   autocor_sim = list(matrix(c(0.1,0.1,0.25,0.1,0.1,0.35),ncol=3,byrow=TRUE),
                      matrix(c(0.1,0.1,0.3,0.1,0.1,0.4),ncol=3,byrow=TRUE)),
   estimate_states = TRUE,
-  plot_it = TRUE
+  plot_it = FALSE
 )
 
 comps[c]=Sys.time()-t
@@ -492,7 +490,7 @@ full_sim_32 <- full_sim_loop(
   autocor_sim = list(matrix(c(0.1,0.1,0.25,0.1,0.1,0.35),ncol=3,byrow=TRUE),
                      matrix(c(0.1,0.1,0.3,0.1,0.1,0.4),ncol=3,byrow=TRUE)),
   estimate_states = TRUE,
-  plot_it = TRUE
+  plot_it = FALSE
 )
 
 #full_sim_32
@@ -521,7 +519,7 @@ full_sim_33 <- full_sim_loop(
   autocor_sim = list(matrix(c(0.1,0.1,0.25,0.1,0.1,0.35),ncol=3,byrow=TRUE),
                      matrix(c(0.1,0.1,0.3,0.1,0.1,0.4),ncol=3,byrow=TRUE)),
   estimate_states = TRUE,
-  plot_it = TRUE
+  plot_it = FALSE
 )
 
 comps[c]=Sys.time()-t

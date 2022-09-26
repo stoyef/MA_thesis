@@ -111,7 +111,7 @@ fit_arp_model <- function(mllk, data, theta.star, N, p_auto, dists, opt_fun='opt
   counter_auto = 0
   # autocorrelation
   if (any(p_auto>0)){
-    ac <- plogis(mod$par[counter+1:(sum(p)*N)])
+    ac <- plogis(mod$par[counter+1:(sum(p_auto)*N)])
     autocor = list()
     for (dist in 1:length(dists)){
       if (p_auto[dist]>0){
@@ -131,13 +131,17 @@ fit_arp_model <- function(mllk, data, theta.star, N, p_auto, dists, opt_fun='opt
     }
   }
   
+  # AIC & BIC (mod$value is already negative log-likelihood)
+  aic = 2*mod$value + 2*length(theta.star)
+  bic = 2*mod$value + log(dim(data)[1])*length(theta.star)
+  
   # create return object
   if (any(p_auto>0)){
-    ret <- list(mod$value, Gamma, delta, params, autocor)
-    names(ret) <- c('mllk_optim', 'Gamma', 'delta', 'params', 'autocorrelation')
+    ret <- list(mod$value, Gamma, delta, params, autocor, aic, bic)
+    names(ret) <- c('mllk_optim', 'Gamma', 'delta', 'params', 'autocorrelation', 'AIC', 'BIC')
   } else{
-    ret <- list(mod$value, Gamma, delta, params)
-    names(ret) <- c('mllk_optim', 'Gamma', 'delta', 'params')
+    ret <- list(mod$value, Gamma, delta, params, aic, bic)
+    names(ret) <- c('mllk_optim', 'Gamma', 'delta', 'params', 'AIC', 'BIC')
   }
   return(ret)
 }

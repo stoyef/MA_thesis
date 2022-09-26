@@ -225,20 +225,32 @@ boxplot_sim_params <- function(gamma_mu, gamma_sigma, vm_mu, vm_kappa, gamma_aut
   }
   
   # boxplot gamma_mu
-  boxplot(x=gamma_mu, xlab=expression(mu), cex.lab=2,xaxt='n',cex.axis=1.5)
+  boxplot(x=gamma_mu, xlab=expression(mu), cex.lab=2,xaxt='n',cex.axis=1.5,
+          pch=19, ylim=c(min(min(true_values[1:nstates]),min(gamma_mu)),
+                         max(max(true_values[1:nstates]),max(gamma_mu))
+                        )
+          )
   axis(1, at=1:nstates, labels=rep("",nstates))
   mtext(c(expression(mu[1]),expression(mu[2])),side=1,at=1:nstates,line=1.25,cex=1.5)
   abline(h=true_values[1:nstates],col=2,lwd=2)
   
   # boxplot gamma_sigma
-  boxplot(x=gamma_sigma, xlab=expression(sigma), cex.lab=2,xaxt='n',cex.axis=1.5)
+  boxplot(x=gamma_sigma, xlab=expression(sigma), cex.lab=2,xaxt='n',cex.axis=1.5,
+          pch=19, ylim=c(min(min(true_values[nstates+1:nstates]),min(gamma_sigma)),
+                          max(max(true_values[nstates+1:nstates]),max(gamma_sigma))
+          ))
   axis(1, at=1:nstates, labels=rep("",nstates))
   mtext(c(expression(sigma[1]),expression(sigma[2])),side=1,at=1:nstates,line=1.25,cex=1.5)
   abline(h=true_values[nstates+1:nstates],col=2,lwd=2)
+  #text = c('true parameters')
+  #legend('bottomleft',text,col=2,lwd=2,lty=1,#bty='n',
+  #       xpd='NA',inset=c(-0.35,-0.5),
+  #       text.width = 1.05*strwidth(text))
   
   # boxplot gamma_auto
   if (length(true_values)>(4*nstates)){
-    boxplot(gamma_auto,xlab=expression(phi),cex.lab=2,cex.axis=1.5,ylim=c(0,1),xaxt='n')
+    boxplot(gamma_auto,xlab=expression(phi),cex.lab=2,cex.axis=1.5,ylim=c(0,1),xaxt='n',
+            pch=19)
     axis(1, at=1:((length(true_values)-4*nstates)/2), labels=rep("",(length(true_values)-4*nstates)/2))
     if ((length(true_values)-4*nstates)/(nstates*2) == 1){ # AR(1)
       mtext(c(expression(phi["1"]),expression(phi["2"])),
@@ -259,20 +271,27 @@ boxplot_sim_params <- function(gamma_mu, gamma_sigma, vm_mu, vm_kappa, gamma_aut
   title("Estimated parameters of gamma distribution",outer=TRUE,line=-2,cex.main=2)
   
   # boxplot vm_mu
-  boxplot(x=vm_mu, xlab=expression(mu), cex.lab=2,xaxt='n',cex.axis=1.5)
+  boxplot(x=vm_mu, xlab=expression(mu), cex.lab=2,xaxt='n',cex.axis=1.5,
+          pch=19, ylim=c(min(min(true_values[2*nstates+1:nstates]),min(vm_mu)),
+                         max(max(true_values[2*nstates+1:nstates]),max(vm_mu))
+          ))
   axis(1, at=1:nstates, labels=rep("",nstates))
   mtext(c(expression(mu[1]),expression(mu[2])),side=1,at=1:nstates,line=1.25,cex=1.5)
   abline(h=true_values[2*nstates+1:nstates],col=2,lwd=2)
   
   # boxplot vm_kappa
-  boxplot(x=vm_kappa, xlab=expression(kappa), cex.lab=2,xaxt='n',cex.axis=1.5)
+  boxplot(x=vm_kappa, xlab=expression(kappa), cex.lab=2,xaxt='n',cex.axis=1.5,
+          pch=19, ylim=c(min(min(true_values[3*nstates+1:nstates]),min(vm_kappa)),
+                         max(max(true_values[3*nstates+1:nstates]),max(vm_kappa))
+          ))
   axis(1, at=1:nstates, labels=rep("",nstates))
   mtext(c(expression(kappa[1]),expression(kappa[2])),side=1,at=1:nstates,line=1.25,cex=1.5)
   abline(h=true_values[3*nstates+1:nstates],col=2,lwd=2)
   
   # boxplot vm_auto
   if (length(true_values)>(4*nstates)){
-    boxplot(vm_auto,xlab=expression(phi),cex.lab=2,cex.axis=1.5,ylim=c(0,1),xaxt='n')
+    boxplot(vm_auto,xlab=expression(phi),cex.lab=2,cex.axis=1.5,ylim=c(0,1),xaxt='n',
+            pch=19)
     axis(1, at=1:((length(true_values)-4*nstates)/2), labels=rep("",(length(true_values)-4*nstates)/2))
     if ((length(true_values)-4*nstates)/(nstates*2) == 1){ # AR(1)
       mtext(c(expression(phi["1"]),expression(phi["2"])),

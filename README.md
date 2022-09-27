@@ -46,6 +46,7 @@ Thesis code and other things
 ## ToDo At the end
 - [ ] Look through thesis with focus on dimension. Is the bold face for vectors consistently used? Write at the first time it happens that we most often only handle the univariate case
 - [ ] Hut über alle geschätzten Parameter
+- [ ] autoregressIVE parameters
 
 ## Future prospects
 

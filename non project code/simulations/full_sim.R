@@ -10,6 +10,7 @@ library(MasterThesis)
 ## takes a couple of hours to compute, see printed output
 
 # sim0, fit0
+t=Sys.time()
 full_sim_00 <- full_sim_loop(
   simulation = ar_simulation,
   n_runs = 250,
@@ -45,6 +46,7 @@ comps = rep(NA,16)
 c=1
 
 # sim0, fit0
+t=Sys.time()
 full_sim_00 <- full_sim_loop(
   simulation = ar_simulation,
   n_runs = 250,
@@ -68,11 +70,15 @@ full_sim_00 <- full_sim_loop(
   plot_it = FALSE
 )
 
+comps[c]=Sys.time()-t
+c=c+1
+
 #full_sim_00
 
 ################################################################################
 
 # sim0, fit1
+t=Sys.time()
 full_sim_01 <- full_sim_loop(
   simulation = ar_simulation,
   n_runs = 250,
@@ -96,11 +102,15 @@ full_sim_01 <- full_sim_loop(
   plot_it = FALSE
 )
 
+comps[c]=Sys.time()-t
+c=c+1
+
 #full_sim_01
 
 ################################################################################
 
 # sim0, fit2
+t=Sys.time()
 full_sim_02 <- full_sim_loop(
   simulation = ar_simulation,
   n_runs = 250,
@@ -124,11 +134,15 @@ full_sim_02 <- full_sim_loop(
   plot_it = FALSE
 )
 
+comps[c]=Sys.time()-t
+c=c+1
+
 #full_sim_02
 
 ################################################################################
 
 # sim0, fit3
+t=Sys.time()
 full_sim_03 <- full_sim_loop(
   simulation = ar_simulation,
   n_runs = 250,
@@ -152,11 +166,15 @@ full_sim_03 <- full_sim_loop(
   plot_it = FALSE
 )
 
+comps[c]=Sys.time()-t
+c=c+1
+
 #full_sim_03
 
 ################################################################################
 
 # sim1, fit0
+t=Sys.time()
 full_sim_10 <- full_sim_loop(
   simulation = ar_simulation,
   n_runs = 250,
@@ -180,11 +198,15 @@ full_sim_10 <- full_sim_loop(
   plot_it = FALSE
 )
 
+comps[c]=Sys.time()-t
+c=c+1
+
 #full_sim_10
 
 ################################################################################
 
 # sim1, fit1
+t=Sys.time()
 full_sim_11 <- full_sim_loop(
   simulation = ar_simulation,
   n_runs = 250,
@@ -207,6 +229,9 @@ full_sim_11 <- full_sim_loop(
   estimate_states = TRUE,
   plot_it = FALSE
 )
+
+comps[c]=Sys.time()-t
+c=c+1
 
 #full_sim_11
 

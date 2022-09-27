@@ -125,8 +125,38 @@ legend('topright',
        col=pal,
        lwd=2,bty='n')
 
+# circular visualization of von Mises distribution
+par(mfrow=c(1,1))
+pal=brewer.pal(4,'Dark2')
+vm_sample=sample_arp(2000,delta=c(0.5,0.5),
+                     Gamma=matrix(c(0.9,0.1,0.1,0.9),nrow=2),
+                     N=2,
+                     params=c(0,0,2,12),
+                     autocor=list(matrix(c(0.5,0.6),nrow=2)),
+                     p=c(1),
+                     dists=c('vm'))
+circ_vm_viz(mu=c(0,0),kappa=c(2,12), delta=c(0.5,0.5), data=vm_sample$data, 
+            sum_dist=T, leg=T)
+
+hist(vm_sample$data,breaks=20,main='',xlab='turning angle', prob=T,
+     xlim=c(-pi,pi),ylim=c(0,0.95))
+curve(0.5*dvm(x,mu=0, kappa=2),col=pal[1],lwd=1.5,add=T,
+      from=-pi,to=pi,n=1000)
+curve(0.5*dvm(x,mu=0, kappa=12),col=pal[2],lwd=1.5,add=T,
+      from=-pi,to=pi,n=1000)
+curve(0.5*dvm(x,mu=0, kappa=2)+
+        0.5*dvm(x,mu=0, kappa=12), col=pal[3],lwd=1.5,add=T,
+      from=-pi,to=pi,n=1000)
+legend('topright',c('state 1', 'state 2', 'marginal'),bty='n',
+       col=pal[1:3], lty=1, ,lwd=1.5, inset=c(0.1,0.1))#, xpd='NA',inset=c(-0.45,0))
+
+
 ## Chapter 4 - Case Study 1
 
+# see file
+
 ## Chapter 5 - Case Study 2
+
+# see file
 
 ## Chapter 6 - Conclusion

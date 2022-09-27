@@ -65,12 +65,12 @@ circ_vm_viz(mu=c(0,2),kappa=c(5,12))
 circ_vm_viz(mu=c(0,2),kappa=c(5,12), data=rvm(1000, 0+pi, 5)-pi)
 circ_vm_viz(mu=c(0,2),kappa=c(5,12), data=rvm(1000, 0+pi, 5)-pi, leg=TRUE)
 
-# now, for out case
+# now, for our case
 vm_sample=sample_arp(2000,delta=c(0.5,0.5),
                      Gamma=matrix(c(0.9,0.1,0.1,0.9),nrow=2),
                      N=2,
                      params=c(0,0,2,12),
-                     autocor=list(matrix(c(0.45,0.55),nrow=2)),
+                     autocor=list(matrix(c(0.5,0.6),nrow=2)),
                      p=c(1),
                      dists=c('vm'))
 circ_vm_viz(mu=c(0,0),kappa=c(2,12), delta=c(0.5,0.5), data=vm_sample$data, 

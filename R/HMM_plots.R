@@ -404,12 +404,12 @@ circ_vm_viz <- function(mu, kappa, delta=1, data=NULL, sum_dist=FALSE, leg=FALSE
   if (leg){
     if (sum_dist){
       legend('topright',
-             c(paste('state',1:number_dists),'marginal', 'KDE'),
+             c(paste('State',1:number_dists),'Marginal', 'KDE'),
              lwd=1.5,bty='n',
              col=cols)
     } else{
       legend('topright',
-             c(paste('state',1:number_dists),'sampled data'),
+             c(paste('State',1:number_dists),'Sampled data'),
              lwd=1.5,bty='n',
              col=cols)
     }

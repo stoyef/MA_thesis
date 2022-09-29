@@ -548,9 +548,9 @@ write.table(comps,
             col.names=FALSE, sep=",")
 
 
-mod=full_sim_00
+mod=full_sim_33
 # find rows where state 1 and 2 are swapped and swap back
-swap = which(mod$estimated_parameters$estimated_1_param_1[,1] > 32.5 & mod$estimated_parameters$estimated_1_param_1[,1] < 37.5 & mod$estimated_parameters$estimated_1_param_1[,2] > 12.5 & mod$estimated_parameters$estimated_1_param_1[,2] < 17.5)
+swap = which(mod$estimated_parameters$estimated_1_param_1[,1] > 32.5 & mod$estimated_parameters$estimated_1_param_1[,1] < 37.5 & mod$estimated_parameters$estimated_1_param_1[,2] > 22.5 & mod$estimated_parameters$estimated_1_param_1[,2] < 27.5)
 for (row in swap){
   hold = mod$estimated_parameters$estimated_1_param_1[row,1]
   mod$estimated_parameters$estimated_1_param_1[row,1]=mod$estimated_parameters$estimated_1_param_1[row,2]
@@ -564,17 +564,19 @@ for (row in swap){
   mod$estimated_parameters$estimated_2_param_1[row,1]=mod$estimated_parameters$estimated_2_param_1[row,2]
   mod$estimated_parameters$estimated_2_param_1[row,2]=hold
   
-  hold = mod$estimated_parameters$estimated_2_param_2[row,1]
-  mod$estimated_parameters$estimated_2_param_2[row,1]=mod$estimated_parameters$estimated_2_param_2[row,2]
-  mod$estimated_parameters$estimated_2_param_2[row,2]=hold
-  
-  hold = mod$estimated_autocorrelation$estimated_1_autocor[row,1]
-  mod$estimated_autocorrelation$estimated_1_autocor[row,1]=mod$estimated_autocorrelation$estimated_1_autocor[row,2]
-  mod$estimated_autocorrelation$estimated_1_autocor[row,2]=hold
-  
-  hold = mod$estimated_autocorrelation$estimated_2_autocor[row,1]
-  mod$estimated_autocorrelation$estimated_2_autocor[row,1]=mod$estimated_autocorrelation$estimated_2_autocor[row,2]
-  mod$estimated_autocorrelation$estimated_2_autocor[row,2]=hold
+  if (dim(mod$estimated_autocorrelation$estimated_1_autocor)[2]>0){
+    hold = mod$estimated_parameters$estimated_2_param_2[row,1]
+    mod$estimated_parameters$estimated_2_param_2[row,1]=mod$estimated_parameters$estimated_2_param_2[row,2]
+    mod$estimated_parameters$estimated_2_param_2[row,2]=hold
+    
+    hold = mod$estimated_autocorrelation$estimated_1_autocor[row,1]
+    mod$estimated_autocorrelation$estimated_1_autocor[row,1]=mod$estimated_autocorrelation$estimated_1_autocor[row,2]
+    mod$estimated_autocorrelation$estimated_1_autocor[row,2]=hold
+    
+    hold = mod$estimated_autocorrelation$estimated_2_autocor[row,1]
+    mod$estimated_autocorrelation$estimated_2_autocor[row,1]=mod$estimated_autocorrelation$estimated_2_autocor[row,2]
+    mod$estimated_autocorrelation$estimated_2_autocor[row,2]=hold
+  }
   
   mod$decoding_accuracies[row] = 1-mod$decoding_accuracies[row]
 }
@@ -587,28 +589,28 @@ not_global
 # change filenames according to simulation
 write.table(data.frame(c(length(not_global),250-length(not_global)),
                        row.names = c('global optimum not reached','global optimum reached')), 
-            "/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation_results_closer/full_sim_00/sim_stats.csv",
+            "/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation_results_closer/full_sim_33/sim_stats.csv",
             col.names=FALSE, sep=",")
 write.table(mod$estimated_parameters$estimated_1_param_1, 
-            "/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation_results_closer/full_sim_00/estimated_gamma_mu.csv",
+            "/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation_results_closer/full_sim_33/estimated_gamma_mu.csv",
             col.names=FALSE, sep=",")
 write.table(mod$estimated_parameters$estimated_1_param_2, 
-            "/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation_results_closer/full_sim_00/estimated_gamma_sigma.csv",
+            "/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation_results_closer/full_sim_33/estimated_gamma_sigma.csv",
             col.names=FALSE, sep=",")
 write.table(mod$estimated_parameters$estimated_2_param_1, 
-            "/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation_results_closer/full_sim_00/estimated_vm_mu.csv",
+            "/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation_results_closer/full_sim_33/estimated_vm_mu.csv",
             col.names=FALSE, sep=",")
 write.table(mod$estimated_parameters$estimated_2_param_2, 
-            "/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation_results_closer/full_sim_00/estimated_vm_kappa.csv",
+            "/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation_results_closer/full_sim_33/estimated_vm_kappa.csv",
             col.names=FALSE, sep=",")
 write.table(mod$estimated_autocorrelation$estimated_1_autocor, 
-            "/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation_results_closer/full_sim_00/estimated_autocor_gamma.csv",
+            "/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation_results_closer/full_sim_33/estimated_autocor_gamma.csv",
             col.names=FALSE, sep=",")
 write.table(mod$estimated_autocorrelation$estimated_2_autocor, 
-            "/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation_results_closer/full_sim_00/estimated_autocor_vm.csv",
+            "/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation_results_closer/full_sim_33/estimated_autocor_vm.csv",
             col.names=FALSE, sep=",")
 write.table(mod$decoding_accuracies, 
-            "/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation_results_closer/full_sim_00/decoding_accuracies.csv",
+            "/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation_results_closer/full_sim_33/decoding_accuracies.csv",
             col.names=FALSE, sep=",")
 
 

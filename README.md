@@ -1,9 +1,13 @@
 # Master Thesis
-Thesis code and other things
+Thesis code (structured as an R-package). Additional code to generate simulations, data applications and additional tests are located in \link{non project code}
 
-- Simulation of HMMs with AR(p)-structure in state-dependent process
-- Application to real data
-- Hopefully much more soon
+Functionalities include:
+- Computation of AR(p)-HMM likelihood
+- Fitting AR(p)-HMMs
+- Global decoding
+- Pseudo residuals
+- Simulation of data from AR(p)-HMMs
+- Applications to real data
 
 
 ## ToDo Theory

@@ -1,5 +1,5 @@
 # Master Thesis
-Thesis code (structured as an R-package). Additional code to generate simulations, data applications and additional tests are located in [non project code](/non project code)
+Thesis code (structured as an R-package). Additional code to generate simulations, data applications and additional tests are located in [non project code](/non project code/)
 
 Functionalities include:
 - Computation of AR(p)-HMM likelihood

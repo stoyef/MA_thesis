@@ -2,21 +2,21 @@
 # Read in saved simulation statistics and evaluate
 
 read_in_sim_data <- function(simfit){ # simfit is a string: 00,01 etc
-  sim_stats = read.table(paste("/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation_results_closer/full_sim_",simfit,"/sim_stats.csv",sep=""),
+  sim_stats = read.table(paste("/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation_results_25_30/full_sim_",simfit,"/sim_stats.csv",sep=""),
                     row.names = 1,sep=",")
-  estimated_gamma_mu = read.table(paste("/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation_results_closer/full_sim_",simfit,"/estimated_gamma_mu.csv",sep=""),
+  estimated_gamma_mu = read.table(paste("/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation_results_25_30/full_sim_",simfit,"/estimated_gamma_mu.csv",sep=""),
                                   row.names=1, sep=",")
-  estimated_gamma_sigma = read.table(paste("/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation_results_closer/full_sim_",simfit,"/estimated_gamma_sigma.csv",sep=""),
+  estimated_gamma_sigma = read.table(paste("/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation_results_25_30/full_sim_",simfit,"/estimated_gamma_sigma.csv",sep=""),
                                      row.names=1, sep=",")
-  estimated_vm_mu = read.table(paste("/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation_results_closer/full_sim_",simfit,"/estimated_vm_mu.csv",sep=""),
+  estimated_vm_mu = read.table(paste("/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation_results_25_30/full_sim_",simfit,"/estimated_vm_mu.csv",sep=""),
                                row.names=1, sep=",")
-  estimated_vm_kappa = read.table(paste("/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation_results_closer/full_sim_",simfit,"/estimated_vm_kappa.csv",sep=""),
+  estimated_vm_kappa = read.table(paste("/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation_results_25_30/full_sim_",simfit,"/estimated_vm_kappa.csv",sep=""),
                                   row.names=1, sep=",")
-  estimated_autocor_gamma = read.table(paste("/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation_results_closer/full_sim_",simfit,"/estimated_autocor_gamma.csv",sep=""),
+  estimated_autocor_gamma = read.table(paste("/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation_results_25_30/full_sim_",simfit,"/estimated_autocor_gamma.csv",sep=""),
                                        row.names=1, sep=",")
-  estimated_autocor_vm = read.table(paste("/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation_results_closer/full_sim_",simfit,"/estimated_autocor_vm.csv",sep=""),
+  estimated_autocor_vm = read.table(paste("/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation_results_25_30/full_sim_",simfit,"/estimated_autocor_vm.csv",sep=""),
                                     row.names=1, sep=",")
-  decoding_accuracies = read.table(paste("/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation_results_closer/full_sim_",simfit,"/decoding_accuracies.csv",sep=""),
+  decoding_accuracies = read.table(paste("/Users/stoye/sciebo/Studium/31-M-Thesis Master's Thesis/simulation_results_25_30/full_sim_",simfit,"/decoding_accuracies.csv",sep=""),
                     row.names=1, sep=",")
   
   ret = list(
@@ -147,7 +147,7 @@ boxplot(c(sim_res_00$decoding_accuracies, sim_res_01$decoding_accuracies,
           sim_res_02$decoding_accuracies, sim_res_03$decoding_accuracies),ylab="accuracy", 
         main="Simulated: AR(0,0) HMM",
         bty="n",
-        ylim=c(0.75,1),xaxt='n',xlab='fitted model',
+        ylim=c(0.6,1),xaxt='n',xlab='fitted model',
         pch=19)
 axis(1, at=c(1,2,3,4), labels=c("","","",""))
 mtext(c("AR(0,0)","AR(1,1)","AR(2,2)","AR(3,3)"),side=1,at=c(1,2,3,4),line=1,cex=1)
@@ -155,7 +155,7 @@ boxplot(c(sim_res_10$decoding_accuracies, sim_res_11$decoding_accuracies,
           sim_res_12$decoding_accuracies, sim_res_13$decoding_accuracies),ylab="accuracy", 
         main="Simulated: AR(1,1) HMM",
         bty="n",
-        ylim=c(0.75,1),xaxt='n',xlab='fitted model',
+        ylim=c(0.6,1),xaxt='n',xlab='fitted model',
         pch=19)
 axis(1, at=c(1,2,3,4), labels=c("","","",""))
 mtext(c("AR(0,0)","AR(1,1)","AR(2,2)","AR(3,3)"),side=1,at=c(1,2,3,4),line=1,cex=1)
@@ -163,7 +163,7 @@ boxplot(c(sim_res_20$decoding_accuracies, sim_res_21$decoding_accuracies,
           sim_res_22$decoding_accuracies, sim_res_23$decoding_accuracies),ylab="accuracy", 
         main="Simulated: AR(2,2) HMM",
         bty="n",
-        ylim=c(0.75,1),xaxt='n',xlab='fitted model',
+        ylim=c(0.6,1),xaxt='n',xlab='fitted model',
         pch=19)
 axis(1, at=c(1,2,3,4), labels=c("","","",""))
 mtext(c("AR(0,0)","AR(1,1)","AR(2,2)","AR(3,3)"),side=1,at=c(1,2,3,4),line=1,cex=1)
@@ -171,7 +171,7 @@ boxplot(c(sim_res_30$decoding_accuracies, sim_res_31$decoding_accuracies,
           sim_res_32$decoding_accuracies, sim_res_33$decoding_accuracies),ylab="accuracy", 
         main="Simulated: AR(3,3) HMM",
         bty="n",
-        ylim=c(0.75,1),xaxt='n',xlab='fitted model',
+        ylim=c(0.6,1),xaxt='n',xlab='fitted model',
         pch=19)
 axis(1, at=c(1,2,3,4), labels=c("","","",""))
 mtext(c("AR(0,0)","AR(1,1)","AR(2,2)","AR(3,3)"),side=1,at=c(1,2,3,4),line=1,cex=1)

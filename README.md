@@ -50,6 +50,7 @@ Functionalities include:
 ## ToDo At the end
 - [ ] Look through thesis with focus on dimension. Is the bold face for vectors consistently used? Write at the first time it happens that we most often only handle the univariate case
 - [ ] Make vertical margins between two plots smaller so that they do not take so much space 
+- [ ] type = 'b' mit grauen Linien und farbigen Punkten bei allen Zeitreihen
 - [ ] Hut über alle geschätzten Parameter
 - [ ] autoregressIVE parameters
 - [ ] Abstract?!?

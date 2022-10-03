@@ -556,7 +556,7 @@ write.table(comps,
             col.names=FALSE, sep=",")
 
 
-mod=full_sim_00
+mod=full_sim_33
 # find rows where state 1 and 2 are swapped and swap back
 swap = which(mod$estimated_parameters$estimated_1_param_1[,1] > 37.5 & mod$estimated_parameters$estimated_1_param_1[,1] < 42.5 & mod$estimated_parameters$estimated_1_param_1[,2] > 17.5 & mod$estimated_parameters$estimated_1_param_1[,2] < 22.5)
 for (row in swap){

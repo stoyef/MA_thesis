@@ -75,7 +75,8 @@ full_sim_00 <- full_sim_loop(
   #   matrix(c(0.2,0.3,0.2,0.4),ncol=2,byrow=TRUE)),
   estimate_states = TRUE,
   plot_it = FALSE,
-  multicore = TRUE
+  multicore = TRUE,
+  extract_aic_bic = TRUE
 )
 
 comps[c]=Sys.time()-t
@@ -108,7 +109,8 @@ full_sim_01 <- full_sim_loop(
   #   matrix(c(0.2,0.3,0.2,0.4),ncol=2,byrow=TRUE)),
   estimate_states = TRUE,
   plot_it = FALSE,
-  multicore = TRUE
+  multicore = TRUE,
+  extract_aic_bic = TRUE
 )
 
 comps[c]=Sys.time()-t
@@ -141,7 +143,8 @@ full_sim_02 <- full_sim_loop(
   #   matrix(c(0.2,0.3,0.2,0.4),ncol=2,byrow=TRUE)),
   estimate_states = TRUE,
   plot_it = FALSE,
-  multicore = TRUE
+  multicore = TRUE,
+  extract_aic_bic = TRUE
 )
 
 comps[c]=Sys.time()-t
@@ -174,7 +177,8 @@ full_sim_03 <- full_sim_loop(
   #   matrix(c(0.2,0.3,0.2,0.4),ncol=2,byrow=TRUE)),
   estimate_states = TRUE,
   plot_it = FALSE,
-  multicore = TRUE
+  multicore = TRUE,
+  extract_aic_bic = TRUE
 )
 
 comps[c]=Sys.time()-t
@@ -207,7 +211,8 @@ full_sim_10 <- full_sim_loop(
                      matrix(c(0.5,0.6),ncol=1,byrow=TRUE)),
   estimate_states = TRUE,
   plot_it = FALSE,
-  multicore = TRUE
+  multicore = TRUE,
+  extract_aic_bic = TRUE
 )
 
 comps[c]=Sys.time()-t
@@ -240,7 +245,8 @@ full_sim_11 <- full_sim_loop(
                      matrix(c(0.5,0.6),ncol=1,byrow=TRUE)),
   estimate_states = TRUE,
   plot_it = FALSE,
-  multicore = TRUE
+  multicore = TRUE,
+  extract_aic_bic = TRUE
 )
 
 comps[c]=Sys.time()-t
@@ -273,7 +279,8 @@ full_sim_12 <- full_sim_loop(
                      matrix(c(0.5,0.6),ncol=1,byrow=TRUE)),
   estimate_states = TRUE,
   plot_it = FALSE,
-  multicore = TRUE
+  multicore = TRUE,
+  extract_aic_bic = TRUE
 )
 
 comps[c]=Sys.time()-t
@@ -306,7 +313,8 @@ full_sim_13 <- full_sim_loop(
                      matrix(c(0.5,0.6),ncol=1,byrow=TRUE)),
   estimate_states = TRUE,
   plot_it = FALSE,
-  multicore = TRUE
+  multicore = TRUE,
+  extract_aic_bic = TRUE
 )
 
 comps[c]=Sys.time()-t
@@ -339,7 +347,8 @@ full_sim_20 <- full_sim_loop(
                      matrix(c(0.2,0.3,0.2,0.4),ncol=2,byrow=TRUE)),
   estimate_states = TRUE,
   plot_it = FALSE,
-  multicore = TRUE
+  multicore = TRUE,
+  extract_aic_bic = TRUE
 )
 
 comps[c]=Sys.time()-t
@@ -372,7 +381,8 @@ full_sim_21 <- full_sim_loop(
                      matrix(c(0.2,0.3,0.2,0.4),ncol=2,byrow=TRUE)),
   estimate_states = TRUE,
   plot_it = FALSE,
-  multicore = TRUE
+  multicore = TRUE,
+  extract_aic_bic = TRUE
 )
 
 comps[c]=Sys.time()-t
@@ -405,7 +415,8 @@ full_sim_22 <- full_sim_loop(
                      matrix(c(0.2,0.3,0.2,0.4),ncol=2,byrow=TRUE)),
   estimate_states = TRUE,
   plot_it = FALSE,
-  multicore = TRUE
+  multicore = TRUE,
+  extract_aic_bic = TRUE
 )
 
 comps[c]=Sys.time()-t
@@ -438,7 +449,8 @@ full_sim_23 <- full_sim_loop(
                      matrix(c(0.2,0.3,0.2,0.4),ncol=2,byrow=TRUE)),
   estimate_states = TRUE,
   plot_it = FALSE,
-  multicore = TRUE
+  multicore = TRUE,
+  extract_aic_bic = TRUE
 )
 
 comps[c]=Sys.time()-t
@@ -471,7 +483,8 @@ full_sim_30 <- full_sim_loop(
                      matrix(c(0.1,0.1,0.3,0.1,0.1,0.4),ncol=3,byrow=TRUE)),
   estimate_states = TRUE,
   plot_it = FALSE,
-  multicore = TRUE
+  multicore = TRUE,
+  extract_aic_bic = TRUE
 )
 
 comps[c]=Sys.time()-t
@@ -504,7 +517,8 @@ full_sim_31 <- full_sim_loop(
                      matrix(c(0.1,0.1,0.3,0.1,0.1,0.4),ncol=3,byrow=TRUE)),
   estimate_states = TRUE,
   plot_it = FALSE,
-  multicore = TRUE
+  multicore = TRUE,
+  extract_aic_bic = TRUE
 )
 
 comps[c]=Sys.time()-t
@@ -537,7 +551,8 @@ full_sim_32 <- full_sim_loop(
                      matrix(c(0.1,0.1,0.3,0.1,0.1,0.4),ncol=3,byrow=TRUE)),
   estimate_states = TRUE,
   plot_it = FALSE,
-  multicore = TRUE
+  multicore = TRUE,
+  extract_aic_bic = TRUE
 )
 
 comps[c]=Sys.time()-t
@@ -570,7 +585,8 @@ full_sim_33 <- full_sim_loop(
                      matrix(c(0.1,0.1,0.3,0.1,0.1,0.4),ncol=3,byrow=TRUE)),
   estimate_states = TRUE,
   plot_it = FALSE,
-  multicore = TRUE
+  multicore = TRUE,
+  extract_aic_bic = TRUE
 )
 
 comps[c]=Sys.time()-t
@@ -651,6 +667,40 @@ write.table(mod$decoding_accuracies,
 
 
 
+### Model selection (AIC and BIC) (Table in 3.4.2)
+median(sort(full_sim_00$AIC)[1:5])
+median(sort(full_sim_01$AIC)[1:5])
+median(sort(full_sim_02$AIC)[1:5])
+median(sort(full_sim_03$AIC)[1:5])
+median(sort(full_sim_10$AIC)[1:5])
+median(sort(full_sim_11$AIC)[1:5])
+median(sort(full_sim_12$AIC)[1:5])
+median(sort(full_sim_13$AIC)[1:5])
+median(sort(full_sim_20$AIC)[1:5])
+median(sort(full_sim_21$AIC)[1:5])
+median(sort(full_sim_22$AIC)[1:5])
+median(sort(full_sim_23$AIC)[1:5])
+median(sort(full_sim_30$AIC)[1:5])
+median(sort(full_sim_31$AIC)[1:5])
+median(sort(full_sim_32$AIC)[1:5])
+median(sort(full_sim_33$AIC)[1:5])
+
+median(sort(full_sim_00$BIC)[1:5])
+median(sort(full_sim_01$BIC)[1:5])
+median(sort(full_sim_02$BIC)[1:5])
+median(sort(full_sim_03$BIC)[1:5])
+median(sort(full_sim_10$BIC)[1:5])
+median(sort(full_sim_11$BIC)[1:5])
+median(sort(full_sim_12$BIC)[1:5])
+median(sort(full_sim_13$BIC)[1:5])
+median(sort(full_sim_20$BIC)[1:5])
+median(sort(full_sim_21$BIC)[1:5])
+median(sort(full_sim_22$BIC)[1:5])
+median(sort(full_sim_23$BIC)[1:5])
+median(sort(full_sim_30$BIC)[1:5])
+median(sort(full_sim_31$BIC)[1:5])
+median(sort(full_sim_32$BIC)[1:5])
+median(sort(full_sim_33$BIC)[1:5])
 
 
 

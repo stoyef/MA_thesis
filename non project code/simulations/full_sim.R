@@ -31,7 +31,8 @@ full_sim_00 <- full_sim_loop(
   autocor_sim = 0,#list(matrix(c(0.15,0.3,0.15,0.4),ncol=2,byrow=TRUE),
   #   matrix(c(0.2,0.3,0.2,0.4),ncol=2,byrow=TRUE)),
   estimate_states = TRUE,
-  plot_it = FALSE
+  plot_it = FALSE,
+  extract_aic_bic = TRUE
 )
 
 #full_sim_00
@@ -67,7 +68,8 @@ full_sim_00 <- full_sim_loop(
   autocor_sim = 0,#list(matrix(c(0.15,0.3,0.15,0.4),ncol=2,byrow=TRUE),
                   #   matrix(c(0.2,0.3,0.2,0.4),ncol=2,byrow=TRUE)),
   estimate_states = TRUE,
-  plot_it = FALSE
+  plot_it = FALSE,
+  extract_aic_bic = TRUE
 )
 
 comps[c]=Sys.time()-t
@@ -99,7 +101,8 @@ full_sim_01 <- full_sim_loop(
   autocor_sim = 0,#list(matrix(c(0.15,0.3,0.15,0.4),ncol=2,byrow=TRUE),
   #   matrix(c(0.2,0.3,0.2,0.4),ncol=2,byrow=TRUE)),
   estimate_states = TRUE,
-  plot_it = FALSE
+  plot_it = FALSE,
+  extract_aic_bic = TRUE
 )
 
 comps[c]=Sys.time()-t
@@ -131,7 +134,8 @@ full_sim_02 <- full_sim_loop(
   autocor_sim = 0,#list(matrix(c(0.15,0.3,0.15,0.4),ncol=2,byrow=TRUE),
   #   matrix(c(0.2,0.3,0.2,0.4),ncol=2,byrow=TRUE)),
   estimate_states = TRUE,
-  plot_it = FALSE
+  plot_it = FALSE,
+  extract_aic_bic = TRUE
 )
 
 comps[c]=Sys.time()-t
@@ -163,7 +167,8 @@ full_sim_03 <- full_sim_loop(
   autocor_sim = 0,#list(matrix(c(0.15,0.3,0.15,0.4),ncol=2,byrow=TRUE),
   #   matrix(c(0.2,0.3,0.2,0.4),ncol=2,byrow=TRUE)),
   estimate_states = TRUE,
-  plot_it = FALSE
+  plot_it = FALSE,
+  extract_aic_bic = TRUE
 )
 
 comps[c]=Sys.time()-t

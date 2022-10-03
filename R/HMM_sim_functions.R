@@ -124,9 +124,6 @@ ar_simulation <- function(model_sim, model_fit, N_sim, N_fit, n_samples,
     }
   }
   
-  
-  
-  
   # Viterbi, if wanted
   if (estimate_states){
     #cat("Generic decoding function not implemented yet.")
@@ -164,6 +161,7 @@ ar_simulation <- function(model_sim, model_fit, N_sim, N_fit, n_samples,
 #' @param p_fitted Vector of degrees of autocorrelation of fitted models.
 #' @param n_states_fitted Number of states of the fitted models.
 #' @param n_samples_simulated Number of samples simulated in each model.
+#' @param extract_aic_bic bool, indicates if AIC and BIC of the models should also be saved.
 #' @param multicore bool, indicates if the loop should be computed using parallelization.
 #'                  This has only be tested in MacOS and probably does not work using Windows.
 #' @param ... Input parameters for the simulation function.
@@ -174,7 +172,7 @@ ar_simulation <- function(model_sim, model_fit, N_sim, N_fit, n_samples,
 #' @rdname full_sim_loop     
 #' 
 full_sim_loop <- function(simulation, n_runs, dists_fitted, p_fitted, 
-                          n_states_fitted, n_samples_simulated, multicore=FALSE,...){
+                          n_states_fitted, n_samples_simulated, extract_aic_bic=FALSE,multicore=FALSE,...){
   
   # Inputs for simulation function
   args=list(...)
@@ -191,6 +189,9 @@ full_sim_loop <- function(simulation, n_runs, dists_fitted, p_fitted,
   }
   true_states = matrix(NA,nrow=n_runs,ncol=n_samples_simulated)
   estimated_states = matrix(NA,nrow=n_runs,ncol=n_samples_simulated)
+  aics = rep(NA,n_runs)
+  bics = rep(NA,n_runs)
+  logLike = rep(NA,n_runs)
   
   start_time = Sys.time()
   
@@ -239,6 +240,14 @@ full_sim_loop <- function(simulation, n_runs, dists_fitted, p_fitted,
           }
           true_states[i,] = successful_results_this_time[[i-n_its]]$simulated_model$states
           estimated_states[i,] = successful_results_this_time[[i-n_its]]$viterbi_states
+          if (extract_aic_bic){
+            # AIC
+            aics[i] = successful_results_this_time[[i-n_its]]$fitted_model$AIC
+            # BIC
+            bics[i] = successful_results_this_time[[i-n_its]]$fitted_model$BIC
+            # log-likelihood
+            logLike = - successful_results_this_time[[i-n_its]]$fitted_model$mllk_optim
+          }
         }
         n_its = n_its+sum(successful_iterations_this_time)
       }
@@ -274,6 +283,14 @@ full_sim_loop <- function(simulation, n_runs, dists_fitted, p_fitted,
         }
         true_states[i,] = sim$simulated_model$states
         estimated_states[i,] = sim$viterbi_states
+        if (extract_aic_bic){
+          # AIC
+          aics[i] = sim$fitted_model$AIC
+          # BIC
+          bics[i] = sim$fitted_model$BIC
+          # log-likelihood
+          logLike = - successful_results_this_time[[i-n_its]]$fitted_model$mllk_optim
+        }
       }
     }
   }
@@ -295,8 +312,13 @@ full_sim_loop <- function(simulation, n_runs, dists_fitted, p_fitted,
     autocor_estimates[[paste("estimated_",dist,"_autocor", sep="")]] = get(paste("estimated_",dist,"_autocor", sep=""))
   }
   
-  ret = list(param_estimates, autocor_estimates, acc)
-  names(ret) = c("estimated_parameters", "estimated_autocorrelation", "decoding_accuracies")
+  if (extract_aic_bic){
+    ret = list(param_estimates, autocor_estimates, acc, logLike, aics, bics)
+    names(ret) = c("estimated_parameters", "estimated_autocorrelation", "decoding_accuracies", "log-Likelihood", "AIC", "BIC")
+  } else{
+    ret = list(param_estimates, autocor_estimates, acc)
+    names(ret) = c("estimated_parameters", "estimated_autocorrelation", "decoding_accuracies")
+  }
   return(ret)
 }
 

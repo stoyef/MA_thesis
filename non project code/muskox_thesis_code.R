@@ -231,17 +231,21 @@ states_33_n2 = viterbi_arp(x=cbind(muskox$step, muskox$angle),
                         p=c(3,3))
 states_33_n2
 
-par(mfrow=c(2,1))
-plot(muskox$step[1:300],type='l',bty='n',xlab='time',ylab='step length')
-segments(x0 = 1:(300 - 1), y0 = muskox$step[1:(300-1)],
-         x1 = 2:300, y1 = muskox$step[2:300],
-         col = pal[states_00_n2[1:(300-1)]], lwd = 1.5)
-plot(muskox$step[1:300],type='l',bty='n',xlab='time',ylab='step length')
-segments(x0 = 1:(300 - 1), y0 = muskox$step[1:(300-1)],
-         x1 = 2:300, y1 = muskox$step[2:300],
-         col = pal[states_33_n2[1:(300-1)]], lwd = 1.5)
+par(mfrow=c(2,1), mar=c(5.1,4.1,4.1,2.1), xpd=TRUE, mai=c(1,0.8,0.25,0.1))
+plot(muskox$step[1:300],type='l',bty='n',xlab='time',ylab='step length',
+     col='grey')
+#segments(x0 = 1:(300 - 1), y0 = muskox$step[1:(300-1)],
+#         x1 = 2:300, y1 = muskox$step[2:300],
+#         col = pal[states_00_n2[1:(300-1)]], lwd = 1.5)
+points(x=1:300,y=muskox$step[1:300], col=pal[states_00_n2], cex=0.75, pch=19)
+plot(muskox$step[1:300],type='l',bty='n',xlab='time',ylab='step length',
+     col='grey')
+#segments(x0 = 1:(300 - 1), y0 = muskox$step[1:(300-1)],
+#         x1 = 2:300, y1 = muskox$step[2:300],
+#         col = pal[states_33_n2[1:(300-1)]], lwd = 1.5)
+points(x=1:300,y=muskox$step[1:300], col=pal[states_33_n2], cex=0.75, pch=19)
 legend('top', c(paste("State",1:N)), bty='n', lwd=2,
-       col=pal[1:2],inset=c(0,-0.75),xpd='NA',horiz=T)# N=3: inset=c(0.25,-0.1)
+       col=pal[1:2],inset=c(0,-0.35),xpd='NA',horiz=T)# N=3: inset=c(0.25,-0.1)
 
 1-sum(states_00_n2==states_33_n2)/dim(muskox)[1]
 
@@ -274,19 +278,23 @@ states_33_n3 = viterbi_arp(x=cbind(muskox$step, muskox$angle),
                         p=c(3,3))
 states_33_n3
 
-par(mfrow=c(2,1))
+par(mfrow=c(2,1), mar=c(5.1,4.1,4.1,2.1), xpd=TRUE, mai=c(1,0.8,0.25,0.1))
 plot(muskox$step[1:300],type='p',bty='n',xlab='time',ylab='step length',
      pch=19,cex=0.5,col=pal[states_00_n3])
-plot(muskox$step[1:300],type='l',bty='n',xlab='time',ylab='step length')
-segments(x0 = 1:(300 - 1), y0 = muskox$step[1:(300-1)],
-         x1 = 2:300, y1 = muskox$step[2:300],
-         col = pal[states_00_n3[1:(300-1)]], lwd = 1.5)
-plot(muskox$step[1:300],type='l',bty='n',xlab='time',ylab='step length')
-segments(x0 = 1:(300 - 1), y0 = muskox$step[1:(300-1)],
-         x1 = 2:300, y1 = muskox$step[2:300],
-         col = pal[states_33_n3[1:(300-1)]], lwd = 1.5)
+plot(muskox$step[1:300],type='l',bty='n',xlab='time',ylab='step length',
+     col='grey')
+#segments(x0 = 1:(300 - 1), y0 = muskox$step[1:(300-1)],
+#         x1 = 2:300, y1 = muskox$step[2:300],
+#         col = pal[states_00_n3[1:(300-1)]], lwd = 1.5)
+points(x=1:300,y=muskox$step[1:300], col=pal[states_00_n3], cex=0.75, pch=19)
+plot(muskox$step[1:300],type='l',bty='n',xlab='time',ylab='step length',
+     col='grey')
+#segments(x0 = 1:(300 - 1), y0 = muskox$step[1:(300-1)],
+#         x1 = 2:300, y1 = muskox$step[2:300],
+#         col = pal[states_33_n3[1:(300-1)]], lwd = 1.5)
+points(x=1:300,y=muskox$step[1:300], col=pal[states_33_n3], cex=0.75, pch=19)
 legend('top', c(paste("State",1:N)), bty='n', lwd=2,
-       col=pal[1:N],inset=c(0,-0.75),xpd='NA',horiz=T)# N=3: inset=c(0.25,-0.1)
+       col=pal[1:N],inset=c(0,-0.35),xpd='NA',horiz=T)# N=3: inset=c(0.25,-0.1)
 
 1-sum(states_00_n3==states_33_n3)/dim(muskox)[1]
 

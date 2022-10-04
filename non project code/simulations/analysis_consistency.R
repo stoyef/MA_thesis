@@ -601,3 +601,42 @@ boxplot(`sim_res_100_20$decoding_accuracies`,
 axis(1, at=c(1,2,3,4,5), labels=c("n=100","n=500","n=1000","n=2000","n=5000"),cex.axis=0.8)
 
 
+## Stability analysis for different n
+# n=100
+for (i in 0:3){
+  for (j in 0:3){
+    print(paste("n=100, Sim:",i, "Fit:", j))
+    print(get(paste("sim_res_100_",i,j,sep=""))$sim_stats)
+  }
+}
+# n=500
+for (i in 0:3){
+  for (j in 0:3){
+    print(paste("n=500, Sim:",i, "Fit:", j))
+    print(get(paste("sim_res_500_",i,j,sep=""))$sim_stats)
+  }
+}
+# n=1000
+for (i in 0:3){
+  for (j in 0:3){
+    print(paste("n=1000, Sim:",i, "Fit:", j))
+    print(get(paste("sim_res_1000_",i,j,sep=""))$sim_stats)
+  }
+}
+# n=2000
+for (i in 0:3){
+  for (j in 0:3){
+    print(paste("n=2000, Sim:",i, "Fit:", j))
+    print(get(paste("sim_res_2000_",i,j,sep=""))$sim_stats)
+  }
+}
+# n=5000
+for (i in 0:3){
+  for (j in 0:3){
+    print(paste("n=5000, Sim:",i, "Fit:", j))
+    print(get(paste("sim_res_5000_",i,j,sep=""))$sim_stats)
+  }
+}
+
+
+

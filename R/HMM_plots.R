@@ -124,12 +124,15 @@ plot_decoded_data <- function(data, states, col, name="none", title="none", lege
     plot(NULL,xlim=c(0,length(data)),ylim=c(min(data,na.rm=TRUE),max(data,na.rm=TRUE)),
          ylab='data',xlab='time',bty='n')
   } else{
-    plot(NULL,xlim=c(0,length(data)),ylim=c(min(data,na.rm=TRUE),max(data,na.rm=TRUE)),
-         ylab=name,xlab='time',bty='n')
+    #plot(NULL,xlim=c(0,length(data)),ylim=c(min(data,na.rm=TRUE),max(data,na.rm=TRUE)),
+    #     ylab=name,xlab='time',bty='n')
+    plot(data, xlim=c(0,length(data)),ylim=c(min(data,na.rm=TRUE),max(data,na.rm=TRUE)),
+         ylab=name,xlab='time',bty='n', col='grey', type='l')
   }
-  segments(x0 = 1:(length(data) - 1), y0 = data[-length(data)],
-           x1 = 2:length(data), y1 = data[-1],
-           col = col[states[-length(data)]], lwd = 1.5)
+  #segments(x0 = 1:(length(data) - 1), y0 = data[-length(data)],
+  #         x1 = 2:length(data), y1 = data[-1],
+  #         col = col[states[-length(data)]], lwd = 1.5)
+  points(x=1:length(data),y=data, col=col[states], cex=0.75, pch=19)
   if (title=="none"){
     title(main="")
   } else{

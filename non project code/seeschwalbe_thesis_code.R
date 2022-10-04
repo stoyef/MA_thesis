@@ -400,17 +400,21 @@ legend('top', c(paste("State",1:N)), bty='n', lwd=2,
 1-sum(states_00==states_31)/dim(data_s_77_1hz)[1]
 
 # Plot that compares step lengths exclusively:
-par(mfrow=c(2,1))
-plot(data_s_77_1hz[,1],type='l',bty='n',xlab='time',ylab='step length')
-segments(x0 = 1:(dim(data_s_77_1hz)[1] - 1), y0 = data_s_77_1hz[-dim(data_s_77_1hz)[1],1],
-         x1 = 2:dim(data_s_77_1hz)[1], y1 = data_s_77_1hz[-1,1],
-         col = pal[states_00[-(dim(data_s_77_1hz)[1])]], lwd = 1.5)
-plot(data_s_77_1hz[,1],type='l',bty='n',xlab='time',ylab='step length')
-segments(x0 = 1:(dim(data_s_77_1hz)[1] - 1), y0 = data_s_77_1hz[-dim(data_s_77_1hz)[1],1],
-         x1 = 2:dim(data_s_77_1hz)[1], y1 = data_s_77_1hz[-1,1],
-         col = pal[states_31[-(dim(data_s_77_1hz)[1])]], lwd = 1.5)
+par(mfrow=c(2,1), mar=c(5.1,4.1,4.1,2.1), xpd=TRUE, mai=c(1,0.8,0.25,0.1))
+plot(data_s_77_1hz[,1],type='l',bty='n',xlab='time',ylab='step length',
+     col='grey')
+#segments(x0 = 1:(dim(data_s_77_1hz)[1] - 1), y0 = data_s_77_1hz[-dim(data_s_77_1hz)[1],1],
+#         x1 = 2:dim(data_s_77_1hz)[1], y1 = data_s_77_1hz[-1,1],
+#         col = pal[states_00[-(dim(data_s_77_1hz)[1])]], lwd = 1.5)
+points(x=1:length(data_s_77_1hz[,1]),y=data_s_77_1hz[,1], col=pal[states_00], cex=0.75, pch=19)
+plot(data_s_77_1hz[,1],type='l',bty='n',xlab='time',ylab='step length',
+     col='grey')
+#segments(x0 = 1:(dim(data_s_77_1hz)[1] - 1), y0 = data_s_77_1hz[-dim(data_s_77_1hz)[1],1],
+#         x1 = 2:dim(data_s_77_1hz)[1], y1 = data_s_77_1hz[-1,1],
+#         col = pal[states_31[-(dim(data_s_77_1hz)[1])]], lwd = 1.5)
+points(x=1:length(data_s_77_1hz[,1]),y=data_s_77_1hz[,1], col=pal[states_31], cex=0.75, pch=19)
 legend('top', c(paste("State",1:N)), bty='n', lwd=2,
-       col=pal[1:2],inset=c(0,-0.75),xpd='NA',horiz=T)# N=3: inset=c(0.25,-0.1)
+       col=pal[1:2],inset=c(0,-0.35),xpd='NA',horiz=T)# N=3: inset=c(0.25,-0.1)
 
 
 par(mfrow=c(2,2))

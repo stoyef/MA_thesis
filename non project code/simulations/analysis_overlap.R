@@ -1,5 +1,9 @@
 # 2022-09-29
-# Analysis of the effects of the distribution overlap in step lengths
+# Performance analyses
+# Overlap
+
+
+### Overlap
 # ceteris paribus
 # A - mu=(20,40)
 # B - mu=(25,35)
@@ -230,8 +234,26 @@ legend('topleft',
        lty=NA)
 
 
-
-
-
-
-
+## Stability analysis for different overlaps
+# n=2000
+# mu=(20,40)
+for (i in 0:3){
+  for (j in 0:3){
+    print(paste("mu=(20,40), Sim:",i, "Fit:", j))
+    print(get(paste("sim_res_2040_",i,j,sep=""))$sim_stats)
+  }
+}
+# mu=(25,35)
+for (i in 0:3){
+  for (j in 0:3){
+    print(paste("mu=(25,35), Sim:",i, "Fit:", j))
+    print(get(paste("sim_res_2535_",i,j,sep=""))$sim_stats)
+  }
+}
+# mu=(25,30)
+for (i in 0:3){
+  for (j in 0:3){
+    print(paste("mu=(25,30), Sim:",i, "Fit:", j))
+    print(get(paste("sim_res_2530_",i,j,sep=""))$sim_stats)
+  }
+}

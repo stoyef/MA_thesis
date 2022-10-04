@@ -382,14 +382,14 @@ boxplot(`sim_res_1000_20$decoding_accuracies`,
         main='n = 1000',
         ylim=c(0.5,1))
 axis(1, at=c(1,2,3,4), labels=c("AR(0,0)","AR(1,1)","AR(2,2)","AR(3,3)"),cex.axis=0.8)
-boxplot(`sim_res_2000_20$decoding_accuracies`,
-        `sim_res_2000_21$decoding_accuracies`,
-        `sim_res_2000_22$decoding_accuracies`,
-        `sim_res_2000_23$decoding_accuracies`,
-        pch=19,
-        main='n = 2000',
-        ylim=c(0.5,1))
-axis(1, at=c(1,2,3,4), labels=c("AR(0,0)","AR(1,1)","AR(2,2)","AR(3,3)"),cex.axis=0.8)
+#boxplot(`sim_res_2000_20$decoding_accuracies`,
+#        `sim_res_2000_21$decoding_accuracies`,
+#        `sim_res_2000_22$decoding_accuracies`,
+#        `sim_res_2000_23$decoding_accuracies`,
+#        pch=19,
+#        main='n = 2000',
+#        ylim=c(0.5,1))
+#axis(1, at=c(1,2,3,4), labels=c("AR(0,0)","AR(1,1)","AR(2,2)","AR(3,3)"),cex.axis=0.8)
 boxplot(`sim_res_5000_20$decoding_accuracies`,
         `sim_res_5000_21$decoding_accuracies`,
         `sim_res_5000_22$decoding_accuracies`,

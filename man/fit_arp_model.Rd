@@ -2,7 +2,7 @@
 % Please edit documentation in R/HMM_fit.R
 \name{fit_arp_model}
 \alias{fit_arp_model}
-\title{Fit an AR(p) HMM to data}
+\title{Fit an AR(p)-HMM to data}
 \usage{
 fit_arp_model(
   mllk,
@@ -17,7 +17,7 @@ fit_arp_model(
 )
 }
 \arguments{
-\item{mllk}{Negative log-Likelihood function that should be minimized.}
+\item{mllk}{Negative log-likelihood function that should be minimized.}
 
 \item{data}{Data that should be fitted using the HMM.}
 
@@ -27,25 +27,25 @@ for the optimization function.}
 
 \item{N}{Number of states.}
 
-\item{p_auto}{Vector of degree of autocorrelation for each distribution, 0=no autocorrelation.}
+\item{p_auto}{Vector of degree of autoregression for each distribution, 0 = no autoregression}
 
 \item{dists}{Vector containing abbreviated names (in R-jargon) of the distributions 
-to be considered in the Likelihood computation.}
+to be considered in the likelihood computation.}
 
-\item{opt_fun}{string - Function that should be used for optimization (default: optim).}
+\item{opt_fun}{string - Function that should be used for optimization (default: optim, one of ['optim', 'nlm', 'genoud']).}
 
-\item{scale_kappa}{Default 1, Scaling factor for kappa to avoid numerical issues in optimization for large kappa.}
+\item{scale_kappa}{Default 1, Scaling factor for kappa to avoid numerical issues in optimization for large kappa in the von Mises distribution.}
 
 \item{zero_inf}{Default FALSE, indicates if the gamma distributed variables should incorporate zero-inflation.}
 }
 \value{
-List, containing minimal value of negative log-Likelihood, Gamma, 
-        delta, (autocorrelation, depending on degree), mu, sigma.
+List, containing minimal value of negative log-likelihood, Gamma, 
+        delta, (autoregression, depending on degree), mu, sigma.
 }
 \description{
-Fit an AR(p) HMM with autocorrelation to data 
+Fit an AR(p)-HMM with within-state autoregression to data 
 using a specified function to compute the negative 
-Log-Likelihood. This function gets minimized using the function \code{optim}.
-It returns the estimated parameters of the fitted model. The distribution of the HMM
+log-likelihood. This function gets by default minimized using the function \code{optim}.
+It returns the estimated parameters of the fitted model. The distributional assumptions for the HMM
 can be specified using the parameter \code{dist}.
 }

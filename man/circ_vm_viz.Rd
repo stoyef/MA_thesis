@@ -22,5 +22,5 @@ circ_vm_viz(mu, kappa, delta = 1, data = NULL, sum_dist = FALSE, leg = FALSE)
 \description{
 Generate a circular visualization of the density of one or several von Mises
 distributed variables. Also, if data is supplied, generate the kernel density
-estimator of the data for comparison.
+estimate of the data for comparison.
 }

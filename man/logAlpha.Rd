@@ -13,13 +13,14 @@ logAlpha(mod, data, N, p)
 
 \item{N}{Number of states.}
 
-\item{p}{Vector of degree of autocorrelation for each distribution (0 = no autocorrelation).}
+\item{p}{Vector of degree of autoregression for each distribution (0 = no autoregression).}
 }
 \value{
 Matrix of forward log-probabilities.
 }
 \description{
-Adapted from moveHMM.
+Computes foward log-probabilities for an AR(p)-HMM. 
+Adapted from moveHMM. 
 Attention: Only works for 2-dim with 1st variable gamma distributed step lengths 
 and 2nd variable von Mises distributed turning angles!
 }

@@ -1,14 +1,14 @@
 # 2022-06-08
 # Functions to manipulate HMM parameters
 
-#' Construct parameter object for HMM likelihood evaluation
+#' Construct parameter object for AR(p)-HMM likelihood evaluation
 #'
-#' Construct a nice named list that contains all relevant parameters of an HMM.
-#' This gets used in the Log-Likelihood computation to generalize to arbitrary 
+#' Construct a nice named list that contains all relevant parameters of an AR(p)-HMM.
+#' This gets used in the log-likelihood computation to generalize to arbitrary 
 #' distributions.
 #' 
 #' @param Gamma Full TPM.
-#' @param autocor Vector or matrix of autocorrelation coefficients in suitable format.
+#' @param autocor Vector or matrix of autoregression parameters in suitable format.
 #' @param ... List of other parameters, specified in "param" (e.g. mu, sigma, depending on distribution). 
 #'            Here, notational conventions have to be considered when supplying the distributional parameters
 #' 
@@ -24,17 +24,17 @@ nice_params <- function(Gamma, autocor, ...){
 
 #' Natural parameters to working parameters (theta->theta.star)
 #'
-#' Transform the natural parameters of HMMs to their working parameters for optimization (theta -> theta.star).
+#' Transform the natural parameters of AR(p)-HMMs to their working parameters for optimization (theta -> theta.star).
 #' Currently only works for distributions with exactly two parameters.
 #' 
 #' @param theta Vector of natural parameters.
 #' @param N Number of states of the HMM.
-#' @param p Vector of degree of autocorrelation within the distributions.
+#' @param p Vector of degree of autoregression within the distributions.
 #' @param dists Vector of the distributions in the HMM.
 #' @param scale_kappa Default 1, Scaling factor for kappa to avoid numerical issues in optimization for large kappa.
 #' @param zero_inf Default FALSE, indicates if the gamma distributed variables should incorporate zero-inflation.
 #' 
-#' @return Vector of working parameters of the HMM.
+#' @return Vector of working parameters of the AR(p)-HMM.
 #' 
 #' @export
 #' @rdname starize
@@ -87,17 +87,17 @@ starize <- function(theta,N,p,dists, scale_kappa=1, zero_inf=FALSE){
 
 #' Working parameters to natural parameters (theta.star->theta)
 #'
-#' Transform the working parameters of HMMs to their natural parameters for optimization (theta.star -> theta).
+#' Transform the working parameters of AR(p)-HMMs to their natural parameters for optimization (theta.star -> theta).
 #' Currently only works for distributions with exactly two parameters.
 #' 
 #' @param theta.star Vector of working parameters.
 #' @param N Number of states of the HMM.
-#' @param p Vector of degree of autocorrelation within the distributions.
+#' @param p Vector of degree of autoregression within the distributions.
 #' @param dists Vector of the distributions in the HMM.
 #' @param scale_kappa Default 1, Scaling factor for kappa to avoid numerical issues in optimization for large kappa.
 #' @param zero_inf Default FALSE, indicates if the gamma distributed variables should incorporate zero-inflation.
 #' 
-#' @return List of natural parameters of the HMM.
+#' @return List of natural parameters of the AR(p)-HMM.
 #' 
 #' @export
 #' @rdname unstarize

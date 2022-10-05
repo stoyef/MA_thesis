@@ -2,7 +2,7 @@
 % Please edit documentation in R/HMM_simulate.R
 \name{sample_arp}
 \alias{sample_arp}
-\title{Simulate data from an HMM with AR(p) structure}
+\title{Simulate data from an AR(p)-HMM}
 \usage{
 sample_arp(n_samples, delta, Gamma, N, params, autocor, p, dists)
 }
@@ -18,21 +18,21 @@ sample_arp(n_samples, delta, Gamma, N, params, autocor, p, dists)
 \item{params}{Parameter vector for the different distributions. 
 .              Has to respect the order specified in \code{dists}.}
 
-\item{autocor}{List of parameter matrix (Dimensions for each matrix: \eqn{n\times p}) for the autocorrelation coefficients. 
+\item{autocor}{List of parameter matrix (Dimensions for each matrix: \eqn{n\times p}) for the autoregression parameters. 
 Has to match p, in the order \eqn{\phi_{t-p},\dots,\phi_{t-1}}
-where \eqn{\phi} is the vector of autocorrelation coefficients
+where \eqn{\phi} is the vector of autoregression parameters
 for one specific time lag (one value for each state).
-0, if no autocorrelation. Has to respect the order specified in \code{dists}.}
+0, if no autoregression Has to respect the order specified in \code{dists}.}
 
-\item{p}{Vector of degree of autocorrelation for each distribution, 0=no autocorrelation.}
+\item{p}{Vector of degree of autoregression for each distribution, 0 = no autoregression}
 
 \item{dists}{Vector containing abbreviated names (in R-jargon) of the distributions 
-to be considered in the Likelihood computation.}
+to be considered in the likelihood computation.}
 }
 \value{
 List of states and data of the HMM.
 }
 \description{
-Simulate data from an HMM with AR(p) structure. 
+Simulate data from an AR(p)-HMM with AR(p).
 Different distributions can be specified in \code{dists} (uni- and multivariate).
 }

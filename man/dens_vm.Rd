@@ -7,19 +7,20 @@
 dens_vm(x, theta, autocor_ind = 0, autocor = 0, p = 0)
 }
 \arguments{
-\item{x}{Data}
+\item{x}{Data.}
 
 \item{theta}{Named list of parameters of von Mises distribution.}
 
-\item{autocor_ind}{Matrix, indices of to consider when computing the autocorrelated parameters.}
+\item{autocor_ind}{Matrix, indices to consider when computing the autoregressive parameters.}
 
 \item{autocor}{Vector, j-th row of autocor matrix, with one value for each time lag considered.}
 
-\item{p}{Int, degree of autocorrelation.}
+\item{p}{Int, degree of autoregression}
 }
 \value{
-Densities of von Mises distribution.
+Vector of densities of von Mises distribution.
 }
 \description{
-Function to calculate the density of different values for a von Mises distributed random variable.
+Function to calculate the density of different values for a von Mises distributed random variable
+(with possible autoregression in \eqn{mu}).
 }

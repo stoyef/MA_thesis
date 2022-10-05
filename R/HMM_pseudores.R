@@ -3,14 +3,15 @@
 
 #' Forward log-probabilities
 #' 
-#' Adapted from moveHMM.
+#' Computes foward log-probabilities for an AR(p)-HMM. 
+#' Adapted from moveHMM. 
 #' Attention: Only works for 2-dim with 1st variable gamma distributed step lengths 
 #' and 2nd variable von Mises distributed turning angles!
 #' 
 #' @param mod Fitted AR(p)-HMM object.
 #' @param data Data the model is fitted on.
 #' @param N Number of states.
-#' @param p Vector of degree of autocorrelation for each distribution (0 = no autocorrelation).
+#' @param p Vector of degree of autoregression for each distribution (0 = no autoregression).
 #' 
 #' @return Matrix of forward log-probabilities.
 #' 
@@ -52,7 +53,7 @@ logAlpha <- function(mod, data, N, p){
 #' @param mod Fitted AR(p)-HMM object.
 #' @param data Data the model is fitted on.
 #' @param N Number of states.
-#' @param p Vector of degree of autocorrelation for each distribution (0 = no autocorrelation).
+#' @param p Vector of degree of autoregression for each distribution (0 = no autoregression).
 #' 
 #' @return Pseudo residuals for step length and turning angles.
 #' 
@@ -67,7 +68,7 @@ pseudores_arp <- function(mod, data, N, p){
   autocor = mod$autocorrelation
   
   # forward log-probabilities
-  la <- logAlpha(mod=mod,data=data,N=N,p=p) # we have to implement this
+  la <- logAlpha(mod=mod,data=data,N=N,p=p)
   
   stepRes <- rep(NA,nbObs)
   pStepMat <- matrix(NA,nbObs,N)
@@ -76,8 +77,8 @@ pseudores_arp <- function(mod, data, N, p){
   
   if (any(p>0)){
 
-    autocor_m_step <- matrix(autocor[[1]], ncol=p[1], byrow=TRUE) # autocorrelation matrix for easier handling later on
-    autocor_m_angle <- matrix(autocor[[2]], ncol=p[2], byrow=TRUE) # autocorrelation matrix for easier handling later on
+    autocor_m_step <- matrix(autocor[[1]], ncol=p[1], byrow=TRUE) # autoregression matrix for easier handling later on
+    autocor_m_angle <- matrix(autocor[[2]], ncol=p[2], byrow=TRUE) # autoregression matrix for easier handling later on
 
     x_wo_na_step = data[,1]
     x_wo_na_angle = data[,2]
@@ -92,8 +93,6 @@ pseudores_arp <- function(mod, data, N, p){
     stepArgs[[2]] = mod$params[[1]][[1]][state]
     stepArgs[[3]] = mod$params[[1]][[2]][state]
     zeromass = 0
-    # zeromass = mod$params[[1]][[3]][state]
-    # cv=sigma/mu
     cv = stepArgs[[3]] / stepArgs[[2]]
     
     angleArgs <- list(anglefun,-pi,data[1,2]) # to pass to function "integrate" below

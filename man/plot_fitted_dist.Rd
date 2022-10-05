@@ -2,7 +2,7 @@
 % Please edit documentation in R/HMM_plots.R
 \name{plot_fitted_dist}
 \alias{plot_fitted_dist}
-\title{Density plot of estimated distributions}
+\title{Density plot of estimated distributions of AR(p)-HMM}
 \usage{
 plot_fitted_dist(
   data,
@@ -40,5 +40,6 @@ HMM: c(\eqn{\mu1,\mu2,\sigma1,\sigma2}).}
 \item{xlim}{optional, set a limit for x-axis for better visibility of the data.}
 }
 \description{
-Plots the estimted distributions along with a histogram of the values.
+Plots the estimated distributions (only the state-dependent stationary values are considered) 
+of a fitted AR(p)-HMM along with a histogram of the data.
 }

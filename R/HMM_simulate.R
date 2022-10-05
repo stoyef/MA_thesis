@@ -4,9 +4,9 @@
 
 
 
-#' Simulate data from an HMM with AR(p) structure
+#' Simulate data from an AR(p)-HMM
 #' 
-#' Simulate data from an HMM with AR(p) structure. 
+#' Simulate data from an AR(p)-HMM with AR(p).
 #' Different distributions can be specified in \code{dists} (uni- and multivariate).
 #' 
 #'
@@ -17,14 +17,14 @@
 #' @param N Number of states.
 #' @param params Parameter vector for the different distributions. 
 #'.              Has to respect the order specified in \code{dists}.
-#' @param autocor List of parameter matrix (Dimensions for each matrix: \eqn{n\times p}) for the autocorrelation coefficients. 
+#' @param autocor List of parameter matrix (Dimensions for each matrix: \eqn{n\times p}) for the autoregression parameters. 
 #'             Has to match p, in the order \eqn{\phi_{t-p},\dots,\phi_{t-1}}
-#'             where \eqn{\phi} is the vector of autocorrelation coefficients
+#'             where \eqn{\phi} is the vector of autoregression parameters
 #'             for one specific time lag (one value for each state).
-#'             0, if no autocorrelation. Has to respect the order specified in \code{dists}.
-#' @param p Vector of degree of autocorrelation for each distribution, 0=no autocorrelation.
+#'             0, if no autoregression Has to respect the order specified in \code{dists}.
+#' @param p Vector of degree of autoregression for each distribution, 0 = no autoregression
 #' @param dists Vector containing abbreviated names (in R-jargon) of the distributions 
-#'              to be considered in the Likelihood computation.
+#'              to be considered in the likelihood computation.
 #'               
 #' @return List of states and data of the HMM.
 #' 

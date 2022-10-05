@@ -6,30 +6,30 @@
 ###### general function for arbitrary distribution
 
 
-#' Compute negative Log-Likelihood
+#' Compute negative log-likelihood of an AR(p)-HMM
 #'
-#' Compute the negative Log-Likelihood, using one or several specified distributions.
+#' Compute the negative log-likelihood, using one or several specified distributions.
 #' The distributions have to be specified by their commonly known abbreviation in R, 
 #' e.g. one of ['gamma', 'vm', 'pois', 'binom',...].
 #' The named list of parameters (one value for each parameter and for each state) have to be
 #' in suitable form, i.e. a vector of the working parameters.
-#' In the likelihood computation, contemporaneus independence is assumed.
+#' In the likelihood computation, contemporaneous independence is assumed.
 #' 
 #' @param theta.star Vector of parameters in the following order: 1) Off-diagonal entries of TPM,
 #'                   2) Distribution parameters for each state (each distribution at a time, i.e. 
 #'                   first all parameters of dist1, then all parameters of dist2 etc.), 
-#'                   3) Autocorrelation parameters (each distribution at a time, i.e. 
-#'                   first all autocorrelation parameters of dist1, then all autocorrelation 
+#'                   3) Autoregression parameters (each distribution at a time, i.e. 
+#'                   first all autoregression parameters of dist1, then all autocorrelation 
 #'                   parameters of dist2 etc.).
 #' @param dists Vector containing abbreviated names (in R-jargon) of the distributions 
-#'              to be considered in the Likelihood computation.
-#' @param x Data vector or matrix for which the negative Log-Likelihood should be computed.
+#'              to be considered in the likelihood computation.
+#' @param x Data vector or matrix for which the negative log-likelihood should be computed.
 #' @param N Number of states.
-#' @param p_auto Vector of degree of autocorrelation for each distribution, 0=no autocorrelation.
+#' @param p_auto Vector of degree of autoregression for each distribution, 0 = no autoregression
 #' @param scale_kappa Default 1, Scaling factor for kappa to avoid numerical issues in optimization for large kappa.
 #' @param zero_inf Default FALSE, indicates if the gamma distributed variables should incorporate zero-inflation.
 #' 
-#' @return Negative Log-Likelihood.
+#' @return Negative log-likelihood.
 #' 
 #' @export
 #' @rdname mllk
@@ -67,14 +67,14 @@ mllk <- function(theta.star, dists, x, N, p_auto, scale_kappa=1, zero_inf=FALSE)
       # (so that the data that has NA in previous time steps does not have to be deleted)
       
       for (j in 1:N){
-        # here comes the autocorrelation! -> computed inside the dens_<...> functions, considering the 
+        # here comes the autoregression! -> computed inside the dens_<...> functions, considering the 
         # autocorrelation!
         theta_j <- params[[dist]]
         # theta_j consists the parameters of state j for each parameter in theta$params
         for (i in names(theta_j)) theta_j[i][[1]] = theta_j[i][[1]][j] 
         
         # computation of the different densities is outsourced to the respective 
-        # functions with name "d<name_of_distribution>, e.g. dgamma for gamma distribution
+        # functions with name "dens_<name_of_distribution>, e.g. dens_gamma for gamma distribution
         allprobs[ind,j] <- allprobs[ind,j] * 
                               match.fun(paste('dens_', dists[dist], sep=""))(x[ind,dist], theta_j, autocor_ind, autocor_m[j,], p_auto[dist])
         # here we have to choose mu_auto[ind], because

@@ -7,12 +7,12 @@
 plot_data(data, name = "none", title = "none")
 }
 \arguments{
-\item{data}{Data vector to be plotted}
+\item{data}{Data vector to be plotted.}
 
-\item{name}{optional, y-axis label, if "none" than "data"}
+\item{name}{optional, y-axis label, if "none" than "data".}
 
-\item{title}{optional, title of the plot, if "none", then no title}
+\item{title}{optional, title of the plot, if "none", then no title.}
 }
 \description{
-Plot a data vector
+Plot a data vector.
 }

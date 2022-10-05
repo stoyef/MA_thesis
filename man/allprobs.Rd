@@ -11,17 +11,17 @@ allprobs(x, dists, autocor = 0, params, N, p)
 
 \item{dists}{Vector of distributions in R-jargon.}
 
-\item{autocor}{list of autocorrelation vectors, respecting order of dists.}
+\item{autocor}{list of autoregression vectors, respecting order of dists.}
 
 \item{params}{List of optimized parameters, returned by fitting the HMM.}
 
 \item{N}{Number of states.}
 
-\item{p}{Vector of degree of autocorrelation for each distribution (0 = no autocorrelation).}
+\item{p}{Vector of degree of autoregression for each distribution (0 = no autoregression).}
 }
 \value{
 Matrix of all probabilities.
 }
 \description{
-Calculate matrix of all probabilities for an AR(p) HMM with or without autocorrelation.
+Calculate matrix of all probabilities for an AR(p)-HMM with or without within-state autoregression.
 }

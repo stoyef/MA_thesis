@@ -2,7 +2,7 @@
 % Please edit documentation in R/HMM_mllk.R
 \name{mllk}
 \alias{mllk}
-\title{Compute negative Log-Likelihood}
+\title{Compute negative log-likelihood of an AR(p)-HMM}
 \usage{
 mllk(theta.star, dists, x, N, p_auto, scale_kappa = 1, zero_inf = FALSE)
 }
@@ -10,31 +10,31 @@ mllk(theta.star, dists, x, N, p_auto, scale_kappa = 1, zero_inf = FALSE)
 \item{theta.star}{Vector of parameters in the following order: 1) Off-diagonal entries of TPM,
 2) Distribution parameters for each state (each distribution at a time, i.e. 
 first all parameters of dist1, then all parameters of dist2 etc.), 
-3) Autocorrelation parameters (each distribution at a time, i.e. 
-first all autocorrelation parameters of dist1, then all autocorrelation 
+3) Autoregression parameters (each distribution at a time, i.e. 
+first all autoregression parameters of dist1, then all autocorrelation 
 parameters of dist2 etc.).}
 
 \item{dists}{Vector containing abbreviated names (in R-jargon) of the distributions 
-to be considered in the Likelihood computation.}
+to be considered in the likelihood computation.}
 
-\item{x}{Data vector or matrix for which the negative Log-Likelihood should be computed.}
+\item{x}{Data vector or matrix for which the negative log-likelihood should be computed.}
 
 \item{N}{Number of states.}
 
-\item{p_auto}{Vector of degree of autocorrelation for each distribution, 0=no autocorrelation.}
+\item{p_auto}{Vector of degree of autoregression for each distribution, 0 = no autoregression}
 
 \item{scale_kappa}{Default 1, Scaling factor for kappa to avoid numerical issues in optimization for large kappa.}
 
 \item{zero_inf}{Default FALSE, indicates if the gamma distributed variables should incorporate zero-inflation.}
 }
 \value{
-Negative Log-Likelihood.
+Negative log-likelihood.
 }
 \description{
-Compute the negative Log-Likelihood, using one or several specified distributions.
+Compute the negative log-likelihood, using one or several specified distributions.
 The distributions have to be specified by their commonly known abbreviation in R, 
 e.g. one of ['gamma', 'vm', 'pois', 'binom',...].
 The named list of parameters (one value for each parameter and for each state) have to be
 in suitable form, i.e. a vector of the working parameters.
-In the likelihood computation, contemporaneus independence is assumed.
+In the likelihood computation, contemporaneous independence is assumed.
 }

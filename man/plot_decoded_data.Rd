@@ -16,7 +16,7 @@ plot_decoded_data(
 \arguments{
 \item{data}{Data vector to be plotted.}
 
-\item{states}{Vector of ecoded states.}
+\item{states}{Vector of decoded states.}
 
 \item{col}{Color of the states.}
 

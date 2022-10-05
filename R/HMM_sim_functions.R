@@ -1,33 +1,33 @@
 # 2022-05-30, updated for general (number of) distributions on 2022-06-14
-# Updated for full simulation loop functino on 2022-06-24
-# Functions for simulating and evaluating HMMs with or without autocorrelation
+# Updated for full simulation loop function on 2022-06-24
+# Functions for simulating and evaluating HMMs with or without autoregression
 
 
 
-#' Simulate HMMs with and without autocorrelation 
+#' Simulation of AR(p)-HMMs
 #'
-#' Top to bottom wrapper function: Simulate from a specified HMM, fit a specified
-#' HMM to the resulting data and return the output. Optionally: Also return the 
+#' Top to bottom wrapper function: Simulate from a specified AR(p)-HMM, fit a specified
+#' AR(p)-HMM to the resulting data and return the output. Optionally: Also return the 
 #' decoded states using the Viterbi algorithm. Optionally: Also plot the resulting 
-#' density functions of the weighted distributions.
+#' densities of the weighted state-dependent distributions using state-stationary values.
 #' 
 #' @param model_sim Form of simulated data in a list: First entry is vector containing 
 #'                  abbreviated names (in R-jargon) of the distributions 
 #'                  the data should be sampled from. Second entry is 
-#'                  vector of degree of autocorrelation for each distribution, 
-#'                  0=no autocorrelation.
+#'                  vector of degree of autoregression for each distribution, 
+#'                  0 = no autoregression
 #' @param model_fit Form of fitted data in a list: First entry is vector containing 
 #'                  abbreviated names (in R-jargon) of the distributions 
-#'                  to be considered in the Likelihood computation. Second entry is 
-#'                  vector of degree of autocorrelation for each distribution, 
-#'                  0=no autocorrelation.
+#'                  to be considered in the likelihood computation. Second entry is 
+#'                  vector of degree of autoregression for each distribution, 
+#'                  0 = no autoregression
 #' @param N_sim Number of states of the HMM used for data generation.
 #' @param N_fit Number of states of the HMM used for fitting the data.
 #' @param n_samples Number of samples to be generated.
 #' @param Gamma_sim Full transition probability matrix of simulated data.
 #' @param delta_sim Initial distribution of simulated data.
 #' @param param_sim Parameter vector for parameters of the simulated data. In a vector form,
-#'                  and in the order that is customary: e.g. for a gamma HMM c(\eqn{\mu1,\mu2,\sigma1,\sigma2}).
+#'                  and in the order that is customary: e.g. for a gamma HMM c(\eqn{\mu_1,\mu_2,\sigma_1,\sigma_2}).
 #'                  The order of distributions has to be the same as in model_sim.
 #' @param autocor_sim List of parameter matrix (Dimensions for each matrix: \eqn{n\times p}) for the autocorrelation coefficients. 
 #'                    Has to match p, in the order \eqn{\phi_{t-p},\dots,\phi_{t-1}}
@@ -38,7 +38,7 @@
 #'                        using Viterbi.
 #' @param plot_it Bool, determines if resulting densities are plotted.    
 #' 
-#' @return List of Fitted model and its parameters (and optional the decoded states).
+#' @return List of fitted model and its parameters (and optional the decoded states).
 #' 
 #' @export
 #' @rdname ar_simulation     
@@ -46,12 +46,7 @@
 ar_simulation <- function(model_sim, model_fit, N_sim, N_fit, n_samples, 
                              Gamma_sim, delta_sim, param_sim, autocor_sim=0,
                              estimate_states=TRUE,plot_it=TRUE){
-  
-  #if (as.integer(model_sim[[2]])>0){
-  #  ## prepare autocor for sampling -> matrix
-  #  autocor_matrix <- matrix(autocor_sim, ncol=as.integer(model_sim[2]), byrow=TRUE) # matrix for easier handling later on
-  #}
-  
+
   simulated_data <- sample_arp(n_samples=n_samples,
                                delta=delta_sim, 
                                Gamma=Gamma_sim, 
@@ -112,7 +107,6 @@ ar_simulation <- function(model_sim, model_fit, N_sim, N_fit, n_samples,
   
   # Plot, if wanted
   if (plot_it){
-    #cat("Generic plot function not implemented yet.")
     for (dist in 1:length(model_fit[[1]])){
       if (model_fit[[1]][dist] == 'norm'){
         cat("Plot for normal distribution not implemented yet.\n")
@@ -126,7 +120,6 @@ ar_simulation <- function(model_sim, model_fit, N_sim, N_fit, n_samples,
   
   # Viterbi, if wanted
   if (estimate_states){
-    #cat("Generic decoding function not implemented yet.")
     estimated_states <- viterbi_arp(x=simulated_data$data, 
                                     Gamma=fitted_model$Gamma,
                                     delta=fitted_model$delta, 
@@ -158,7 +151,7 @@ ar_simulation <- function(model_sim, model_fit, N_sim, N_fit, n_samples,
 #' @param simulation Function that generates one simulation.
 #' @param n_runs Number of models that should be created in the loop.
 #' @param dists_fitted Vector of distributions of fitted model in R-jargon.
-#' @param p_fitted Vector of degrees of autocorrelation of fitted models.
+#' @param p_fitted Vector of degrees of autoregression of fitted models.
 #' @param n_states_fitted Number of states of the fitted models.
 #' @param n_samples_simulated Number of samples simulated in each model.
 #' @param extract_aic_bic bool, indicates if AIC and BIC of the models should also be saved.
@@ -203,7 +196,6 @@ full_sim_loop <- function(simulation, n_runs, dists_fitted, p_fitted,
     sim_wrap <- function(iteration){
       current_time=Sys.time()
       sim <- do.call(ar_simulation,args)
-      #cat(iteration,' (', Sys.time()-current_time,') \n',sep="")
       return(sim)
     }
     

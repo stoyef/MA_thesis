@@ -11,16 +11,16 @@ dens_gamma(x, theta, autocor_ind = 0, autocor = 0, p = 0)
 
 \item{theta}{Named list of parameters of gamma distribution.}
 
-\item{autocor_ind}{Matrix, indices of to consider when computing the autocorrelated parameters.}
+\item{autocor_ind}{Matrix, indices to consider when computing the autoregressive parameters.}
 
 \item{autocor}{Vector, j-th row of autocor matrix, with one value for each time lag considered.}
 
-\item{p}{Int, degree of autocorrelation.}
+\item{p}{Int, degree of autoregression.}
 }
 \value{
-Densities of gamma distribution.
+Vector of densities of gamma distribution.
 }
 \description{
 Function to calculate the density of different values for a gamma distributed random variable 
-(with possible autocorrelation in \eqn{mu} and \eqn{sigma}, due to the constant coefficient of variation).
+(with possible autoregression in \eqn{mu} and \eqn{sigma}, due to the constant coefficient of variation).
 }

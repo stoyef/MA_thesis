@@ -14,5 +14,5 @@ plot_states(states, names = "none", title = TRUE)
 \item{title}{bool, indicator if the plot should have a title.}
 }
 \description{
-This function plots the states decoded by the Viterbi algorithm.
+This function plots the states of an AR(p)-HMM decoded by the Viterbi algorithm.
 }

@@ -7,20 +7,20 @@
 dens_norm(x, theta, autocor_ind = 0, autocor = 0, p = 0)
 }
 \arguments{
-\item{x}{Data}
+\item{x}{Data.}
 
 \item{theta}{Named list of parameters of normal distribution.}
 
-\item{autocor_ind}{Matrix, indices of to consider when computing the autocorrelated parameters.}
+\item{autocor_ind}{Matrix, indices to consider when computing the autoregressive parameters.}
 
 \item{autocor}{Vector, j-th row of autocor matrix, with one value for each time lag considered.}
 
-\item{p}{Int, degree of autocorrelation.}
+\item{p}{Int, degree of autoregression}
 }
 \value{
-Densities of normal distribution.
+Vector of densities of normal distribution.
 }
 \description{
 Function to calculate the density of different values for a normal distributed random variable
-(currently only with possible autocorrelation in parameter \eqn{mu}).
+(with possible autoregression in parameter \eqn{mu}).
 }

@@ -2,14 +2,14 @@
 % Please edit documentation in R/nice_params.R
 \name{nice_params}
 \alias{nice_params}
-\title{Construct parameter object for HMM likelihood evaluation}
+\title{Construct parameter object for AR(p)-HMM likelihood evaluation}
 \usage{
 nice_params(Gamma, autocor, ...)
 }
 \arguments{
 \item{Gamma}{Full TPM.}
 
-\item{autocor}{Vector or matrix of autocorrelation coefficients in suitable format.}
+\item{autocor}{Vector or matrix of autoregression parameters in suitable format.}
 
 \item{...}{List of other parameters, specified in "param" (e.g. mu, sigma, depending on distribution). 
 Here, notational conventions have to be considered when supplying the distributional parameters}
@@ -18,7 +18,7 @@ Here, notational conventions have to be considered when supplying the distributi
 Named list of all parameters
 }
 \description{
-Construct a nice named list that contains all relevant parameters of an HMM.
-This gets used in the Log-Likelihood computation to generalize to arbitrary 
+Construct a nice named list that contains all relevant parameters of an AR(p)-HMM.
+This gets used in the log-likelihood computation to generalize to arbitrary 
 distributions.
 }

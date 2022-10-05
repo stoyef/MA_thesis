@@ -2,7 +2,7 @@
 % Please edit documentation in R/HMM_sim_functions.R
 \name{ar_simulation}
 \alias{ar_simulation}
-\title{Simulate HMMs with and without autocorrelation}
+\title{Simulation of AR(p)-HMMs}
 \usage{
 ar_simulation(
   model_sim,
@@ -22,14 +22,14 @@ ar_simulation(
 \item{model_sim}{Form of simulated data in a list: First entry is vector containing 
 abbreviated names (in R-jargon) of the distributions 
 the data should be sampled from. Second entry is 
-vector of degree of autocorrelation for each distribution, 
-0=no autocorrelation.}
+vector of degree of autoregression for each distribution, 
+0 = no autoregression}
 
 \item{model_fit}{Form of fitted data in a list: First entry is vector containing 
 abbreviated names (in R-jargon) of the distributions 
-to be considered in the Likelihood computation. Second entry is 
-vector of degree of autocorrelation for each distribution, 
-0=no autocorrelation.}
+to be considered in the likelihood computation. Second entry is 
+vector of degree of autoregression for each distribution, 
+0 = no autoregression}
 
 \item{N_sim}{Number of states of the HMM used for data generation.}
 
@@ -42,7 +42,7 @@ vector of degree of autocorrelation for each distribution,
 \item{delta_sim}{Initial distribution of simulated data.}
 
 \item{param_sim}{Parameter vector for parameters of the simulated data. In a vector form,
-and in the order that is customary: e.g. for a gamma HMM c(\eqn{\mu1,\mu2,\sigma1,\sigma2}).
+and in the order that is customary: e.g. for a gamma HMM c(\eqn{\mu_1,\mu_2,\sigma_1,\sigma_2}).
 The order of distributions has to be the same as in model_sim.}
 
 \item{autocor_sim}{List of parameter matrix (Dimensions for each matrix: \eqn{n\times p}) for the autocorrelation coefficients. 
@@ -57,11 +57,11 @@ using Viterbi.}
 \item{plot_it}{Bool, determines if resulting densities are plotted.}
 }
 \value{
-List of Fitted model and its parameters (and optional the decoded states).
+List of fitted model and its parameters (and optional the decoded states).
 }
 \description{
-Top to bottom wrapper function: Simulate from a specified HMM, fit a specified
-HMM to the resulting data and return the output. Optionally: Also return the 
+Top to bottom wrapper function: Simulate from a specified AR(p)-HMM, fit a specified
+AR(p)-HMM to the resulting data and return the output. Optionally: Also return the 
 decoded states using the Viterbi algorithm. Optionally: Also plot the resulting 
-density functions of the weighted distributions.
+densities of the weighted state-dependent distributions using state-stationary values.
 }

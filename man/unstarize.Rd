@@ -11,7 +11,7 @@ unstarize(theta.star, N, p, dists, scale_kappa = 1, zero_inf = FALSE)
 
 \item{N}{Number of states of the HMM.}
 
-\item{p}{Vector of degree of autocorrelation within the distributions.}
+\item{p}{Vector of degree of autoregression within the distributions.}
 
 \item{dists}{Vector of the distributions in the HMM.}
 
@@ -20,9 +20,9 @@ unstarize(theta.star, N, p, dists, scale_kappa = 1, zero_inf = FALSE)
 \item{zero_inf}{Default FALSE, indicates if the gamma distributed variables should incorporate zero-inflation.}
 }
 \value{
-List of natural parameters of the HMM.
+List of natural parameters of the AR(p)-HMM.
 }
 \description{
-Transform the working parameters of HMMs to their natural parameters for optimization (theta.star -> theta).
+Transform the working parameters of AR(p)-HMMs to their natural parameters for optimization (theta.star -> theta).
 Currently only works for distributions with exactly two parameters.
 }

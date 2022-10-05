@@ -4,14 +4,14 @@
 
 #' Matrix of all probabilities
 #' 
-#' Calculate matrix of all probabilities for an AR(p) HMM with or without autocorrelation.
+#' Calculate matrix of all probabilities for an AR(p)-HMM with or without within-state autoregression.
 #' 
 #' @param x Data matrix the model was fitted to.
 #' @param dists Vector of distributions in R-jargon.
-#' @param autocor list of autocorrelation vectors, respecting order of dists.
+#' @param autocor list of autoregression vectors, respecting order of dists.
 #' @param params List of optimized parameters, returned by fitting the HMM.
 #' @param N Number of states.
-#' @param p Vector of degree of autocorrelation for each distribution (0 = no autocorrelation).
+#' @param p Vector of degree of autoregression for each distribution (0 = no autoregression).
 #' 
 #' @return Matrix of all probabilities.
 #' 
@@ -36,7 +36,7 @@ allprobs <- function(x, dists, autocor=0, params, N, p){
         allprobs[ind,j] <- allprobs[ind,j] * match.fun(paste('dens_', dists[dist], sep=""))(x[ind,dist], 
                                                                                             params_j)
       }
-    } else{ # p!=0, autocorrelation
+    } else{ # p!=0, autoregression
       
       if (length(dists)>1){
         ind <- which(!is.na(x[,dist]))[-c(1:p[dist])] # change: we omit first step 
@@ -45,7 +45,7 @@ allprobs <- function(x, dists, autocor=0, params, N, p){
         ind <- which(!is.na(x))[-c(1:p[dist])]
       }
       
-      autocor_m <- matrix(autocor[[dist]], ncol=p[dist], byrow=TRUE) # autocorrelation matrix for easier handling later on
+      autocor_m <- matrix(autocor[[dist]], ncol=p[dist], byrow=TRUE) # autoregression matrix for easier handling later on
       
       autocor_ind <- matrix(NA,nrow=length(ind),ncol=p[dist]) # matrix for indices of autocor data
       for (i in 1:p[dist]){
@@ -80,19 +80,19 @@ allprobs <- function(x, dists, autocor=0, params, N, p){
 }
 
 
-#' Global decoding for AR(p) HMM using Viterbi
+#' Global decoding for AR(p)-HMM using Viterbi
 #' 
-#' Global decoding for an AR(p) HMM with or without autocorrelation 
+#' Global decoding for an AR(p)-HMM with or without within-state autoregression 
 #' using the Viterbi algorithm.
 #' 
 #' @param x Data matrix the model was fitted to.
 #' @param Gamma Transition probability matrix (full matrix, not only off diagonal entries).
 #' @param delta Stationary distribution.
 #' @param dists Vector of distributions in R-jargon.
-#' @param autocor list of autocorrelation vectors, respecting order of dists.
+#' @param autocor list of autoregression vectors, respecting order of dists.
 #' @param params List of optimized parameters, returned by fitting the HMM.
 #' @param N Number of states.
-#' @param p Vector of degree of autocorrelation for each distribution (0 = no autocorrelation).
+#' @param p Vector of degree of autoregression for each distribution (0 = no autocorrelation).
 #' 
 #' @return Estimated states using Viterbi.
 #' 
@@ -107,7 +107,6 @@ viterbi_arp <-function(x, Gamma, delta, dists, autocor=0,
   } else{
     n <- length(x)
   }
-  
   
   xi <- matrix(0,n,N)
   foo <- delta*allprobs[1,]

@@ -2,29 +2,29 @@
 # Functions that fit different HMMs to data
 
 
-#' Fit an AR(p) HMM to data
+#' Fit an AR(p)-HMM to data
 #' 
-#' Fit an AR(p) HMM with autocorrelation to data 
+#' Fit an AR(p)-HMM with within-state autoregression to data 
 #' using a specified function to compute the negative 
-#' Log-Likelihood. This function gets minimized using the function \code{optim}.
-#' It returns the estimated parameters of the fitted model. The distribution of the HMM
+#' log-likelihood. This function gets by default minimized using the function \code{optim}.
+#' It returns the estimated parameters of the fitted model. The distributional assumptions for the HMM
 #' can be specified using the parameter \code{dist}.
 #' 
-#' @param mllk Negative log-Likelihood function that should be minimized.
+#' @param mllk Negative log-likelihood function that should be minimized.
 #' @param data Data that should be fitted using the HMM.
 #' @param theta.star Unconstrained parameter vector (has to be provided in suitable form).
 #'                   Attention: -Inf values (resulting e.g. from supplying autocorrelation = 0) are not possible
 #'                   for the optimization function. 
 #' @param N Number of states.
-#' @param p_auto Vector of degree of autocorrelation for each distribution, 0=no autocorrelation.
+#' @param p_auto Vector of degree of autoregression for each distribution, 0 = no autoregression
 #' @param dists Vector containing abbreviated names (in R-jargon) of the distributions 
-#'              to be considered in the Likelihood computation.
-#' @param opt_fun string - Function that should be used for optimization (default: optim).
-#' @param scale_kappa Default 1, Scaling factor for kappa to avoid numerical issues in optimization for large kappa.
+#'              to be considered in the likelihood computation.
+#' @param opt_fun string - Function that should be used for optimization (default: optim, one of ['optim', 'nlm', 'genoud']).
+#' @param scale_kappa Default 1, Scaling factor for kappa to avoid numerical issues in optimization for large kappa in the von Mises distribution.
 #' @param zero_inf Default FALSE, indicates if the gamma distributed variables should incorporate zero-inflation.
 #'            
-#' @return List, containing minimal value of negative log-Likelihood, Gamma, 
-#'         delta, (autocorrelation, depending on degree), mu, sigma.
+#' @return List, containing minimal value of negative log-likelihood, Gamma, 
+#'         delta, (autoregression, depending on degree), mu, sigma.
 #' 
 #' @export
 #' @rdname fit_arp_model
@@ -74,7 +74,6 @@ fit_arp_model <- function(mllk, data, theta.star, N, p_auto, dists, opt_fun='opt
   }
   
   # working parameters -> natural parameters
-  
   ## TPM
   Gamma <- diag(N)
   Gamma[!Gamma] <- exp(mod$par[1:((N-1)*N)])

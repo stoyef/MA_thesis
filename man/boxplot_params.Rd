@@ -11,7 +11,7 @@ boxplot_params(data, name, true_value, ...)
 
 \item{name}{Name of the parameter.}
 
-\item{true_value}{optional, true parameter value, 0 if no horizontal hould 
+\item{true_value}{optional, true parameter value, 0 if no horizontal line should 
 be drawn.}
 }
 \description{

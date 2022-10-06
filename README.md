@@ -51,11 +51,10 @@ Functionalities include:
 - [ ] Look through thesis with focus on dimension. Is the bold face for vectors consistently used? Write at the first time it happens that we most often only handle the univariate case
 - [x] Make vertical margins between two plots smaller so that they do not take so much space 
 - [x] type = 'b' mit grauen Linien und farbigen Punkten bei allen Zeitreihen
-- [ ] Bei Schwalben 30Hz, in die Iterationen der Optimierung gucken, gehen die Varianzen gegen 0?
 - [ ] Hut über alle geschätzten Parameter
 - [ ] autoregressIVE parameters
 - [ ] Abstract?!?
-- [ ] Update package documentation
+- [x] Update package documentation
 
 ## Future prospects
 

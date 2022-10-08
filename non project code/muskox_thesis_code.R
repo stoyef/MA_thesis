@@ -1,5 +1,5 @@
 ## 2022-09-13
-# Code to prduce analyses of sea tern data for chapter 4.2
+# Code to produce analyses of sea tern data for chapter 4.2
 
 # set wd to current file directory
 setwd(dirname(rstudioapi::getActiveDocumentContext()$path)) # RStudio way
@@ -360,6 +360,5 @@ curve(dnorm(x),-5,5,lty=2,add=T,col=4,lwd=1.5)
 plot(density(pres_33_n3$stepRes[pres_33_n3$stepRes!=-Inf],na.rm=T),
      bty='n',main='',lwd=1.5,xlab='x',xlim=c(-5,5))
 curve(dnorm(x),-5,5,lty=2,add=T,lwd=1.5,col=4)
-# lassen wir jetzt die Finger von :)
 
 

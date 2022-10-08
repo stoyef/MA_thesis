@@ -341,7 +341,7 @@ legend('topleft', c('true values'), xpd='NA',
 
 
 
-# Decoding accuracies, maybe for appendix in performance section
+# Decoding accuracies
 
 
 for (n in c(100,500,1000,2000,5000)){

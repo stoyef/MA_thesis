@@ -1,5 +1,5 @@
 ## 2022-09-12
-# Code to prduce analyses of sea tern data for chapter 4.1
+# Code to produce analyses of sea tern data for chapter 4.1
 
 # set wd to current file directory
 setwd(dirname(rstudioapi::getActiveDocumentContext()$path)) # RStudio way
@@ -160,7 +160,7 @@ theta = c(rep(-2,N*(N-1)),
 theta.star = starize(theta, N=N, p=p, dists=c('gamma'),scale_kappa = 20)
 mod = fit_arp_model(mllk, data=data_s_77[,1], theta.star = theta.star, N=N, 
                     p_auto=p, dists=c('gamma'))
-# ne, geht nicht
+# doesn't work
 
 
 # downsample data

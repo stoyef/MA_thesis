@@ -51,7 +51,6 @@ plot_fitted_dist(data=muskox$step,
 plot_fitted_dist(data=muskox$angle,
                  dist='vm', param=list(mu=mod_ar1both$params[[2]]$mu,kappa=mod_ar1both$params[[2]]$kappa),
                  N=2,delta=mod_ar1both$delta, title='muskox w/ AR(1)', breaks=20)
-# Good results!!!! :D
 
 # AR(2)
 theta=c(rep(-2,2),25,150,20,200,pi,0,0.5,0.5, rep(0.01,8)) 
@@ -66,5 +65,4 @@ plot_fitted_dist(data=muskox$angle,
                  dist='vm', param=list(mu=mod_ar2both$params[[2]]$mu,kappa=mod_ar2both$params[[2]]$kappa),
                  N=2,delta=mod$delta, title='muskox w/ AR(2)', breaks=20)
 # doesn't work
-# maybe with other starting values?
 

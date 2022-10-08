@@ -18,7 +18,7 @@ for (i in unique(schwalben$ID)){
 }
 
 
-# die 3. nehmen wir
+# die 77. nehmen wir
 
 library(moveHMM)
 
@@ -43,14 +43,10 @@ mod_move=fitHMM(schwalbe_77,
        c(0,0,0,20,50,200))
 plot(mod_move)
 
-# trick 17 for seeschwalbe:
+# Modification for seeschwalbe:
 # change resolution of kappa parameter in von Mises distribution to avoid numerical 
 # issues in optimization function
 # -> theta.star for kappa in input of optim function should be smaller
-# -> re-work for starize and unstarize
-# -> we have to change mllk so that the updated starize/unstarize functions are used
-
-# ok, done. Let's see...joa geht :)
 
 # no autocorrelation
 theta=c(rep(-2,6),15,25,30,9,4,3,0,0,0,200,500,1000)
@@ -65,16 +61,6 @@ plot_fitted_dist(data=schwalbe_77$angle,
                  dist='vm', param=list(mu=mod_ar0$params[[2]]$mu,kappa=mod_ar0$params[[2]]$kappa),
                  N=3,delta=mod_ar0$delta, title='schwalbe_77 w/o autocorrelation',breaks=100)
 
-
-# just for the kicks: Genetic algorithm
-theta=c(rep(-2,2),15,250,9,3,0,0,500,1000)
-theta.star=starize(theta, N=2,p=c(0,0),dists=c('gamma','vm'))
-mod_ga=fit_arp_model(mllk=mllk, data=cbind(schwalbe_77$step, schwalbe_77$angle), 
-                  theta.star=theta.star, N=2, p_auto=c(0,0),dists=c('gamma','vm'),
-                  opt_fun = 'ga')
-mod_ga
-# doesn't work
-
 # nur turning angle
 theta=c(rep(-2,6),0,0,0,100,300,800)
 theta.star=starize(theta, N=3,p=c(0),dists=c('vm'),scale_kappa = 10)
@@ -84,7 +70,6 @@ mod
 plot_fitted_dist(data=schwalbe_77$angle,
                  dist='vm', param=list(mu=mod$params[[1]]$mu,kappa=mod$params[[1]]$kappa),
                  N=3,delta=mod$delta, title='schwalbe_77 w/ AR(1)',breaks=200)
-
 
 
 # AR(1) in step length (not turning angle) -> doesn't work
@@ -106,7 +91,7 @@ theta.star=starize(theta, N=3,p=c(0,1),dists=c('gamma','vm'))
 mod_ar1turn=fit_arp_model(mllk=mllk, data=cbind(schwalbe_77$step, schwalbe_77$angle), 
               theta.star=theta.star, N=3, p_auto=c(0,1),dists=c('gamma','vm'))
 mod_ar1turn
-# sinnvolles Ergebnis!! :D
+# works
 plot_fitted_dist(data=schwalbe_77$step,
                  dist='gamma', param=list(mu=mod_ar1turn$params[[1]]$mu,sigma=mod_ar1turn$params[[1]]$sigma),
                  N=3,delta=mod_ar1turn$delta, title='schwalbe_77 w/ AR(1)')
@@ -126,7 +111,7 @@ plot_fitted_dist(data=schwalbe_77$step,
 plot_fitted_dist(data=schwalbe_77$angle,
                  dist='vm', param=list(mu=mod_ar1both$params[[2]]$mu,kappa=mod_ar1both$params[[2]]$kappa),
                  N=3,delta=mod$delta, title='schwalbe_77 w/o autocorrelation')
-## AR(1) in step length funzt einfach nicht...
+## AR(1) in step length doesn't work
 
 
 # AR(2) in turning angle (not step length)
@@ -135,7 +120,7 @@ theta.star=starize(theta, N=3,p=c(0,2),dists=c('gamma','vm'))
 mod_ar2turn=fit_arp_model(mllk=mllk, data=cbind(schwalbe_77$step, schwalbe_77$angle), 
                           theta.star=theta.star, N=3, p_auto=c(0,2),dists=c('gamma','vm'))
 mod_ar2turn
-# sinnvolles Ergebnis!! :D
+# works
 plot_fitted_dist(data=schwalbe_77$step,
                  dist='gamma', param=list(mu=mod_ar2turn$params[[1]]$mu,sigma=mod_ar2turn$params[[1]]$sigma),
                  N=3,delta=mod_ar2turn$delta, title='schwalbe_77 w/ AR(2) in turning angle')
@@ -160,7 +145,7 @@ plot_fitted_dist(data=schwalbe_80$angle,
 
 
 ##
-## Now, tortuosity
+## Tortuosity
 ##
 
 plot(schwalbe_77$tortuosity,type='l')
@@ -209,8 +194,7 @@ plot_fitted_dist(data=schwalbe_77$tortuosity,
 
 
 ##
-## Das sind jetzt nicht so gute Ergebnisse
-## Next try: downsamplen zu 1Hz Daten
+## Next try: downsampling to 1Hz
 ##
 
 # read in again, to get raw data
@@ -234,7 +218,7 @@ plot(schwalbe_77_1hz$x,schwalbe_77_1hz$y,type='l')
 schwalbe_77_1hz = prepData(schwalbe_77_1hz)
 plot(schwalbe_77_1hz)
 
-# this should be better to handle :)
+# this sis better to handle
 
 ##
 ## N=2

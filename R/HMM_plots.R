@@ -60,14 +60,10 @@ plot_fitted_dist <- function(data, dist, param, N, delta, title="none", breaks=3
   x <- seq(min(data[data!=0], na.rm=TRUE),max(data, na.rm=TRUE),length=10000)
   
   if (dist=='gamma'){
-    mu <- param[1:N]
-    sigma <- param[N+1:N]
     for (i in 1:N){
       dens[,i] = delta[i]*dgamma(x, shape=param$mu[i]^2/param$sigma[i]^2, scale=param$sigma[i]^2/param$mu[i])
     }
   } else if (dist=='vm'){
-    mu <- param[1:N]
-    kappa <- param[N+1:N]
     for (i in 1:N){
       dens[,i] = delta[i]*dvm(x, param$mu[i], param$kappa[i])
     }

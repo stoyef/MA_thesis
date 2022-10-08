@@ -341,6 +341,16 @@ pal=brewer.pal(N+1,'Dark2')
 legend('topright', c(paste("State",1:N),"Total"), bty='n', lwd=2,
        col=pal,inset=c(0.45,-0.1),xpd='NA',horiz=T)# N=3: inset=c(0.25,-0.1)
 
+par(mfrow=c(1,2))
+plot_fitted_dist(data=data_s_77_1hz[,1],
+                 dist='gamma', param=list(mu=c(429.303, 765.007),sigma=c(179.193, 63.354)),
+                 N=N,delta=c(0.278,0.722), title='none',breaks=20, xlab='step length', legend=FALSE)
+plot_fitted_dist(data=data_s_77_1hz[,2],
+                 dist='vm', param=list(mu=c(-0.037, 0.206),kappa=c(2.833, 15.631)),
+                 N=N,delta=c(0.278,0.722), title='none',breaks=15, xlab='turning angle', legend=FALSE)
+pal=brewer.pal(N+1,'Dark2')
+legend('topright', c(paste("State",1:N),"Total"), bty='n', lwd=2,
+       col=pal,inset=c(0.45,-0.1),xpd='NA',horiz=T)# N=3: inset=c(0.25,-0.1)
 
 
 # state decoding

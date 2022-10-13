@@ -12,10 +12,10 @@ library(moveHMM)
 muskox = prepData(muskox, type='UTM')
 head(muskox)
 
-layout(matrix(c(1,3,3, 2,3,3),byrow=TRUE,ncol=3))
+layout(matrix(c(1,1,2, 1,1,3),byrow=TRUE,ncol=3))
+plot(muskox$x,muskox$y, type='l', bty='n',xlab='x',ylab='y', cex.lab=1.25)
 hist(muskox$step, breaks=25,prob=T,main="", xlab='step length', cex.lab=1.25)
 hist(muskox$angle, breaks=15,prob=T,main="", xlab='turning angle', cex.lab=1.25)
-plot(muskox$x,muskox$y, type='l', bty='n',xlab='x',ylab='y', cex.lab=1.25)
 
 
 

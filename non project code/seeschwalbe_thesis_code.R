@@ -20,11 +20,11 @@ library(moveHMM)
 s_77 = prepData(schwalbe_77)
 head(s_77)
 
-layout(matrix(c(1,3,3, 2,3,3),byrow=TRUE,ncol=3))
+layout(matrix(c(1,1,2, 1,1,3),byrow=TRUE,ncol=3))
+plot(s_77$x,s_77$y, type='l', bty='n',xlab='x',ylab='y', cex.lab=1.25)
 hist(s_77$step, breaks=25,prob=T,main="", xlab='step length', cex.lab=1.25)
 hist(s_77$angle, breaks=80,prob=T,main="", xlab='turning angle', cex.lab=1.25,
      xlim=c(-1,1))
-plot(s_77$x,s_77$y, type='l', bty='n',xlab='x',ylab='y', cex.lab=1.25)
 
 
 ### fit different models for original data

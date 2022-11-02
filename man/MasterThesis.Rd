@@ -14,6 +14,11 @@ and one von Mises distributed variable (although in principle this can be change
 The functions are primarily used in my Master Thesis (hence the package name :D).
 Of course, everyone is free to use them in any other context.
 }
+\details{
+Attention: Compared to the description in the thesis, the autoregression parameter
+matrices \eqn{\phi} have a reversed column order. \eqn{\phi_{jk}} should always be 
+supplied as follows: \eqn{\phi_{j,t-p-1+k}}
+}
 \section{Important functions}{
 
 \code{\link{sample_arp}} Simulate data from an AR(p)-HMM 

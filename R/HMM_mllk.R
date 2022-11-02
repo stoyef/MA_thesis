@@ -55,6 +55,8 @@ mllk <- function(theta.star, dists, x, N, p_auto, scale_kappa=1, zero_inf=FALSE)
       ind <- which(!is.na(x[,dist]))[-c(1:p_auto[dist])] # change: we omit first p steps 
       # in order to always have the step in t-p
       autocor_ind <- matrix(NA,nrow=length(ind),ncol=p_auto[dist]) # matrix for indices of autocor data
+      # Attention: This matrix' columns have reversed order compared to description
+      # in the master thesis!
       
       for (i in 1:p_auto[dist]){
         autocor_ind[,i] <- ind-p_auto[dist]+i-1

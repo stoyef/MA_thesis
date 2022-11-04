@@ -157,7 +157,7 @@ boxplot(sim_res_2040_20$estimated_gamma_mu[,2],
 )
 axis(1, at=c(1,2,3), labels=c("small","medium","high"),cex.axis=0.8)
 points(x=c(1,2,3),y=c(40,35,30),col=2,lwd=1.5,pch=19)
-text(-0.5,43.5,"simulated: AR(2,2), fitted: AR(0,0)",xpd='NA',
+text(-0.5,43.5,"Simulated: AR(2,2), fitted: AR(0,0)",xpd='NA',
      font=2,cex=1.3)
 
 boxplot(sim_res_2040_22$estimated_gamma_mu[,1], 
@@ -177,7 +177,7 @@ boxplot(sim_res_2040_22$estimated_gamma_mu[,2],
         xlab=expression(mu[2]),
         ylim=c(27.5,42)
 )
-text(-0.5,43.5,"simulated: AR(2,2), fitted: AR(2,2)",xpd='NA',
+text(-0.5,43.5,"Simulated: AR(2,2), fitted: AR(2,2)",xpd='NA',
      font=2,cex=1.3)
 axis(1, at=c(1,2,3), labels=c("small","medium","high"),cex.axis=0.8)
 points(x=c(1,2,3),y=c(40,35,30),col=2,lwd=1.5,pch=19)

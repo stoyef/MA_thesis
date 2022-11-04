@@ -187,17 +187,17 @@ par(mfrow=c(1,2))
 #                 N=3,delta=mods[[1]]$delta, title='none',breaks=100,
 #                 xlim=c(0,500),legend=F,xlab='step length')
 plot_fitted_dist(data=muskox$angle,
-                 dist='vm', param=list(mu=best_mod_00_n3$params[[2]]$mu,kappa=best_mod_00_n3$params[[2]]$kappa),
-                 N=3,delta=best_mod_00_n3$delta, title='Basic HMM',breaks=20,
+                 dist='vm', param=list(mu=c(3.072, -2.898,0.007), kappa=c(0.474, 0.112, 0.925)),
+                 N=3,delta=c(0.259,0.515,0.226), title='',breaks=20,
                  legend=F,xlab='turning angle')
 plot_fitted_dist(data=muskox$angle,
-                 dist='vm', param=list(mu=best_mod_33_n3$params[[2]]$mu,kappa=best_mod_33_n3$params[[2]]$kappa),
-                 N=3,delta=best_mod_33_n3$delta, title='AR(3,3)-HMM',breaks=20,
+                 dist='vm', param=list(mu=c(3.118, -3.111,-0.046), kappa=c(0.464, 0.411, 0.581)),
+                 N=3,delta=c(0.203,0.357,0.440), title='',breaks=20,
                  legend=F,xlab='turning angle')
 pal=brewer.pal(N+1,'Dark2')
-legend('topleft', c(paste("State",1:N),"Total"), bty='n', lwd=2,
+legend('topleft', c(paste("State",1:N),"Marginal"), bty='n', lwd=2,
        col=pal,inset=c(#-1.2,#
-                       -1.35,
+                       -1.25,
                        -0.075),xpd='NA',horiz=T)
 
 

@@ -349,8 +349,8 @@ plot_fitted_dist(data=data_s_77_1hz[,2],
                  dist='vm', param=list(mu=c(-0.037, 0.206),kappa=c(2.833, 15.631)),
                  N=N,delta=c(0.278,0.722), title='none',breaks=15, xlab='turning angle', legend=FALSE)
 pal=brewer.pal(N+1,'Dark2')
-legend('topright', c(paste("State",1:N),"Total"), bty='n', lwd=2,
-       col=pal,inset=c(0.45,-0.1),xpd='NA',horiz=T)# N=3: inset=c(0.25,-0.1)
+legend('topright', c(paste("State",1:N),"Marginal"), bty='n', lwd=2,
+       col=pal,inset=c(0.55,-0.1),xpd='NA',horiz=T)# N=3: inset=c(0.25,-0.1)
 
 
 # state decoding

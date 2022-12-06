@@ -5,7 +5,7 @@ Title: Master Thesis
 Description: Master Thesis about AR(p)-HMMs.
 Authors@R: person("Ferdinand", "Stoye", email = "ferdinand.stoye@uni-bielefeld.de", 
   role = c("aut","cre"))
-RoxygenNote: 7.2.1
+RoxygenNote: 7.2.2
 Encoding: UTF-8
 License: GPL-3
 LazyData: true

@@ -89,7 +89,7 @@ sample_arp <- function(n_samples, delta, Gamma, N, params, autocor, p, dists){
           param1_ar <- Arg(param1_ar_auto + param1_ar_fixed)
         } else{
           param1_ar <- sum(ar_matrix[states[t],]*data[(t-p[dist]):(t-1),dist]) + 
-          (1-sum(ar_matrix[states[t],]))*param1[states[t]]
+            (1-sum(ar_matrix[states[t],]))*param1[states[t]]
         }
         
         if (dists[dist]=='gamma'){ # respect ccv

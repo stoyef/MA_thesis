@@ -11,7 +11,7 @@ starize(theta, N, p, dists, scale_kappa = 1, zero_inf = FALSE)
 
 \item{N}{Number of states of the HMM.}
 
-\item{p}{Vector of degree of autoregression within the distributions.}
+\item{p}{Vector of degree of autoregression within the distributions (one value for each state).}
 
 \item{dists}{Vector of the distributions in the HMM.}
 

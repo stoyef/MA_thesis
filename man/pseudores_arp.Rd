@@ -13,7 +13,8 @@ pseudores_arp(mod, data, N, p)
 
 \item{N}{Number of states.}
 
-\item{p}{Vector of degree of autoregression for each distribution (0 = no autoregression).}
+\item{p}{Vector of degree of autoregression for each distribution 
+(one value for every state) (0 = no autoregression).}
 }
 \value{
 Pseudo residuals for step length and turning angles.

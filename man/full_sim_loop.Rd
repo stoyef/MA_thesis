@@ -23,7 +23,7 @@ full_sim_loop(
 
 \item{dists_fitted}{Vector of distributions of fitted model in R-jargon.}
 
-\item{p_fitted}{Vector of degrees of autoregression of fitted models.}
+\item{p_fitted}{Vector of degrees of autoregression of fitted models (one value for every state).}
 
 \item{n_states_fitted}{Number of states of the fitted models.}
 

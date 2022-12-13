@@ -13,7 +13,8 @@ logAlpha(mod, data, N, p)
 
 \item{N}{Number of states.}
 
-\item{p}{Vector of degree of autoregression for each distribution (0 = no autoregression).}
+\item{p}{Vector of degree of autoregression for each distribution 
+(one value for each state) (0 = no autoregression).}
 }
 \value{
 Matrix of forward log-probabilities.

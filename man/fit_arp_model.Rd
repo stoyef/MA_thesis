@@ -27,7 +27,8 @@ for the optimization function.}
 
 \item{N}{Number of states.}
 
-\item{p_auto}{Vector of degree of autoregression for each distribution, 0 = no autoregression}
+\item{p_auto}{Vector of degree of autoregression for each distribution, 0 = no autoregression, one value
+for every state of every variable.}
 
 \item{dists}{Vector containing abbreviated names (in R-jargon) of the distributions 
 to be considered in the likelihood computation.}

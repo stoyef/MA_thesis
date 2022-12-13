@@ -12,7 +12,7 @@ mllk(theta.star, dists, x, N, p_auto, scale_kappa = 1, zero_inf = FALSE)
 first all parameters of dist1, then all parameters of dist2 etc.), 
 3) Autoregression parameters (each distribution at a time, i.e. 
 first all autoregression parameters of dist1, then all autocorrelation 
-parameters of dist2 etc.).}
+parameters of dist2 etc.) -> degree parameters for each state of each variable.}
 
 \item{dists}{Vector containing abbreviated names (in R-jargon) of the distributions 
 to be considered in the likelihood computation.}
@@ -21,7 +21,7 @@ to be considered in the likelihood computation.}
 
 \item{N}{Number of states.}
 
-\item{p_auto}{Vector of degree of autoregression for each distribution, 0 = no autoregression}
+\item{p_auto}{Vector of autoregression degrees, one value for each state of each variable.}
 
 \item{scale_kappa}{Default 1, Scaling factor for kappa to avoid numerical issues in optimization for large kappa.}
 

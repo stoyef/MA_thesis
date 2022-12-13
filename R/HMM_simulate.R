@@ -114,6 +114,52 @@ sample_arp <- function(n_samples, delta, Gamma, N, params, autocor, p, dists){
 
 
 
+## Function to generate track from simulated data
+##
+
+#' Generate track from simulated data
+#' 
+#' Generate movement path coordinates from simulated data (step length and turning
+#' angle) of an AR(p)-HMM.
+#' 
+#'
+#' 
+#' @param simulated_data DataFrame or matrix, simulated step lengths and turning angles.
+#' @param coord_start Vector, initial coordinates to start in, default: (0,0).
+#' @param direction_start int, initial direction, the first turning angle should be relative to. 
+#'                        Scale: [-pi,pi), default: 0
+#'               
+#' @return Data frame of coordinates, step length and turning angles, similar to 
+#'          output from prepData in moveHMM.
+#' 
+#' @export
+#' @rdname simulate_track
+simulate_track <- function(simulated_data, coord_start=c(0,0), direction_start=0){
+  
+  if (!is.matrix(simulated_data)) simulated_data = as.matrix(simulated_data)
+  x_coord = rep(NA, nrow(simulated_data))
+  y_coord = rep(NA, nrow(simulated_data))
+  
+  # step 1
+  angle = direction_start + simulated_data[1,2]
+  new_x = coord_start[1] + simulated_data[1,1] * cos(angle)
+  new_y = coord_start[2] + simulated_data[1,1] * sin(angle)
+  x_coord[1] = new_x
+  y_coord[1] = new_y
+  
+  for (step in 2:nrow(simulated_data)){
+    angle = angle + simulated_data[step,2]
+    new_x = x_coord[step-1] + simulated_data[step,1] * cos(angle)
+    new_y = y_coord[step-1] + simulated_data[step,1] * sin(angle)
+    x_coord[step] = new_x
+    y_coord[step] = new_y
+  }
+  
+  ret = as.data.frame(matrix(c(x_coord, y_coord, simulated_data), 
+                             nrow=nrow(simulated_data), ncol=4))
+  colnames(ret) = c('x','y','step','turn')
+  return(ret)
+}
 
 
 

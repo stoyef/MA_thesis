@@ -22,11 +22,11 @@ ar_simulation(
 \item{model_sim}{Form of simulated data in a list: First entry is vector containing 
 abbreviated names (in R-jargon) of the distributions 
 the data should be sampled from. Second entry is 
-vector of degree of autoregression for each distribution, 
+vector of degree of autoregression for each distribution (one value for each state), 
 0 = no autoregression}
 
 \item{model_fit}{Form of fitted data in a list: First entry is vector containing 
-abbreviated names (in R-jargon) of the distributions 
+abbreviated names (in R-jargon) of the distributions (one value for each state)
 to be considered in the likelihood computation. Second entry is 
 vector of degree of autoregression for each distribution, 
 0 = no autoregression}
@@ -45,7 +45,7 @@ vector of degree of autoregression for each distribution,
 and in the order that is customary: e.g. for a gamma HMM c(\eqn{\mu_1,\mu_2,\sigma_1,\sigma_2}).
 The order of distributions has to be the same as in model_sim.}
 
-\item{autocor_sim}{List of parameter matrix (Dimensions for each matrix: \eqn{n\times p}) for the autocorrelation coefficients. 
+\item{autocor_sim}{List of list of parameters for the autocorrelation coefficients. 
  Has to match p, in the order \eqn{\phi_{t-p},\dots,\phi_{t-1}}
  where \eqn{\phi} is the vector of autocorrelation coefficients
 for one specific time lag (one value for each state).

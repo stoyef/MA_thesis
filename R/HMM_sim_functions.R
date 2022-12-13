@@ -14,10 +14,10 @@
 #' @param model_sim Form of simulated data in a list: First entry is vector containing 
 #'                  abbreviated names (in R-jargon) of the distributions 
 #'                  the data should be sampled from. Second entry is 
-#'                  vector of degree of autoregression for each distribution, 
+#'                  vector of degree of autoregression for each distribution (one value for each state), 
 #'                  0 = no autoregression
 #' @param model_fit Form of fitted data in a list: First entry is vector containing 
-#'                  abbreviated names (in R-jargon) of the distributions 
+#'                  abbreviated names (in R-jargon) of the distributions (one value for each state)
 #'                  to be considered in the likelihood computation. Second entry is 
 #'                  vector of degree of autoregression for each distribution, 
 #'                  0 = no autoregression
@@ -29,7 +29,7 @@
 #' @param param_sim Parameter vector for parameters of the simulated data. In a vector form,
 #'                  and in the order that is customary: e.g. for a gamma HMM c(\eqn{\mu_1,\mu_2,\sigma_1,\sigma_2}).
 #'                  The order of distributions has to be the same as in model_sim.
-#' @param autocor_sim List of parameter matrix (Dimensions for each matrix: \eqn{n\times p}) for the autocorrelation coefficients. 
+#' @param autocor_sim List of list of parameters for the autocorrelation coefficients. 
 #'                    Has to match p, in the order \eqn{\phi_{t-p},\dots,\phi_{t-1}}
 #'                    where \eqn{\phi} is the vector of autocorrelation coefficients
 #'                   for one specific time lag (one value for each state).
@@ -44,9 +44,9 @@
 #' @rdname ar_simulation     
 #' 
 ar_simulation <- function(model_sim, model_fit, N_sim, N_fit, n_samples, 
-                             Gamma_sim, delta_sim, param_sim, autocor_sim=0,
-                             estimate_states=TRUE,plot_it=TRUE){
-
+                          Gamma_sim, delta_sim, param_sim, autocor_sim=0,
+                          estimate_states=TRUE,plot_it=TRUE){
+  
   simulated_data <- sample_arp(n_samples=n_samples,
                                delta=delta_sim, 
                                Gamma=Gamma_sim, 
@@ -55,9 +55,8 @@ ar_simulation <- function(model_sim, model_fit, N_sim, N_fit, n_samples,
                                autocor=autocor_sim,
                                p=model_sim[[2]], 
                                dists=model_sim[[1]]
-                                 )
-  ## simulated data -> contained in simulated_data$data
-
+  )
+  
   ## starting parameters for model fitting
   params <- c()
   for (dist in 1:length(model_fit[[1]])){
@@ -67,13 +66,13 @@ ar_simulation <- function(model_sim, model_fit, N_sim, N_fit, n_samples,
   if (any(model_fit[[2]]>0)){
     autocor <- c()
     for (dist in 1:length(model_fit[[1]])){
-      ac <- as.numeric(acf(simulated_data$data[,dist], plot=F)$acf[2:(model_fit[[2]][dist]+1)])
+      ac <- as.numeric(acf(simulated_data$data[,dist], plot=F)$acf[2:(sum(model_fit[[2]][(dist-1)*N_fit+1:N_fit])+1)])
       # Attention: The sum of the autoregression coefficients must not be >1 for a state
       # Otherwise, in the Gamma distribution negative values would be possible for mu
       # which leads to an error
       # Therefore, we standardize ac to avoid this
       ac = ac/(sum(ac)+1)
-      autocor <- c(autocor, rep(ac,N_fit))
+      autocor <- c(autocor, ac)
     }
     
     theta <- c(
@@ -92,11 +91,11 @@ ar_simulation <- function(model_sim, model_fit, N_sim, N_fit, n_samples,
   
   # fit the model
   fitted_model <- fit_arp_model(mllk=mllk, 
-                    data=simulated_data$data, 
-                    theta.star=theta.star, 
-                    N=N_fit, 
-                    p_auto=model_fit[[2]], 
-                    dists=model_fit[[1]])
+                                data=simulated_data$data, 
+                                theta.star=theta.star, 
+                                N=N_fit, 
+                                p_auto=model_fit[[2]], 
+                                dists=model_fit[[1]])
   
   
   ## Error handling, if optim() in fit function didn't work
@@ -113,7 +112,7 @@ ar_simulation <- function(model_sim, model_fit, N_sim, N_fit, n_samples,
       }
       param <- fitted_model$params[[dist]]
       plot_fitted_dist(simulated_data$data[,dist], model_fit[[1]][dist], param, N_fit,
-                        fitted_model$delta)
+                       fitted_model$delta)
       
     }
   }
@@ -132,12 +131,13 @@ ar_simulation <- function(model_sim, model_fit, N_sim, N_fit, n_samples,
     ret <- list(simulated_data, fitted_model, estimated_states)
     names(ret) <- c('simulated_model','fitted_model', 'viterbi_states')
     return(ret)
-    } else{
-      ret <- list(simulated_data, fitted_model)
-      names(ret) <- c('simulated_model','fitted_model')
-      return(ret)
-    }
+  } else{
+    ret <- list(simulated_data, fitted_model)
+    names(ret) <- c('simulated_model','fitted_model')
+    return(ret)
+  }
 }
+
 
 
 

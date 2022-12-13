@@ -29,7 +29,7 @@ nice_params <- function(Gamma, autocor, ...){
 #' 
 #' @param theta Vector of natural parameters.
 #' @param N Number of states of the HMM.
-#' @param p Vector of degree of autoregression within the distributions.
+#' @param p Vector of degree of autoregression within the distributions (one value for each state).
 #' @param dists Vector of the distributions in the HMM.
 #' @param scale_kappa Default 1, Scaling factor for kappa to avoid numerical issues in optimization for large kappa.
 #' @param zero_inf Default FALSE, indicates if the gamma distributed variables should incorporate zero-inflation.
@@ -41,9 +41,9 @@ nice_params <- function(Gamma, autocor, ...){
 starize <- function(theta,N,p,dists, scale_kappa=1, zero_inf=FALSE){
   # check for right number of parameters
   if (zero_inf){
-    right_number = N*(N-1)+2*N*length(dists)+sum(p)*N+sum(dists=='gamma')*N
+    right_number = N*(N-1)+2*N*length(dists)+sum(p)+sum(dists=='gamma')*N
   } else{
-    right_number = N*(N-1)+2*N*length(dists)+sum(p)*N
+    right_number = N*(N-1)+2*N*length(dists)+sum(p)
   }
   if (length(theta) != right_number){
     return("ERROR: Wrong number of parameters supplied.")
@@ -69,7 +69,7 @@ starize <- function(theta,N,p,dists, scale_kappa=1, zero_inf=FALSE){
     }
     
     if (any(p>0)){
-      autocor <- qlogis(theta[param_count+1:(sum(p)*N)])
+      autocor <- qlogis(theta[param_count+1:sum(p)])
       theta.star <- c(Gamma, params, autocor)
     } else{
       theta.star <- c(Gamma, params)
@@ -78,10 +78,11 @@ starize <- function(theta,N,p,dists, scale_kappa=1, zero_inf=FALSE){
       zero_inf <- qlogis(theta[-(1:(param_count+sum(p)*N))])
       theta.star <- c(theta.star, zero_inf)
     }
-
+    
     return(theta.star)
   }
 }
+
 
 
 

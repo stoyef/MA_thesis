@@ -16,7 +16,8 @@
 #'                   Attention: -Inf values (resulting e.g. from supplying autocorrelation = 0) are not possible
 #'                   for the optimization function. 
 #' @param N Number of states.
-#' @param p_auto Vector of degree of autoregression for each distribution, 0 = no autoregression
+#' @param p_auto Vector of degree of autoregression for each distribution, 0 = no autoregression, one value
+#'               for every state of every variable.
 #' @param dists Vector containing abbreviated names (in R-jargon) of the distributions 
 #'              to be considered in the likelihood computation.
 #' @param opt_fun string - Function that should be used for optimization (default: optim, one of ['optim', 'nlm', 'genoud']).
@@ -46,7 +47,7 @@ fit_arp_model <- function(mllk, data, theta.star, N, p_auto, dists, opt_fun='opt
   } else if (opt_fun=='nlm'){
     tryCatch(
       mod <- nlm(f=mllk, p=theta.star, iterlim=500,
-                   N=N,p_auto=p_auto,x=data, dists=dists, scale_kappa=scale_kappa, zero_inf=zero_inf),
+                 N=N,p_auto=p_auto,x=data, dists=dists, scale_kappa=scale_kappa, zero_inf=zero_inf),
       error=function(e){cat("ERROR: nlm() failed.\n
                             Continue to next iteration.\n")
         skip <<- TRUE
@@ -60,7 +61,7 @@ fit_arp_model <- function(mllk, data, theta.star, N, p_auto, dists, opt_fun='opt
                     N=N,p_auto=p_auto,scale_kappa=scale_kappa,zero_inf=zero_inf,
                     dists=dists,x=data#,
                     #Domains=matrix(rep(c(-Inf,Inf),length(theta.star)),ncol=2,byrow=T)
-                    ),
+      ),
       error=function(e){cat("ERROR: rgenoud() failed.\n
                             Continue to next iteration.\n")
         skip <<- TRUE
@@ -110,12 +111,15 @@ fit_arp_model <- function(mllk, data, theta.star, N, p_auto, dists, opt_fun='opt
   counter_auto = 0
   # autocorrelation
   if (any(p_auto>0)){
-    ac <- plogis(mod$par[counter+1:(sum(p_auto)*N)])
+    ac <- plogis(mod$par[counter+1:sum(p_auto)])
     autocor = list()
     for (dist in 1:length(dists)){
-      if (p_auto[dist]>0){
-        autocor[[dist]] = ac[counter_auto+1:(p_auto[dist]*N)]
-        counter_auto <- counter_auto+(p_auto[dist]*N)
+      autocor[[dist]] = list()
+      for (state in 1:N){
+        if (p_auto[(dist-1)*N+state]>0){
+          autocor[[dist]][[state]] = ac[counter_auto+1:(p_auto[(dist-1)*N+state])]
+          counter_auto = counter_auto+p_auto[(dist-1)*N+state]
+        }
       }
     }
   }
@@ -144,3 +148,4 @@ fit_arp_model <- function(mllk, data, theta.star, N, p_auto, dists, opt_fun='opt
   }
   return(ret)
 }
+

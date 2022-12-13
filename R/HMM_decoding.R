@@ -22,8 +22,8 @@
 #' @export
 #' @rdname viterbi_arp
 viterbi_arp <-function(x, Gamma, delta, dists, autocor=0, 
-                             params, N, p){
-
+                       params, N, p){
+  
   allprobs = allprobs(x=x, dists=dists, autocor=autocor, params=params, N=N, p=p)  
   if (length(dists)>1){
     n <- dim(x)[1]

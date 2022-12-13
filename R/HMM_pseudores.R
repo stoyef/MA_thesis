@@ -11,7 +11,8 @@
 #' @param mod Fitted AR(p)-HMM object.
 #' @param data Data the model is fitted on.
 #' @param N Number of states.
-#' @param p Vector of degree of autoregression for each distribution (0 = no autoregression).
+#' @param p Vector of degree of autoregression for each distribution 
+#'          (one value for each state) (0 = no autoregression).
 #' 
 #' @return Matrix of forward log-probabilities.
 #' 
@@ -43,6 +44,7 @@ logAlpha <- function(mod, data, N, p){
 }
 
 
+
 #' Compute pseudo residuals
 #' 
 #' Compute the pseudo residuals of an AR(p)-HMM.
@@ -53,7 +55,8 @@ logAlpha <- function(mod, data, N, p){
 #' @param mod Fitted AR(p)-HMM object.
 #' @param data Data the model is fitted on.
 #' @param N Number of states.
-#' @param p Vector of degree of autoregression for each distribution (0 = no autoregression).
+#' @param p Vector of degree of autoregression for each distribution 
+#'          (one value for every state) (0 = no autoregression).
 #' 
 #' @return Pseudo residuals for step length and turning angles.
 #' 
@@ -76,10 +79,10 @@ pseudores_arp <- function(mod, data, N, p){
   pAngleMat <- matrix(NA,nbObs,N)
   
   if (any(p>0)){
-
-    autocor_m_step <- matrix(autocor[[1]], ncol=p[1], byrow=TRUE) # autoregression matrix for easier handling later on
-    autocor_m_angle <- matrix(autocor[[2]], ncol=p[2], byrow=TRUE) # autoregression matrix for easier handling later on
-
+    
+    #autocor_m_step <- matrix(autocor[[1]], ncol=p[1], byrow=TRUE) # autoregression matrix for easier handling later on
+    #autocor_m_angle <- matrix(autocor[[2]], ncol=p[2], byrow=TRUE) # autoregression matrix for easier handling later on
+    
     x_wo_na_step = data[,1]
     x_wo_na_angle = data[,2]
     x_wo_na_step[which(is.na(x_wo_na_step))] = mean(x_wo_na_step,na.rm = TRUE)
@@ -102,10 +105,10 @@ pseudores_arp <- function(mod, data, N, p){
     for(i in 1:nbObs) {
       # steps
       if(!is.na(data[i,1])) {
-        if (p[1]>0){
-          if (i > p[1]){
-            mu_auto <- (1-sum(autocor_m_step[state,]))*stepArgs[[2]] + 
-              as.vector(x_wo_na_step[(i-p[1]):(i-1)]%*%autocor_m_step[state,])
+        if (p[step]>0){
+          if (i > p[step]){
+            mu_auto <- (1-sum(autocor[[1]][[state]]))*stepArgs[[2]] + 
+              as.vector(x_wo_na_step[(i-p[step]):(i-1)]%*%autocor[[1]][[state]])
             sigma_auto <- cv*mu_auto
             pStepMat[i,state] <- zeromass+(1-zeromass)*pgamma(data[i,1],
                                                               shape=mu_auto^2/sigma_auto^2,
@@ -116,7 +119,7 @@ pseudores_arp <- function(mod, data, N, p){
                                                               scale=stepArgs[[3]]^2/stepArgs[[2]])
           }
         } else{
-            pStepMat[i,state] <- zeromass+(1-zeromass)*pgamma(data[i,1],
+          pStepMat[i,state] <- zeromass+(1-zeromass)*pgamma(data[i,1],
                                                             shape=stepArgs[[2]]^2/stepArgs[[3]]^2,
                                                             scale=stepArgs[[3]]^2/stepArgs[[2]])
         }
@@ -125,12 +128,12 @@ pseudores_arp <- function(mod, data, N, p){
       # angles
       if(!is.na(data[i,2])) {
         # angle==pi => residual=Inf
-        if (p[2]>0){
-          if (i > p[2]){
+        if (p[N+step]>0){
+          if (i > p[N+step]){
             if(data[i,2]!=pi) {
               mu_auto <- Arg(
-                (1-sum(autocor_m_angle[state,]))*exp(1i*angleArgs[[4]]) + 
-                  as.vector(exp(1i*x_wo_na_angle[(i-p[2]):(i-1)])%*%autocor_m_angle[state,])
+                (1-sum(autocor[[2]][[state]]))*exp(1i*angleArgs[[4]]) + 
+                  as.vector(exp(1i*x_wo_na_angle[(i-p[2]):(i-1)])%*%autocor[[2]][[state]])
               )
               pAngleMat[i,state] <- integrate(dvm,angleArgs[[2]],data[i,2],
                                               mu_auto,angleArgs[[5]])$value
@@ -171,3 +174,4 @@ pseudores_arp <- function(mod, data, N, p){
   
   return(list(stepRes=stepRes, angleRes=angleRes))
 }
+

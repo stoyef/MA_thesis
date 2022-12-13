@@ -151,7 +151,7 @@ ar_simulation <- function(model_sim, model_fit, N_sim, N_fit, n_samples,
 #' @param simulation Function that generates one simulation.
 #' @param n_runs Number of models that should be created in the loop.
 #' @param dists_fitted Vector of distributions of fitted model in R-jargon.
-#' @param p_fitted Vector of degrees of autoregression of fitted models.
+#' @param p_fitted Vector of degrees of autoregression of fitted models (one value for every state).
 #' @param n_states_fitted Number of states of the fitted models.
 #' @param n_samples_simulated Number of samples simulated in each model.
 #' @param extract_aic_bic bool, indicates if AIC and BIC of the models should also be saved.
@@ -177,8 +177,10 @@ full_sim_loop <- function(simulation, n_runs, dists_fitted, p_fitted,
            matrix(NA,nrow=n_runs,ncol=n_states_fitted))
     assign(paste("estimated_",dist,"_param_2", sep=""), 
            matrix(NA,nrow=n_runs,ncol=n_states_fitted))
-    assign(paste("estimated_",dist,"_autocor", sep=""),
-           matrix(NA,nrow=n_runs,ncol=n_states_fitted*p_fitted[dist]))
+    for (state in 1:n_states_fitted){
+      assign(paste("estimated_",dist,"state_",state,"_autocor", sep=""),
+             matrix(NA,nrow=n_runs,ncol=n_states_fitted*p_fitted[(dist-1)*n_states_fitted+state]))
+    }
   }
   true_states = matrix(NA,nrow=n_runs,ncol=n_samples_simulated)
   estimated_states = matrix(NA,nrow=n_runs,ncol=n_samples_simulated)
@@ -226,9 +228,11 @@ full_sim_loop <- function(simulation, n_runs, dists_fitted, p_fitted,
             h[i,] = successful_results_this_time[[i-n_its]]$fitted_model$params[[dist]][[2]]
             assign(paste("estimated_",dist,"_param_2", sep=""), h)
             # autocorrelation
-            h = get(paste("estimated_",dist,"_autocor", sep=""))
-            h[i,] = successful_results_this_time[[i-n_its]]$fitted_model$autocorrelation[[dist]]
-            assign(paste("estimated_",dist,"_autocor", sep=""), h)
+            for (state in 1:n_states_fitted){
+              h = get(paste("estimated_",dist,"state_",state,"_autocor", sep=""))
+              h[i,] = successful_results_this_time[[i-n_its]]$fitted_model$autocorrelation[[dist]][[state]]
+              assign(paste("estimated_",dist,"state_",state,"_autocor", sep=""), h)
+            }
           }
           true_states[i,] = successful_results_this_time[[i-n_its]]$simulated_model$states
           estimated_states[i,] = successful_results_this_time[[i-n_its]]$viterbi_states
@@ -238,7 +242,7 @@ full_sim_loop <- function(simulation, n_runs, dists_fitted, p_fitted,
             # BIC
             bics[i] = successful_results_this_time[[i-n_its]]$fitted_model$BIC
             # log-likelihood
-            logLike = - successful_results_this_time[[i-n_its]]$fitted_model$mllk_optim
+            logLike[i] = - successful_results_this_time[[i-n_its]]$fitted_model$mllk_optim
           }
         }
         n_its = n_its+sum(successful_iterations_this_time)
@@ -269,9 +273,11 @@ full_sim_loop <- function(simulation, n_runs, dists_fitted, p_fitted,
           h[i,] = sim$fitted_model$params[[dist]][[2]]
           assign(paste("estimated_",dist,"_param_2", sep=""), h)
           # autocorrelation
-          h = get(paste("estimated_",dist,"_autocor", sep=""))
-          h[i,] = sim$fitted_model$autocorrelation[[dist]]
-          assign(paste("estimated_",dist,"_autocor", sep=""), h)
+          for (state in 1:n_states_fitted){
+            h = get(paste("estimated_",dist,"state_",state,"_autocor", sep=""))
+            h[i,] = sim$fitted_model$autocorrelation[[dist]][[state]]
+            assign(paste("estimated_",dist,"state_",state,"_autocor", sep=""), h)
+          }
         }
         true_states[i,] = sim$simulated_model$states
         estimated_states[i,] = sim$viterbi_states
@@ -281,12 +287,12 @@ full_sim_loop <- function(simulation, n_runs, dists_fitted, p_fitted,
           # BIC
           bics[i] = sim$fitted_model$BIC
           # log-likelihood
-          logLike = - successful_results_this_time[[i-n_its]]$fitted_model$mllk_optim
+          logLike[i] = - sim$fitted_model$mllk_optim
         }
       }
     }
   }
-    
+  
   elapsed_time = Sys.time()-start_time
   cat("Total simulation time:", elapsed_time, "\n")
   

@@ -92,7 +92,8 @@ starize <- function(theta,N,p,dists, scale_kappa=1, zero_inf=FALSE){
 #' 
 #' @param theta.star Vector of working parameters.
 #' @param N Number of states of the HMM.
-#' @param p Vector of degree of autoregression within the distributions.
+#' @param p Vector of degree of autoregression within the distributions 
+#'          (one value of each state for each distribution).
 #' @param dists Vector of the distributions in the HMM.
 #' @param scale_kappa Default 1, Scaling factor for kappa to avoid numerical issues in optimization for large kappa.
 #' @param zero_inf Default FALSE, indicates if the gamma distributed variables should incorporate zero-inflation.
@@ -130,7 +131,7 @@ unstarize <- function(theta.star,N,p,dists, scale_kappa=1, zero_inf=FALSE){
     } else if (dists[dist]=='vm'){
       params[[dist]] = list(mu = Arg((theta.star[counter+1:N]*scale_kappa)+1i*(theta.star[counter+N+1:N]*scale_kappa)),
                             kappa = sqrt((theta.star[counter+1:N]*scale_kappa)^2+(theta.star[counter+N+1:N]*scale_kappa)^2)
-                            )
+      )
       
     } else if (dists[dist]=='norm'){
       params[[dist]] = list(mu=theta.star[counter+1:N],
@@ -144,17 +145,24 @@ unstarize <- function(theta.star,N,p,dists, scale_kappa=1, zero_inf=FALSE){
   
   ### Autocorrelation parameters
   if (any(p>0)){
-    auto_params = theta.star[counter+1:(sum(p)*N)]
+    auto_params = theta.star[counter+1:(sum(p))] # no sum(p)*N anymore
     autocor = list()
-    counter = 0
+    counter_param = 0
+    counter_p = 1
     for (dist in 1:n_dists){
-      if (p[dist]>0){
-        autocor[[dist]] = plogis(auto_params[counter+1:(p[dist]*N)])
-        counter = counter+p[dist]*N
-      } else{
-        autocor[[dist]] = NA
+      autocor[[dist]] = list()
+      for (state in 1:N){
+        if (p[counter_p]>0){ # check if there is autocorrelation in the state
+          autocor[[dist]][[state]] = plogis(auto_params[counter_param+1:p[counter_p]])
+          counter_param = counter_param + p[counter_p]
+          counter_p = counter_p+1
+        } else{
+          autocor[[dist]][[state]] = NA
+          counter_p = counter_p+1
+        }
       }
     }
+    
     all_params$autocor = autocor
   }
   

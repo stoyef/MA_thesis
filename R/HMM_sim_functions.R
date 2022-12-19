@@ -183,7 +183,7 @@ full_sim_loop <- function(simulation, n_runs, dists_fitted, p_fitted,
            matrix(NA,nrow=n_runs,ncol=n_states_fitted))
     for (state in 1:n_states_fitted){
       assign(paste("estimated_",dist,"state_",state,"_autocor", sep=""),
-             matrix(NA,nrow=n_runs,ncol=n_states_fitted*p_fitted[(dist-1)*n_states_fitted+state]))
+             matrix(NA,nrow=n_runs,ncol=p_fitted[(dist-1)*n_states_fitted+state]))
     }
   }
   true_states = matrix(NA,nrow=n_runs,ncol=n_samples_simulated)

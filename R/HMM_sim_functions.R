@@ -45,7 +45,7 @@
 #' 
 ar_simulation <- function(model_sim, model_fit, N_sim, N_fit, n_samples, 
                           Gamma_sim, delta_sim, param_sim, autocor_sim=0,
-                          estimate_states=TRUE,plot_it=TRUE){
+                          estimate_states=TRUE, plot_it=TRUE, mllk=mllk){
   
   simulated_data <- sample_arp(n_samples=n_samples,
                                delta=delta_sim, 

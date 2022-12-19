@@ -15,7 +15,8 @@ ar_simulation(
   param_sim,
   autocor_sim = 0,
   estimate_states = TRUE,
-  plot_it = TRUE
+  plot_it = TRUE,
+  mllk = mllk
 )
 }
 \arguments{

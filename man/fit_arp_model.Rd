@@ -13,7 +13,8 @@ fit_arp_model(
   dists,
   opt_fun = "optim",
   scale_kappa = 1,
-  zero_inf = FALSE
+  zero_inf = FALSE,
+  lambda = 0
 )
 }
 \arguments{
@@ -38,6 +39,8 @@ to be considered in the likelihood computation.}
 \item{scale_kappa}{Default 1, Scaling factor for kappa to avoid numerical issues in optimization for large kappa in the von Mises distribution.}
 
 \item{zero_inf}{Default FALSE, indicates if the gamma distributed variables should incorporate zero-inflation.}
+
+\item{lambda}{Default 0, complexity penalty for lasso regularization of autoregression coefficients.}
 }
 \value{
 List, containing minimal value of negative log-likelihood, Gamma, 

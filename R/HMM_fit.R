@@ -23,13 +23,14 @@
 #' @param opt_fun string - Function that should be used for optimization (default: optim, one of ['optim', 'nlm', 'genoud']).
 #' @param scale_kappa Default 1, Scaling factor for kappa to avoid numerical issues in optimization for large kappa in the von Mises distribution.
 #' @param zero_inf Default FALSE, indicates if the gamma distributed variables should incorporate zero-inflation.
+#' @param lambda Default 0, complexity penalty for lasso regularization of autoregression coefficients.
 #'            
 #' @return List, containing minimal value of negative log-likelihood, Gamma, 
 #'         delta, (autoregression, depending on degree), mu, sigma.
 #' 
 #' @export
 #' @rdname fit_arp_model
-fit_arp_model <- function(mllk, data, theta.star, N, p_auto, dists, opt_fun='optim', scale_kappa=1, zero_inf=FALSE){
+fit_arp_model <- function(mllk, data, theta.star, N, p_auto, dists, opt_fun='optim', scale_kappa=1, zero_inf=FALSE, lambda=0){
   skip = FALSE
   
   if (opt_fun=='optim'){
@@ -38,7 +39,8 @@ fit_arp_model <- function(mllk, data, theta.star, N, p_auto, dists, opt_fun='opt
       # error. We want to be notified that there is an error, but the execution should 
       # not be interrupted (important for for loops that use this function)
       mod <- optim(par=theta.star, fn=mllk, method='L-BFGS-B',
-                   N=N,p_auto=p_auto,x=data, dists=dists, scale_kappa=scale_kappa, zero_inf=zero_inf),
+                   N=N,p_auto=p_auto,x=data, dists=dists, scale_kappa=scale_kappa, zero_inf=zero_inf,
+                   lambda=lambda),
       error=function(e){cat("ERROR: optim() failed. Did you supply autocorrelation parameters = 0?\n
                             Continue to next iteration.\n")
         skip <<- TRUE
@@ -47,7 +49,8 @@ fit_arp_model <- function(mllk, data, theta.star, N, p_auto, dists, opt_fun='opt
   } else if (opt_fun=='nlm'){
     tryCatch(
       mod <- nlm(f=mllk, p=theta.star, iterlim=500,
-                 N=N,p_auto=p_auto,x=data, dists=dists, scale_kappa=scale_kappa, zero_inf=zero_inf),
+                 N=N,p_auto=p_auto,x=data, dists=dists, scale_kappa=scale_kappa, zero_inf=zero_inf,
+                 lambda=lambda),
       error=function(e){cat("ERROR: nlm() failed.\n
                             Continue to next iteration.\n")
         skip <<- TRUE
@@ -59,7 +62,7 @@ fit_arp_model <- function(mllk, data, theta.star, N, p_auto, dists, opt_fun='opt
       mod <- genoud(fn=mllk, nvars=length(theta.star), pop.size=1000, max.generations=100,
                     starting.values = theta.star,
                     N=N,p_auto=p_auto,scale_kappa=scale_kappa,zero_inf=zero_inf,
-                    dists=dists,x=data#,
+                    dists=dists,x=data, lambda=lambda#,
                     #Domains=matrix(rep(c(-Inf,Inf),length(theta.star)),ncol=2,byrow=T)
       ),
       error=function(e){cat("ERROR: rgenoud() failed.\n

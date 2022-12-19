@@ -311,7 +311,9 @@ full_sim_loop <- function(simulation, n_runs, dists_fitted, p_fitted,
   for (dist in 1:length(dists_fitted)){
     param_estimates[[paste("estimated_",dist,"_param_1", sep="")]] = get(paste("estimated_",dist,"_param_1", sep=""))
     param_estimates[[paste("estimated_",dist,"_param_2", sep="")]] = get(paste("estimated_",dist,"_param_2", sep=""))
-    autocor_estimates[[paste("estimated_",dist,"_autocor", sep="")]] = get(paste("estimated_",dist,"_autocor", sep=""))
+    for (state in 1:n_states_fitted){
+      autocor_estimates[[paste("estimated_",dist,"state_",state,"_autocor", sep="")]] = get(paste("estimated_",dist,"state_",state,"_autocor", sep=""))
+    }
   }
   
   if (extract_aic_bic){

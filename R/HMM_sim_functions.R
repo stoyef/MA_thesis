@@ -38,6 +38,7 @@
 #'                        using Viterbi.
 #' @param plot_it Bool, determines if resulting densities are plotted.
 #' @param mllk Optional, choice of negative log likelihood function (e.g. penalized).
+#' @param lambda Optional, choice of complexity penalty (\eqn{\ge 0}).
 #' 
 #' @return List of fitted model and its parameters (and optional the decoded states).
 #' 
@@ -46,7 +47,8 @@
 #' 
 ar_simulation <- function(model_sim, model_fit, N_sim, N_fit, n_samples, 
                           Gamma_sim, delta_sim, param_sim, autocor_sim=0,
-                          estimate_states=TRUE, plot_it=TRUE, mllk=mllk){
+                          estimate_states=TRUE, plot_it=TRUE, mllk=mllk,
+                          lambda=0){
   
   simulated_data <- sample_arp(n_samples=n_samples,
                                delta=delta_sim, 
@@ -96,7 +98,8 @@ ar_simulation <- function(model_sim, model_fit, N_sim, N_fit, n_samples,
                                 theta.star=theta.star, 
                                 N=N_fit, 
                                 p_auto=model_fit[[2]], 
-                                dists=model_fit[[1]])
+                                dists=model_fit[[1]],
+                                lambda=lambda)
   
   
   ## Error handling, if optim() in fit function didn't work

@@ -143,11 +143,21 @@ fit_arp_model <- function(mllk, data, theta.star, N, p_auto, dists, opt_fun='opt
   
   # create return object
   if (any(p_auto>0)){
-    ret <- list(mod$value, Gamma, delta, params, autocor, aic, bic)
-    names(ret) <- c('mllk_optim', 'Gamma', 'delta', 'params', 'autocorrelation', 'AIC', 'BIC')
+    if (lambda>0){
+      ret <- list(mod$value, Gamma, delta, params, autocor, aic, bic, lambda)
+      names(ret) <- c('mllk_optim', 'Gamma', 'delta', 'params', 'autocorrelation', 'AIC', 'BIC', 'penalty')
+    } else{
+      ret <- list(mod$value, Gamma, delta, params, autocor, aic, bic)
+      names(ret) <- c('mllk_optim', 'Gamma', 'delta', 'params', 'autocorrelation', 'AIC', 'BIC')
+    }
   } else{
-    ret <- list(mod$value, Gamma, delta, params, aic, bic)
-    names(ret) <- c('mllk_optim', 'Gamma', 'delta', 'params', 'AIC', 'BIC')
+    if (lambda>0){
+      ret <- list(mod$value, Gamma, delta, params, aic, bic, lambda)
+      names(ret) <- c('mllk_optim', 'Gamma', 'delta', 'params', 'AIC', 'BIC', 'complexity')
+    } else{
+      ret <- list(mod$value, Gamma, delta, params, aic, bic)
+      names(ret) <- c('mllk_optim', 'Gamma', 'delta', 'params', 'AIC', 'BIC')
+    }
   }
   return(ret)
 }

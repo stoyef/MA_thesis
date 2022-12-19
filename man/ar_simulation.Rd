@@ -16,7 +16,8 @@ ar_simulation(
   autocor_sim = 0,
   estimate_states = TRUE,
   plot_it = TRUE,
-  mllk = mllk
+  mllk = mllk,
+  lambda = 0
 )
 }
 \arguments{
@@ -58,6 +59,8 @@ using Viterbi.}
 \item{plot_it}{Bool, determines if resulting densities are plotted.}
 
 \item{mllk}{Optional, choice of negative log likelihood function (e.g. penalized).}
+
+\item{lambda}{Optional, choice of complexity penalty (\eqn{\ge 0}).}
 }
 \value{
 List of fitted model and its parameters (and optional the decoded states).

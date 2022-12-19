@@ -56,6 +56,8 @@ for one specific time lag (one value for each state).
 using Viterbi.}
 
 \item{plot_it}{Bool, determines if resulting densities are plotted.}
+
+\item{mllk}{Optional, choice of negative log likelihood function (e.g. penalized).}
 }
 \value{
 List of fitted model and its parameters (and optional the decoded states).

@@ -36,7 +36,8 @@
 #'                   0, if no autocorrelation. Has to respect the order specified in \code{model_sim}.
 #' @param estimate_states Bool, determines if states are estimated and returned
 #'                        using Viterbi.
-#' @param plot_it Bool, determines if resulting densities are plotted.    
+#' @param plot_it Bool, determines if resulting densities are plotted.
+#' @param mllk Optional, choice of negative log likelihood function (e.g. penalized).
 #' 
 #' @return List of fitted model and its parameters (and optional the decoded states).
 #' 

@@ -35,8 +35,8 @@
 #' @return Negative (penalized) log-likelihood.
 #' 
 #' @export
-#' @rdname lasso_mllk
-lasso_mllk <- function(theta.star, dists, x, N, p_auto, lambda=0, scale_kappa=1, zero_inf=FALSE){
+#' @rdname mllk
+mllk <- function(theta.star, dists, x, N, p_auto, lambda=0, scale_kappa=1, zero_inf=FALSE){
   
   # First: Working to natural parameters, list structure for better handling
   # We currently only use distributions with 2 parameters, once we use Poisson distribution etc, we need a re-write

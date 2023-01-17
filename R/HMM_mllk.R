@@ -6,7 +6,7 @@
 ###### general function for arbitrary distribution
 
 
-#' Compute negative log-likelihood of an AR(p)-HMM
+#' Compute negative (penalized) log-likelihood of an AR(p)-HMM
 #'
 #' Compute the negative log-likelihood, using one or several specified distributions.
 #' The distributions have to be specified by their commonly known abbreviation in R, 
@@ -14,6 +14,7 @@
 #' The named list of parameters (one value for each parameter and for each state) have to be
 #' in suitable form, i.e. a vector of the working parameters.
 #' In the likelihood computation, contemporaneous independence is assumed.
+#' Includes an optional penalization term \eqn{\lambda} for parameter selection of \eqn{p}.
 #' 
 #' @param theta.star Vector of parameters in the following order: 1) Off-diagonal entries of TPM,
 #'                   2) Distribution parameters for each state (each distribution at a time, i.e. 
@@ -25,15 +26,17 @@
 #'              to be considered in the likelihood computation.
 #' @param x Data vector or matrix for which the negative log-likelihood should be computed.
 #' @param N Number of states.
-#' @param p_auto Vector of autoregression degrees, one value for each state of each variable.
+#' @param p_auto Vector of autoregression degrees, one value for each state of each variable 
+#'               (in case of penalization choose upper bound of number of parameters).
+#' @param lambda Complexity penalty (≥0) for autoregression parameters \eqn{\phi}.(default: 0 no penalization).
 #' @param scale_kappa Default 1, Scaling factor for kappa to avoid numerical issues in optimization for large kappa.
 #' @param zero_inf Default FALSE, indicates if the gamma distributed variables should incorporate zero-inflation.
 #' 
-#' @return Negative log-likelihood.
+#' @return Negative (penalized) log-likelihood.
 #' 
 #' @export
-#' @rdname mllk
-mllk <- function(theta.star, dists, x, N, p_auto, scale_kappa=1, zero_inf=FALSE){
+#' @rdname lasso_mllk
+lasso_mllk <- function(theta.star, dists, x, N, p_auto, lambda=0, scale_kappa=1, zero_inf=FALSE){
   
   # First: Working to natural parameters, list structure for better handling
   # We currently only use distributions with 2 parameters, once we use Poisson distribution etc, we need a re-write
@@ -58,6 +61,19 @@ mllk <- function(theta.star, dists, x, N, p_auto, scale_kappa=1, zero_inf=FALSE)
     # Then the function fails
     l <- l+log(sum(foo))
     phi <- foo/sum(foo)
+  }
+  ## Lasso penalty for autoregression parameters
+  if (lambda>0){
+    sum_auto = 0
+    auto = c()
+    for (dist in 1:length(dists)){
+      for (state in 1:N){
+        #sum_auto = sum_auto + sum(abs(autocor[[dist]][[state]]),na.rm = T)
+        auto = c(auto, autocor[[dist]][[state]])
+      }
+    }
+    sum_auto = sum(sqrt((auto+1e-10)^2), na.rm = T) # Approx wie in Marius Paper
+    l <- l - lambda * sum_auto
   }
   return(-l)
 }

@@ -120,7 +120,9 @@ fit_arp_model <- function(mllk, data, theta.star, N, p_auto, dists, opt_fun='opt
       autocor[[dist]] = list()
       for (state in 1:N){
         if (p_auto[(dist-1)*N+state]>0){
-          autocor[[dist]][[state]] = ac[counter_auto+1:(p_auto[(dist-1)*N+state])]
+          # Following Ötting and Groll (2021) and Hambucker et al. (2018) we round autoregressive
+          # parameters to 3rd decimal place
+          autocor[[dist]][[state]] = round(ac[counter_auto+1:(p_auto[(dist-1)*N+state])],3)
           counter_auto = counter_auto+p_auto[(dist-1)*N+state]
         }
       }
@@ -138,8 +140,24 @@ fit_arp_model <- function(mllk, data, theta.star, N, p_auto, dists, opt_fun='opt
   }
   
   # AIC & BIC (mod$value is already negative log-likelihood)
-  aic = 2*mod$value + 2*length(theta.star)
-  bic = 2*mod$value + log(dim(data)[1])*length(theta.star)
+  #aic = 2*mod$value + 2*length(theta.star)
+  #bic = 2*mod$value + log(dim(data)[1])*length(theta.star)
+  
+  ## Update 2023-01-18 --- effective number of parameters for pen logL
+  ## effective number of parameters = number of nonzero parameters (Zhou et al. 2007)
+  if (zero_inf){
+    n_eff_fixed = N*(N-1)+2*N*length(dists)+sum(dists=='gamma')*N
+  } else{
+    n_eff_fixed = N*(N-1)+2*N*length(dists)
+  }
+  n_eff_auto = sum(unlist(autocor)>0)
+  n_params_eff = n_eff_fixed + n_eff_auto
+  ## Here, we need the unpenalized logL of the fitted model
+  mllk_unpen = mllk(theta.star = mod$par, N=N,p_auto=p_auto, x=data, dists=dists, scale_kappa=scale_kappa, zero_inf=zero_inf,
+       lambda=0) # lambda=0 --> unpenalized
+  # mllk_unpen is already negative logL
+  aic = 2*mllk_unpen + 2*n_params_eff
+  bic = 2*mllk_unpen + log(dim(data)[1])*n_params_eff
   
   # create return object
   if (any(p_auto>0)){

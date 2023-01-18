@@ -2,9 +2,18 @@
 % Please edit documentation in R/HMM_mllk.R
 \name{mllk}
 \alias{mllk}
-\title{Compute negative log-likelihood of an AR(p)-HMM}
+\title{Compute negative (penalized) log-likelihood of an AR(p)-HMM}
 \usage{
-mllk(theta.star, dists, x, N, p_auto, scale_kappa = 1, zero_inf = FALSE)
+mllk(
+  theta.star,
+  dists,
+  x,
+  N,
+  p_auto,
+  lambda = 0,
+  scale_kappa = 1,
+  zero_inf = FALSE
+)
 }
 \arguments{
 \item{theta.star}{Vector of parameters in the following order: 1) Off-diagonal entries of TPM,
@@ -21,14 +30,17 @@ to be considered in the likelihood computation.}
 
 \item{N}{Number of states.}
 
-\item{p_auto}{Vector of autoregression degrees, one value for each state of each variable.}
+\item{p_auto}{Vector of autoregression degrees, one value for each state of each variable 
+(in case of penalization choose upper bound of number of parameters).}
+
+\item{lambda}{Complexity penalty (≥0) for autoregression parameters \eqn{\phi}.(default: 0 no penalization).}
 
 \item{scale_kappa}{Default 1, Scaling factor for kappa to avoid numerical issues in optimization for large kappa.}
 
 \item{zero_inf}{Default FALSE, indicates if the gamma distributed variables should incorporate zero-inflation.}
 }
 \value{
-Negative log-likelihood.
+Negative (penalized) log-likelihood.
 }
 \description{
 Compute the negative log-likelihood, using one or several specified distributions.
@@ -37,4 +49,5 @@ e.g. one of ['gamma', 'vm', 'pois', 'binom',...].
 The named list of parameters (one value for each parameter and for each state) have to be
 in suitable form, i.e. a vector of the working parameters.
 In the likelihood computation, contemporaneous independence is assumed.
+Includes an optional penalization term \eqn{\lambda} for parameter selection of \eqn{p}.
 }

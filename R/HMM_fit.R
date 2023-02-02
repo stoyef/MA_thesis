@@ -40,7 +40,7 @@ fit_arp_model <- function(mllk, data, theta.star, N, p_auto, dists, opt_fun='opt
       # not be interrupted (important for for loops that use this function)
       mod <- optim(par=theta.star, fn=mllk, method='L-BFGS-B',
                    N=N,p_auto=p_auto,x=data, dists=dists, scale_kappa=scale_kappa, zero_inf=zero_inf,
-                   lambda=lambda),
+                   lambda=lambda, hessian=TRUE, control=list(maxit=5000)),
       error=function(e){cat("ERROR: optim() failed. Did you supply autocorrelation parameters = 0?\n
                             Continue to next iteration.\n")
         skip <<- TRUE
@@ -50,7 +50,7 @@ fit_arp_model <- function(mllk, data, theta.star, N, p_auto, dists, opt_fun='opt
     tryCatch(
       mod <- nlm(f=mllk, p=theta.star, iterlim=500,
                  N=N,p_auto=p_auto,x=data, dists=dists, scale_kappa=scale_kappa, zero_inf=zero_inf,
-                 lambda=lambda),
+                 lambda=lambda, hessian=TRUE),
       error=function(e){cat("ERROR: nlm() failed.\n
                             Continue to next iteration.\n")
         skip <<- TRUE
@@ -143,21 +143,37 @@ fit_arp_model <- function(mllk, data, theta.star, N, p_auto, dists, opt_fun='opt
   #aic = 2*mod$value + 2*length(theta.star)
   #bic = 2*mod$value + log(dim(data)[1])*length(theta.star)
   
-  ## Update 2023-01-18 --- effective number of parameters for pen logL
-  ## effective number of parameters = number of nonzero parameters (Zhou et al. 2007)
-  if (zero_inf){
-    n_eff_fixed = N*(N-1)+2*N*length(dists)+sum(dists=='gamma')*N
+  ## Update 2023-02-02 --- effective number of parameters for pen logL
+  ## (OLD) effective number of parameters = number of nonzero parameters (Zhou et al. 2007)
+  ## (NEW) effective number of parameters = trace of product of FI_pen and (FI_unpen)^{-1} (Langrock et al. 2017)
+  #if (zero_inf){
+  #  n_eff_fixed = N*(N-1)+2*N*length(dists)+sum(dists=='gamma')*N
+  #} else{
+  #  n_eff_fixed = N*(N-1)+2*N*length(dists)
+  #}
+  #n_eff_auto = sum(unlist(autocor)>0)
+  #n_params_eff = n_eff_fixed + n_eff_auto
+  if (lambda>0){
+    ## Here, we need the unpenalized logL of the fitted model
+    mllk_unpen = mllk(theta.star = mod$par, N=N,p_auto=p_auto, x=data, dists=dists, scale_kappa=scale_kappa, zero_inf=zero_inf,
+         lambda=0) # lambda=0 --> unpenalized
+    ## number of effective parameters:
+    require(numDeriv)
+    hessian_unpen = hessian(mllk, x=mod$par, N=N,p_auto=p_auto, dists=dists, scale_kappa=scale_kappa, 
+                            zero_inf=zero_inf,lambda=0,alt_data=data)
+    FI_unpen = -hessian_unpen
+    FI_pen = -mod$hessian
+    eff_df = sum(diag(FI_unpen %*% solve(FI_pen)))
+    # mllk_unpen is already negative logL
+    
+    ## SHOULD THE ABSOLUTE VALUE OF THE EFFECTIVE DEGREES BE TAKEN HERE?
+    ## IN ANY CASE, WHY ARE THE EFFECTIVE DEGREES NEGATIVE???
+    aic = 2*mllk_unpen + 2*abs(eff_df)
+    bic = 2*mllk_unpen + log(dim(data)[1])*abs(eff_df)
   } else{
-    n_eff_fixed = N*(N-1)+2*N*length(dists)
+    aic = 2*mod$value + 2*length(theta.star)
+    bic = 2*mod$value + log(dim(data)[1])*length(theta.star)
   }
-  n_eff_auto = sum(unlist(autocor)>0)
-  n_params_eff = n_eff_fixed + n_eff_auto
-  ## Here, we need the unpenalized logL of the fitted model
-  mllk_unpen = mllk(theta.star = mod$par, N=N,p_auto=p_auto, x=data, dists=dists, scale_kappa=scale_kappa, zero_inf=zero_inf,
-       lambda=0) # lambda=0 --> unpenalized
-  # mllk_unpen is already negative logL
-  aic = 2*mllk_unpen + 2*n_params_eff
-  bic = 2*mllk_unpen + log(dim(data)[1])*n_params_eff
   
   # create return object
   if (any(p_auto>0)){

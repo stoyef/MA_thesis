@@ -12,7 +12,8 @@ mllk(
   p_auto,
   lambda = 0,
   scale_kappa = 1,
-  zero_inf = FALSE
+  zero_inf = FALSE,
+  alt_data = NULL
 )
 }
 \arguments{
@@ -38,6 +39,8 @@ to be considered in the likelihood computation.}
 \item{scale_kappa}{Default 1, Scaling factor for kappa to avoid numerical issues in optimization for large kappa.}
 
 \item{zero_inf}{Default FALSE, indicates if the gamma distributed variables should incorporate zero-inflation.}
+
+\item{alt_data}{Default NULL, provide data here if variable name x is already taken in wrapper function.}
 }
 \value{
 Negative (penalized) log-likelihood.

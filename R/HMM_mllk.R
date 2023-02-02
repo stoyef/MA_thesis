@@ -31,13 +31,18 @@
 #' @param lambda Complexity penalty (≥0) for autoregression parameters \eqn{\phi}.(default: 0 no penalization).
 #' @param scale_kappa Default 1, Scaling factor for kappa to avoid numerical issues in optimization for large kappa.
 #' @param zero_inf Default FALSE, indicates if the gamma distributed variables should incorporate zero-inflation.
+#' @param alt_data Default NULL, provide data here if variable name x is already taken in wrapper function.
 #' 
 #' @return Negative (penalized) log-likelihood.
 #' 
 #' @export
 #' @rdname mllk
-mllk <- function(theta.star, dists, x, N, p_auto, lambda=0, scale_kappa=1, zero_inf=FALSE){
+mllk <- function(theta.star, dists, x, N, p_auto, lambda=0, scale_kappa=1, zero_inf=FALSE, alt_data=NULL){
   
+  if (!is.null(alt_data)){ # safeguard if x can't be given as argument to mllk 
+                           # (problem in computation of hessian)
+    x=alt_data
+  }
   # First: Working to natural parameters, list structure for better handling
   # We currently only use distributions with 2 parameters, once we use Poisson distribution etc, we need a re-write
   all_params = unstarize(theta.star=theta.star, N=N, p=p_auto, dists=dists, scale_kappa = scale_kappa, zero_inf = zero_inf)

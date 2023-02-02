@@ -200,7 +200,7 @@ full_sim_loop <- function(simulation, n_runs, dists_fitted, p_fitted,
   while(n_its < n_runs){ # run as long as all models are fitted
     current_time=Sys.time()
     sim = do.call(ar_simulation, args)
-    if (length(sim)>0){ # if sim was sucessful
+    if (length(sim)>1){ # if sim was sucessful
       n_its = n_its + 1
       # insert estimated parameters in matrices by only accessing string values
       # -> weird workaround with get() and temporary matrix

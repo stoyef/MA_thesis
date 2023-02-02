@@ -159,8 +159,6 @@ ar_simulation <- function(model_sim, model_fit, N_sim, N_fit, n_samples,
 #' @param n_states_fitted Number of states of the fitted models.
 #' @param n_samples_simulated Number of samples simulated in each model.
 #' @param extract_aic_bic bool, indicates if AIC and BIC of the models should also be saved.
-#' @param multicore bool, indicates if the loop should be computed using parallelization.
-#'                  This has only be tested in MacOS and probably does not work using Windows.
 #' @param ... Input parameters for the simulation function.
 #' 
 #' @return List of model statistics (estimated parameters, accuracies, summary of models).
@@ -169,7 +167,7 @@ ar_simulation <- function(model_sim, model_fit, N_sim, N_fit, n_samples,
 #' @rdname full_sim_loop     
 #' 
 full_sim_loop <- function(simulation, n_runs, dists_fitted, p_fitted, 
-                          n_states_fitted, n_samples_simulated, extract_aic_bic=FALSE,multicore=FALSE,...){
+                          n_states_fitted, n_samples_simulated, extract_aic_bic=FALSE,...){
   
   # Inputs for simulation function
   args=list(...)
@@ -194,108 +192,152 @@ full_sim_loop <- function(simulation, n_runs, dists_fitted, p_fitted,
   
   start_time = Sys.time()
   
-  ## separate code for single and multicore computations
-  if (multicore){
-    require(parallel)
-    n_cores=detectCores()
-    # we need a wrapper function for mclapply
-    sim_wrap <- function(iteration){
-      current_time=Sys.time()
-      sim <- do.call(ar_simulation,args)
-      return(sim)
-    }
-    
-    n_its = 0 # counter of successful iterations
-    while(length(which(is.na(estimated_1_param_1[,1])))>0){ # run as long as all models are fitted
-      iterations = 1:length(which(is.na(estimated_1_param_1[,1]))) # missing iterations
-      # parallelization with mclapply:
-      results <- mclapply(iterations,
-                          sim_wrap,
-                          mc.cores = n_cores
-      )
-      
-      # check which iterations were successful
-      successful_iterations_this_time = unlist(lapply(results, function(it) length(it)>1))
-      successful_results_this_time = results[successful_iterations_this_time]
-      
-      if (sum(successful_iterations_this_time)>0){ # execute loop only, if some fits were successful
-        for (i in n_its+1:sum(successful_iterations_this_time)){ # fill up the matrices top to bottom
-          # insert estimated parameters in matrices by only accessing string values
-          # -> weird workaround with get() and temporary matrix
-          for (dist in 1:length(dists_fitted)){
-            # 1st parameter
-            h = get(paste("estimated_",dist,"_param_1", sep=""))
-            h[i,] = successful_results_this_time[[i-n_its]]$fitted_model$params[[dist]][[1]]
-            assign(paste("estimated_",dist,"_param_1", sep=""), h)
-            # 2nd parameter
-            h = get(paste("estimated_",dist,"_param_2", sep=""))
-            h[i,] = successful_results_this_time[[i-n_its]]$fitted_model$params[[dist]][[2]]
-            assign(paste("estimated_",dist,"_param_2", sep=""), h)
-            # autocorrelation
-            for (state in 1:n_states_fitted){
-              h = get(paste("estimated_",dist,"state_",state,"_autocor", sep=""))
-              h[i,] = successful_results_this_time[[i-n_its]]$fitted_model$autocorrelation[[dist]][[state]]
-              assign(paste("estimated_",dist,"state_",state,"_autocor", sep=""), h)
-            }
-          }
-          true_states[i,] = successful_results_this_time[[i-n_its]]$simulated_model$states
-          estimated_states[i,] = successful_results_this_time[[i-n_its]]$viterbi_states
-          if (extract_aic_bic){
-            # AIC
-            aics[i] = successful_results_this_time[[i-n_its]]$fitted_model$AIC
-            # BIC
-            bics[i] = successful_results_this_time[[i-n_its]]$fitted_model$BIC
-            # log-likelihood
-            logLike[i] = - successful_results_this_time[[i-n_its]]$fitted_model$mllk_optim
-          }
+  ## Update 2023-02-02 -- use of optimParallel instead of optim makes parallelization
+  ## of simulation runs unnecessary (all cores are working anyway)
+  n_its = 0 # counter of successful iterations
+  results = list()
+  
+  while(n_its < n_runs){ # run as long as all models are fitted
+    current_time=Sys.time()
+    sim = do.call(ar_simulation, args)
+    if (length(sim)>0){ # if sim was sucessful
+      n_its = n_its + 1
+      # insert estimated parameters in matrices by only accessing string values
+      # -> weird workaround with get() and temporary matrix
+      for (dist in 1:length(dists_fitted)){
+        # 1st parameter
+        h = get(paste("estimated_",dist,"_param_1", sep=""))
+        h[n_its,] = sim$fitted_model$params[[dist]][[1]]
+        assign(paste("estimated_",dist,"_param_1", sep=""), h)
+        # 2nd parameter
+        h = get(paste("estimated_",dist,"_param_2", sep=""))
+        h[n_its,] = sim$fitted_model$params[[dist]][[2]]
+        assign(paste("estimated_",dist,"_param_2", sep=""), h)
+        # autocorrelation
+        for (state in 1:n_states_fitted){
+          h = get(paste("estimated_",dist,"state_",state,"_autocor", sep=""))
+          h[n_its,] = sim$fitted_model$autocorrelation[[dist]][[state]]
+          assign(paste("estimated_",dist,"state_",state,"_autocor", sep=""), h)
         }
-        n_its = n_its+sum(successful_iterations_this_time)
       }
-    }
-    
-  } else{ # single core
-    while(length(which(is.na(estimated_1_param_1[,1])))>0){ # run as long as all models are fitted
-      for (i in which(is.na(estimated_1_param_1[,1]))){ # re-run only models that failed last time
-        current_time = Sys.time()
-        sim <- do.call(ar_simulation,args)
-        cat(i,'/',n_runs,' (', Sys.time()-current_time,') \n',sep="")
-        
-        # error handling, skip iteration if optim() in fit function didn't work
-        if(anyNA(sim)){
-          next
-        }
-        
-        # insert estimated parameters in matrices by only accessing string values
-        # -> weird workaround with get() and temporary matrix
-        for (dist in 1:length(dists_fitted)){
-          # 1st parameter
-          h = get(paste("estimated_",dist,"_param_1", sep=""))
-          h[i,] = sim$fitted_model$params[[dist]][[1]]
-          assign(paste("estimated_",dist,"_param_1", sep=""), h)
-          # 2nd parameter
-          h = get(paste("estimated_",dist,"_param_2", sep=""))
-          h[i,] = sim$fitted_model$params[[dist]][[2]]
-          assign(paste("estimated_",dist,"_param_2", sep=""), h)
-          # autocorrelation
-          for (state in 1:n_states_fitted){
-            h = get(paste("estimated_",dist,"state_",state,"_autocor", sep=""))
-            h[i,] = sim$fitted_model$autocorrelation[[dist]][[state]]
-            assign(paste("estimated_",dist,"state_",state,"_autocor", sep=""), h)
-          }
-        }
-        true_states[i,] = sim$simulated_model$states
-        estimated_states[i,] = sim$viterbi_states
-        if (extract_aic_bic){
-          # AIC
-          aics[i] = sim$fitted_model$AIC
-          # BIC
-          bics[i] = sim$fitted_model$BIC
-          # log-likelihood
-          logLike[i] = - sim$fitted_model$mllk_optim
-        }
+      true_states[n_its,] = sim$simulated_model$states
+      estimated_states[n_its,] = sim$viterbi_states
+      if (extract_aic_bic){
+        # AIC
+        aics[n_its] = sim$fitted_model$AIC
+        # BIC
+        bics[n_its] = sim$fitted_model$BIC
+        # log-likelihood
+        logLike[n_its] = - sim$fitted_model$mllk_optim
       }
     }
   }
+  
+  
+  ### OLD:
+  ###
+  ## separate code for single and multicore computations
+  #if (multicore){
+  #  require(parallel)
+  #  n_cores=detectCores()
+  #  # we need a wrapper function for mclapply
+  #  sim_wrap <- function(iteration){
+  #    current_time=Sys.time()
+  #    sim <- do.call(ar_simulation,args)
+  #    return(sim)
+  #  }
+  #  
+  #  n_its = 0 # counter of successful iterations
+  #  while(length(which(is.na(estimated_1_param_1[,1])))>0){ # run as long as all models are fitted
+  #    iterations = 1:length(which(is.na(estimated_1_param_1[,1]))) # missing iterations
+  #    # parallelization with mclapply:
+  #    results <- mclapply(iterations,
+  #                        sim_wrap,
+  #                        mc.cores = n_cores
+  #    )
+  #    
+  #    # check which iterations were successful
+  #    successful_iterations_this_time = unlist(lapply(results, function(it) length(it)>1))
+  #    successful_results_this_time = results[successful_iterations_this_time]
+  #    
+  #    if (sum(successful_iterations_this_time)>0){ # execute loop only, if some fits were successful
+  #      for (i in n_its+1:sum(successful_iterations_this_time)){ # fill up the matrices top to bottom
+  #        # insert estimated parameters in matrices by only accessing string values
+  #        # -> weird workaround with get() and temporary matrix
+  #        for (dist in 1:length(dists_fitted)){
+  #          # 1st parameter
+  #          h = get(paste("estimated_",dist,"_param_1", sep=""))
+  #          h[i,] = successful_results_this_time[[i-n_its]]$fitted_model$params[[dist]][[1]]
+  #          assign(paste("estimated_",dist,"_param_1", sep=""), h)
+  #          # 2nd parameter
+  #          h = get(paste("estimated_",dist,"_param_2", sep=""))
+  #          h[i,] = successful_results_this_time[[i-n_its]]$fitted_model$params[[dist]][[2]]
+  #          assign(paste("estimated_",dist,"_param_2", sep=""), h)
+  #          # autocorrelation
+  #          for (state in 1:n_states_fitted){
+  #            h = get(paste("estimated_",dist,"state_",state,"_autocor", sep=""))
+  #            h[i,] = successful_results_this_time[[i-n_its]]$fitted_model$autocorrelation[[dist]][[state]]
+  #            assign(paste("estimated_",dist,"state_",state,"_autocor", sep=""), h)
+  #          }
+  #        }
+  #        true_states[i,] = successful_results_this_time[[i-n_its]]$simulated_model$states
+  #        estimated_states[i,] = successful_results_this_time[[i-n_its]]$viterbi_states
+  #        if (extract_aic_bic){
+  #          # AIC
+  #          aics[i] = successful_results_this_time[[i-n_its]]$fitted_model$AIC
+  #          # BIC
+  #          bics[i] = successful_results_this_time[[i-n_its]]$fitted_model$BIC
+  #          # log-likelihood
+  #          logLike[i] = - successful_results_this_time[[i-n_its]]$fitted_model$mllk_optim
+  #        }
+  #      }
+  #      n_its = n_its+sum(successful_iterations_this_time)
+  #    }
+  #  }
+  #  
+  #} else{ # single core
+  #  while(length(which(is.na(estimated_1_param_1[,1])))>0){ # run as long as all models are fitted
+  #    for (i in which(is.na(estimated_1_param_1[,1]))){ # re-run only models that failed last time
+  #      current_time = Sys.time()
+  #      sim <- do.call(ar_simulation,args)
+  #      cat(i,'/',n_runs,' (', Sys.time()-current_time,') \n',sep="")
+  #      
+  #      # error handling, skip iteration if optim() in fit function didn't work
+  #      if(anyNA(sim)){
+  #        next
+  #      }
+  #      
+  #      # insert estimated parameters in matrices by only accessing string values
+  #      # -> weird workaround with get() and temporary matrix
+  #      for (dist in 1:length(dists_fitted)){
+  #        # 1st parameter
+  #        h = get(paste("estimated_",dist,"_param_1", sep=""))
+  #        h[i,] = sim$fitted_model$params[[dist]][[1]]
+  #        assign(paste("estimated_",dist,"_param_1", sep=""), h)
+  #        # 2nd parameter
+  #        h = get(paste("estimated_",dist,"_param_2", sep=""))
+  #        h[i,] = sim$fitted_model$params[[dist]][[2]]
+  #        assign(paste("estimated_",dist,"_param_2", sep=""), h)
+  #        # autocorrelation
+  #        for (state in 1:n_states_fitted){
+  #          h = get(paste("estimated_",dist,"state_",state,"_autocor", sep=""))
+  #          h[i,] = sim$fitted_model$autocorrelation[[dist]][[state]]
+  #          assign(paste("estimated_",dist,"state_",state,"_autocor", sep=""), h)
+  #        }
+  #      }
+  #      true_states[i,] = sim$simulated_model$states
+  #      estimated_states[i,] = sim$viterbi_states
+  #      if (extract_aic_bic){
+  #        # AIC
+  #        aics[i] = sim$fitted_model$AIC
+  #        # BIC
+  #        bics[i] = sim$fitted_model$BIC
+  #        # log-likelihood
+  #        logLike[i] = - sim$fitted_model$mllk_optim
+  #      }
+  #    }
+  #  }
+  #}
   
   elapsed_time = Sys.time()-start_time
   cat("Total simulation time:", elapsed_time, "\n")

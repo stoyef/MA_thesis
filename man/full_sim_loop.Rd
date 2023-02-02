@@ -12,7 +12,6 @@ full_sim_loop(
   n_states_fitted,
   n_samples_simulated,
   extract_aic_bic = FALSE,
-  multicore = FALSE,
   ...
 )
 }
@@ -30,9 +29,6 @@ full_sim_loop(
 \item{n_samples_simulated}{Number of samples simulated in each model.}
 
 \item{extract_aic_bic}{bool, indicates if AIC and BIC of the models should also be saved.}
-
-\item{multicore}{bool, indicates if the loop should be computed using parallelization.
-This has only be tested in MacOS and probably does not work using Windows.}
 
 \item{...}{Input parameters for the simulation function.}
 }

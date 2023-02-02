@@ -34,13 +34,24 @@ fit_arp_model <- function(mllk, data, theta.star, N, p_auto, dists, opt_fun='opt
   skip = FALSE
   
   if (opt_fun=='optim'){
+    require(optimParallel)
+    require(parallel)
+    n_cluster = detectCores()
+    cl = makeCluster(n_cluster)
+    setDefaultCluster(cl=cl)
     tryCatch(
       # Error handling: sometimes the optim function does not work, because of some
       # error. We want to be notified that there is an error, but the execution should 
       # not be interrupted (important for for loops that use this function)
-      mod <- optim(par=theta.star, fn=mllk, method='L-BFGS-B',
-                   N=N,p_auto=p_auto,x=data, dists=dists, scale_kappa=scale_kappa, zero_inf=zero_inf,
-                   lambda=lambda, hessian=TRUE, control=list(maxit=5000)),
+      #mod <- optim(par=theta.star, fn=mllk, method='L-BFGS-B',
+      #             N=N,p_auto=p_auto,x=data, dists=dists, scale_kappa=scale_kappa, zero_inf=zero_inf,
+      #             lambda=lambda, hessian=TRUE, control=list(maxit=5000)),
+      
+      # optimParallel parallelizes the optimization directly, much prettier 
+      # than using mcapply :)
+      mod <- optimParallel(par=theta.star, fn=mllk, method='L-BFGS-B',
+                           N=N,p_auto=p_auto,x=data, dists=dists, scale_kappa=scale_kappa, zero_inf=zero_inf,
+                           lambda=lambda, hessian=TRUE, control=list(maxit=5000)),
       error=function(e){cat("ERROR: optim() failed. Did you supply autocorrelation parameters = 0?\n
                             Continue to next iteration.\n")
         skip <<- TRUE

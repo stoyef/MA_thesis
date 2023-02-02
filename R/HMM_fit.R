@@ -57,6 +57,7 @@ fit_arp_model <- function(mllk, data, theta.star, N, p_auto, dists, opt_fun='opt
         skip <<- TRUE
       }
     )
+    stopCluster(cl=cl)
   } else if (opt_fun=='nlm'){
     tryCatch(
       mod <- nlm(f=mllk, p=theta.star, iterlim=500,

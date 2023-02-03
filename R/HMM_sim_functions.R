@@ -69,12 +69,30 @@ ar_simulation <- function(model_sim, model_fit, N_sim, N_fit, n_samples,
   if (any(model_fit[[2]]>0)){
     autocor <- c()
     for (dist in 1:length(model_fit[[1]])){
-      ac <- as.numeric(acf(simulated_data$data[,dist], plot=F)$acf[2:(sum(model_fit[[2]][(dist-1)*N_fit+1:N_fit])+1)])
-      # Attention: The sum of the autoregression coefficients must not be >1 for a state
-      # Otherwise, in the Gamma distribution negative values would be possible for mu
-      # which leads to an error
-      # Therefore, we standardize ac to avoid this
-      ac = ac/(sum(ac)+1)
+      ac = c()
+      for (state in 1:N_fit){
+        pos_autocor_this_state = (dist-1)*N_fit+state
+        ## Update 2023-02-03 -- use pacf instead of acf here
+        ac = c(ac, abs(as.numeric(pacf(simulated_data$data[,dist], plot=F)[[1]][,,1][1:(sum(model_fit[[2]][pos_autocor_this_state]))])))
+        if (sum(ac)>=1){
+          # Attention: The sum of the autoregression coefficients must not be >1 for a state
+          # Otherwise, in the Gamma distribution negative values would be possible for mu
+          # which leads to an error
+          # Therefore, we standardize ac to avoid this
+          ac = ac/(sum(ac)+1)
+        }
+        
+        ## OLD:
+        
+        #ac = c(ac, abs(as.numeric(acf(simulated_data$data[,dist], plot=F)$acf[2:(sum(model_fit[[2]][pos_autocor_this_state]))+1])))
+        # Attention: The sum of the autoregression coefficients must not be >1 for a state
+        # Otherwise, in the Gamma distribution negative values would be possible for mu
+        # which leads to an error
+        # Therefore, we standardize ac to avoid this
+        #ac = ac/(sum(ac)+1)
+      }
+      #ac <- abs(as.numeric(acf(simulated_data$data[,dist], plot=F)$acf[2:(sum(model_fit[[2]][(dist-1)*N_fit+1:N_fit])+1)]))
+      
       autocor <- c(autocor, ac)
     }
     

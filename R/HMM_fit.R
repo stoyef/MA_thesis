@@ -52,8 +52,7 @@ fit_arp_model <- function(mllk, data, theta.star, N, p_auto, dists, opt_fun='opt
       mod <- optimParallel(par=theta.star, fn=mllk, method='L-BFGS-B',
                            N=N,p_auto=p_auto,x=data, dists=dists, scale_kappa=scale_kappa, zero_inf=zero_inf,
                            lambda=lambda, hessian=TRUE, control=list(maxit=5000)),
-      error=function(e){cat("ERROR: optim() failed. Did you supply autocorrelation parameters = 0?\n
-                            Continue to next iteration.\n")
+      error=function(e){cat("ERROR: optim() failed. Did you supply autocorrelation parameters = 0?\n Continue to next iteration.\n")
         skip <<- TRUE
       }
     )
@@ -63,8 +62,7 @@ fit_arp_model <- function(mllk, data, theta.star, N, p_auto, dists, opt_fun='opt
       mod <- nlm(f=mllk, p=theta.star, iterlim=500,
                  N=N,p_auto=p_auto,x=data, dists=dists, scale_kappa=scale_kappa, zero_inf=zero_inf,
                  lambda=lambda, hessian=TRUE),
-      error=function(e){cat("ERROR: nlm() failed.\n
-                            Continue to next iteration.\n")
+      error=function(e){cat("ERROR: nlm() failed.\n Continue to next iteration.\n")
         skip <<- TRUE
       }
     )
@@ -77,8 +75,7 @@ fit_arp_model <- function(mllk, data, theta.star, N, p_auto, dists, opt_fun='opt
                     dists=dists,x=data, lambda=lambda#,
                     #Domains=matrix(rep(c(-Inf,Inf),length(theta.star)),ncol=2,byrow=T)
       ),
-      error=function(e){cat("ERROR: rgenoud() failed.\n
-                            Continue to next iteration.\n")
+      error=function(e){cat("ERROR: rgenoud() failed.\n Continue to next iteration.\n")
         skip <<- TRUE
       }
     )
@@ -176,7 +173,7 @@ fit_arp_model <- function(mllk, data, theta.star, N, p_auto, dists, opt_fun='opt
     FI_unpen = -hessian_unpen
     FI_pen = -mod$hessian
     tryCatch( # sometimes (rarely) the matrix mult doesn't work. Then return empty solution
-      eff_df = sum(diag(FI_unpen %*% solve(FI_pen))),
+      {eff_df = sum(diag(FI_unpen %*% solve(FI_pen)))},
       error=function(e){cat("Error: AIC/BIC computation didn't work, I'll retry this iteration.\n")
         skip <<- TRUE}
     )

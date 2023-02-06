@@ -131,6 +131,7 @@ fit_arp_model <- function(mllk, data, theta.star, N, p_auto, dists, opt_fun='opt
         if (p_auto[(dist-1)*N+state]>0){
           # Following Ötting and Groll (2021) and Hambucker et al. (2018) we round autoregressive
           # parameters to 3rd decimal place
+          #autocor[[dist]][[state]] = ac[counter_auto+1:(p_auto[(dist-1)*N+state])]
           autocor[[dist]][[state]] = round(ac[counter_auto+1:(p_auto[(dist-1)*N+state])],3)
           counter_auto = counter_auto+p_auto[(dist-1)*N+state]
         }
@@ -170,10 +171,12 @@ fit_arp_model <- function(mllk, data, theta.star, N, p_auto, dists, opt_fun='opt
     require(numDeriv)
     hessian_unpen = hessian(mllk, x=mod$par, N=N,p_auto=p_auto, dists=dists, scale_kappa=scale_kappa, 
                             zero_inf=zero_inf,lambda=0,alt_data=data)
-    FI_unpen = -hessian_unpen
-    FI_pen = mod$hessian
+    FI_unpen = hessian_unpen # minus or no minus??
+    FI_pen = mod$hessian # minus or no minus??
     tryCatch( # sometimes (rarely) the matrix mult doesn't work. Then return empty solution
-      {eff_df = sum(diag(FI_unpen %*% solve(FI_pen)))},
+      {#eff_df = sum(diag(FI_unpen %*% solve(FI_pen)))
+        eff_df = abs(sum(diag(FI_unpen %*% solve(FI_pen))))
+      },
       error=function(e){cat("Error: AIC/BIC computation didn't work, I'll retry this iteration.\n")
         skip <<- TRUE}
     )

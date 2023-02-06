@@ -196,8 +196,8 @@ fit_arp_model <- function(mllk, data, theta.star, N, p_auto, dists, opt_fun='opt
   # create return object
   if (any(p_auto>0)){
     if (lambda>0){
-      ret <- list(mod$value, Gamma, delta, params, autocor, aic, bic, lambda)
-      names(ret) <- c('mllk_optim', 'Gamma', 'delta', 'params', 'autocorrelation', 'AIC', 'BIC', 'penalty')
+      ret <- list(mod$value, Gamma, delta, params, autocor, aic, bic, lambda, eff_df)
+      names(ret) <- c('mllk_optim', 'Gamma', 'delta', 'params', 'autocorrelation', 'AIC', 'BIC', 'penalty', 'effective_df')
     } else{
       ret <- list(mod$value, Gamma, delta, params, autocor, aic, bic)
       names(ret) <- c('mllk_optim', 'Gamma', 'delta', 'params', 'autocorrelation', 'AIC', 'BIC')

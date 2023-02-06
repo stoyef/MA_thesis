@@ -175,7 +175,12 @@ fit_arp_model <- function(mllk, data, theta.star, N, p_auto, dists, opt_fun='opt
                             zero_inf=zero_inf,lambda=0,alt_data=data)
     FI_unpen = -hessian_unpen
     FI_pen = -mod$hessian
-    eff_df = sum(diag(FI_unpen %*% solve(FI_pen)))
+    tryCatch( # sometimes (rarely) the matrix mult doesn't work. Then return empty solution
+      eff_df = sum(diag(FI_unpen %*% solve(FI_pen))),
+      error=function(e){cat("Error: AIC/BIC computation didn't work, I'll retry this iteration.\n")
+        return(NA)}
+    )
+    
     # mllk_unpen is already negative logL
     
     ## SHOULD THE ABSOLUTE VALUE OF THE EFFECTIVE DEGREES BE TAKEN HERE?

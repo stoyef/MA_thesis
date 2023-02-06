@@ -178,8 +178,12 @@ fit_arp_model <- function(mllk, data, theta.star, N, p_auto, dists, opt_fun='opt
     tryCatch( # sometimes (rarely) the matrix mult doesn't work. Then return empty solution
       eff_df = sum(diag(FI_unpen %*% solve(FI_pen))),
       error=function(e){cat("Error: AIC/BIC computation didn't work, I'll retry this iteration.\n")
-        return(NA)}
+        skip <<- TRUE}
     )
+    
+    if (skip){
+      return(NA)
+    }
     
     # mllk_unpen is already negative logL
     

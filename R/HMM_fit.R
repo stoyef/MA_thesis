@@ -171,11 +171,11 @@ fit_arp_model <- function(mllk, data, theta.star, N, p_auto, dists, opt_fun='opt
     require(numDeriv)
     hessian_unpen = hessian(mllk, x=mod$par, N=N,p_auto=p_auto, dists=dists, scale_kappa=scale_kappa, 
                             zero_inf=zero_inf,lambda=0,alt_data=data)
-    FI_unpen = hessian_unpen # minus or no minus??
-    FI_pen = mod$hessian # minus or no minus??
+    FI_unpen = hessian_unpen 
+    FI_pen = mod$hessian
     tryCatch( # sometimes (rarely) the matrix mult doesn't work. Then return empty solution
-      {#eff_df = sum(diag(FI_unpen %*% solve(FI_pen)))
-        eff_df = abs(sum(diag(FI_unpen %*% solve(FI_pen))))
+      {
+        eff_df = sum(diag(FI_unpen %*% solve(FI_pen)))
       },
       error=function(e){cat("Error: AIC/BIC computation didn't work, I'll retry this iteration.\n")
         skip <<- TRUE}

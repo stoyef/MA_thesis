@@ -207,6 +207,7 @@ full_sim_loop <- function(simulation, n_runs, dists_fitted, p_fitted,
   aics = rep(NA,n_runs)
   bics = rep(NA,n_runs)
   logLike = rep(NA,n_runs)
+  eff_df = rep(NA,n_runs)
   
   start_time = Sys.time()
   
@@ -247,6 +248,8 @@ full_sim_loop <- function(simulation, n_runs, dists_fitted, p_fitted,
         bics[n_its] = sim$fitted_model$BIC
         # log-likelihood
         logLike[n_its] = - sim$fitted_model$mllk_optim
+        # effective degrees of freedom
+        eff_df[n_its] = sim$fitted_model$effective_df
       }
     }
   }

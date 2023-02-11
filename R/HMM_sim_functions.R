@@ -380,8 +380,8 @@ full_sim_loop <- function(simulation, n_runs, dists_fitted, p_fitted,
   }
   
   if (extract_aic_bic){
-    ret = list(param_estimates, autocor_estimates, acc, logLike, aics, bics)
-    names(ret) = c("estimated_parameters", "estimated_autocorrelation", "decoding_accuracies", "log-Likelihood", "AIC", "BIC")
+    ret = list(param_estimates, autocor_estimates, acc, logLike, aics, bics, eff_df)
+    names(ret) = c("estimated_parameters", "estimated_autocorrelation", "decoding_accuracies", "log-Likelihood", "AIC", "BIC", "effective-df")
   } else{
     ret = list(param_estimates, autocor_estimates, acc)
     names(ret) = c("estimated_parameters", "estimated_autocorrelation", "decoding_accuracies")

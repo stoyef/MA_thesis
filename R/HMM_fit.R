@@ -156,45 +156,47 @@ fit_arp_model <- function(mllk, data, theta.star, N, p_auto, dists, opt_fun='opt
   ## Update 2023-02-02 --- effective number of parameters for pen logL
   ## (OLD) effective number of parameters = number of nonzero parameters (Zhou et al. 2007)
   ## (NEW) effective number of parameters = trace of product of FI_pen and (FI_unpen)^{-1} (Langrock et al. 2017)
-  #if (zero_inf){
-  #  n_eff_fixed = N*(N-1)+2*N*length(dists)+sum(dists=='gamma')*N
-  #} else{
-  #  n_eff_fixed = N*(N-1)+2*N*length(dists)
-  #}
-  #n_eff_auto = sum(unlist(autocor)>0)
-  #n_params_eff = n_eff_fixed + n_eff_auto
-  if (lambda>0){
-    ## Here, we need the unpenalized logL of the fitted model
-    mllk_unpen = mllk(theta.star = mod$par, N=N,p_auto=p_auto, x=data, dists=dists, scale_kappa=scale_kappa, zero_inf=zero_inf,
-         lambda=0) # lambda=0 --> unpenalized
-    ## number of effective parameters:
-    require(numDeriv)
-    hessian_unpen = hessian(mllk, x=mod$par, N=N,p_auto=p_auto, dists=dists, scale_kappa=scale_kappa, 
-                            zero_inf=zero_inf,lambda=0,alt_data=data)
-    FI_unpen = hessian_unpen 
-    FI_pen = mod$hessian
-    tryCatch( # sometimes (rarely) the matrix mult doesn't work. Then return empty solution
-      {
-        eff_df = sum(diag(FI_unpen %*% solve(FI_pen)))
-      },
-      error=function(e){cat("Error: AIC/BIC computation didn't work, I'll retry this iteration.\n")
-        skip <<- TRUE}
-    )
-    
-    if (skip){
-      return(NA)
+  if (lambda >0){
+    if (zero_inf){
+      n_eff_fixed = N*(N-1)+2*N*length(dists)+sum(dists=='gamma')*N
+    } else{
+      n_eff_fixed = N*(N-1)+2*N*length(dists)
     }
+    n_eff_auto = sum(unlist(autocor)>0)
+    eff_df = n_eff_fixed + n_eff_auto
+  } else{
+    eff_df = length(theta.star)
+  }
+  #if (lambda>0){
+  #  ## Here, we need the unpenalized logL of the fitted model
+  mllk_unpen = mllk(theta.star = mod$par, N=N,p_auto=p_auto, x=data, dists=dists, scale_kappa=scale_kappa, zero_inf=zero_inf,
+         lambda=0) # lambda=0 --> unpenalized
+  #  ## number of effective parameters:
+  #  require(numDeriv)
+  #  hessian_unpen = hessian(mllk, x=mod$par, N=N,p_auto=p_auto, dists=dists, scale_kappa=scale_kappa, 
+  #                          zero_inf=zero_inf,lambda=0,alt_data=data)
+  #  FI_unpen = hessian_unpen 
+  #  FI_pen = mod$hessian
+  #  tryCatch( # sometimes (rarely) the matrix mult doesn't work. Then return empty solution
+  #    {
+  #      eff_df = sum(diag(FI_unpen %*% solve(FI_pen)))
+  #    },
+  #    error=function(e){cat("Error: AIC/BIC computation didn't work, I'll retry this iteration.\n")
+  #      skip <<- TRUE}
+  #  )
+    
+  #  if (skip){
+  #    return(NA)
+  #  }
     
     # mllk_unpen is already negative logL
     
-    ## SHOULD THE ABSOLUTE VALUE OF THE EFFECTIVE DEGREES BE TAKEN HERE?
-    ## IN ANY CASE, WHY ARE THE EFFECTIVE DEGREES NEGATIVE???
     aic = 2*mllk_unpen + 2*eff_df#abs(eff_df)
     bic = 2*mllk_unpen + log(dim(data)[1])*eff_df#abs(eff_df)
-  } else{
-    aic = 2*mod$value + 2*length(theta.star)
-    bic = 2*mod$value + log(dim(data)[1])*length(theta.star)
-  }
+  #} else{
+  #  aic = 2*mod$value + 2*length(theta.star)
+  #  bic = 2*mod$value + log(dim(data)[1])*length(theta.star)
+  #}
   
   # create return object
   if (any(p_auto>0)){

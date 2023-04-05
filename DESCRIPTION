@@ -1,6 +1,6 @@
 Package: MasterThesis
 Version: 1.1.0
-Date: 2022-10-05
+Date: 2023-04-05
 Title: Master Thesis
 Description: Master Thesis about AR(p)-HMMs.
 Authors@R: person("Ferdinand", "Stoye", email = "ferdinand.stoye@uni-bielefeld.de", 
@@ -10,3 +10,5 @@ Encoding: UTF-8
 License: GPL-3
 LazyData: true
 ByteCompile: true
+Imports: Rcpp (>= 1.0.9)
+LinkingTo: Rcpp, RcppArmadillo

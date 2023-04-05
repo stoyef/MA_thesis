@@ -161,3 +161,17 @@ allprobs <- function(x, dists, autocor=0, params, N, p){
 
 
 
+#' Dummy for C++ mllk
+#'
+#' @param fake fake param 
+#' 
+#' @return Negative log likelihood
+#' 
+#' @export
+#' @rdname mllk_cpp
+mllk_new <- function(){
+  mllk = mllk_cpp()
+  return(mllk)
+}
+
+

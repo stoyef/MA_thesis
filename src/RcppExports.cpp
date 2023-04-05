@@ -89,30 +89,13 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// timesTwo
-NumericVector timesTwo(NumericVector x);
-RcppExport SEXP _MasterThesis_timesTwo(SEXP xSEXP) {
+// mllk_cpp
+double mllk_cpp();
+RcppExport SEXP _MasterThesis_mllk_cpp() {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericVector >::type x(xSEXP);
-    rcpp_result_gen = Rcpp::wrap(timesTwo(x));
+    rcpp_result_gen = Rcpp::wrap(mllk_cpp());
     return rcpp_result_gen;
 END_RCPP
-}
-
-static const R_CallMethodDef CallEntries[] = {
-    {"_MasterThesis_dgamma_rcpp", (DL_FUNC) &_MasterThesis_dgamma_rcpp, 3},
-    {"_MasterThesis_dweibull_rcpp", (DL_FUNC) &_MasterThesis_dweibull_rcpp, 3},
-    {"_MasterThesis_dlnorm_rcpp", (DL_FUNC) &_MasterThesis_dlnorm_rcpp, 3},
-    {"_MasterThesis_dexp_rcpp", (DL_FUNC) &_MasterThesis_dexp_rcpp, 3},
-    {"_MasterThesis_dvm_rcpp", (DL_FUNC) &_MasterThesis_dvm_rcpp, 3},
-    {"_MasterThesis_dwrpcauchy_rcpp", (DL_FUNC) &_MasterThesis_dwrpcauchy_rcpp, 3},
-    {"_MasterThesis_timesTwo", (DL_FUNC) &_MasterThesis_timesTwo, 1},
-    {NULL, NULL, 0}
-};
-
-RcppExport void R_init_MasterThesis(DllInfo *dll) {
-    R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
-    R_useDynamicSymbols(dll, FALSE);
 }

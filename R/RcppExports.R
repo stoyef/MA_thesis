@@ -28,7 +28,7 @@ dwrpcauchy_rcpp <- function(x, mu, rho) {
     .Call('_MasterThesis_dwrpcauchy_rcpp', PACKAGE = 'MasterThesis', x, mu, rho)
 }
 
-timesTwo <- function(x) {
-    .Call('_MasterThesis_timesTwo', PACKAGE = 'MasterThesis', x)
+mllk_cpp <- function() {
+    .Call('_MasterThesis_mllk_cpp', PACKAGE = 'MasterThesis')
 }
 

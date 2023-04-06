@@ -89,13 +89,35 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// mllk_cpp
-double mllk_cpp();
-RcppExport SEXP _MasterThesis_mllk_cpp() {
+// allprobs_cpp
+arma::mat allprobs_cpp(arma::mat x, std::vector<std::string> dists, arma::mat autocor, List params, IntegerVector p);
+RcppExport SEXP _MasterThesis_allprobs_cpp(SEXP xSEXP, SEXP distsSEXP, SEXP autocorSEXP, SEXP paramsSEXP, SEXP pSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    rcpp_result_gen = Rcpp::wrap(mllk_cpp());
+    Rcpp::traits::input_parameter< arma::mat >::type x(xSEXP);
+    Rcpp::traits::input_parameter< std::vector<std::string> >::type dists(distsSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type autocor(autocorSEXP);
+    Rcpp::traits::input_parameter< List >::type params(paramsSEXP);
+    Rcpp::traits::input_parameter< IntegerVector >::type p(pSEXP);
+    rcpp_result_gen = Rcpp::wrap(allprobs_cpp(x, dists, autocor, params, p));
+    return rcpp_result_gen;
+END_RCPP
+}
+// forward_cpp
+double forward_cpp(arma::mat allprobs, arma::rowvec delta, arma::mat Gamma, arma::mat autocor, int nObs, int nVars, double lambda);
+RcppExport SEXP _MasterThesis_forward_cpp(SEXP allprobsSEXP, SEXP deltaSEXP, SEXP GammaSEXP, SEXP autocorSEXP, SEXP nObsSEXP, SEXP nVarsSEXP, SEXP lambdaSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::mat >::type allprobs(allprobsSEXP);
+    Rcpp::traits::input_parameter< arma::rowvec >::type delta(deltaSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type Gamma(GammaSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type autocor(autocorSEXP);
+    Rcpp::traits::input_parameter< int >::type nObs(nObsSEXP);
+    Rcpp::traits::input_parameter< int >::type nVars(nVarsSEXP);
+    Rcpp::traits::input_parameter< double >::type lambda(lambdaSEXP);
+    rcpp_result_gen = Rcpp::wrap(forward_cpp(allprobs, delta, Gamma, autocor, nObs, nVars, lambda));
     return rcpp_result_gen;
 END_RCPP
 }

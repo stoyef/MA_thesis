@@ -10,5 +10,10 @@ Encoding: UTF-8
 License: GPL-3
 LazyData: true
 ByteCompile: true
-Imports: Rcpp (>= 1.0.9)
+Imports: Rcpp (>= 1.0.9),
+	 CircStats,
+	 RColorBrewer,
+	 optimParallel,
+	 parallel,
+   	 rgenoud
 LinkingTo: Rcpp, RcppArmadillo

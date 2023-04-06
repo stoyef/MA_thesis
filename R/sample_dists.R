@@ -29,8 +29,9 @@ sample_gamma <- function(n, mu, sigma,cv){
 #' 
 #' @export
 #' @rdname sample_vonMises
+#' @import CircStats
 sample_vm <- function(n, mu, kappa){
-  require(CircStats)
+  #require(CircStats)
   return(rvm(n, mean=mu+pi, k=kappa)-pi)
 }
 

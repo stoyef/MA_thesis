@@ -57,8 +57,9 @@ dens_gamma <- function(x, theta, autocor_ind=0, autocor=0, p=0){
 #' 
 #' @export
 #' @rdname dens_vm
+#' @import CircStats
 dens_vm <- function(x, theta, autocor_ind=0, autocor=0, p=0){
-  require(CircStats)
+  #require(CircStats)
   if (p>0){
     mu_auto <- Arg(
       (1-sum(autocor))*exp(1i*theta$mu) + 

@@ -54,9 +54,11 @@ mllk <- function(theta.star, dists, x, N, p_auto, lambda=0, scale_kappa=1, zero_
   # transform data to matrix, if necessary
   if (is.vector(x)) x <- matrix(x, nrow=length(x))
   
-  # allprobs calculation in separate function allprobs
+  # allprobs calculation in separate function allprobs 
+  ## --> allprobs_cpp
   allprobs = allprobs(x=x, dists=dists, autocor = autocor, params=params, N=N, p=p_auto)
   
+  ## --> forward_cpp
   foo <- delta%*%diag(allprobs[1,])
   l <- log(sum(foo))
   phi <- foo/sum(foo)
@@ -170,7 +172,7 @@ allprobs <- function(x, dists, autocor=0, params, N, p){
 #' @export
 #' @rdname mllk_cpp
 mllk_new <- function(){
-  mllk = mllk_cpp()
+  mllk = allprobs_cpp() # doesn't work right now
   return(mllk)
 }
 

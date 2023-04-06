@@ -28,7 +28,11 @@ dwrpcauchy_rcpp <- function(x, mu, rho) {
     .Call('_MasterThesis_dwrpcauchy_rcpp', PACKAGE = 'MasterThesis', x, mu, rho)
 }
 
-mllk_cpp <- function() {
-    .Call('_MasterThesis_mllk_cpp', PACKAGE = 'MasterThesis')
+allprobs_cpp <- function(x, dists, autocor, params, p) {
+    .Call('_MasterThesis_allprobs_cpp', PACKAGE = 'MasterThesis', x, dists, autocor, params, p)
+}
+
+forward_cpp <- function(allprobs, delta, Gamma, autocor, nObs, nVars, lambda) {
+    .Call('_MasterThesis_forward_cpp', PACKAGE = 'MasterThesis', allprobs, delta, Gamma, autocor, nObs, nVars, lambda)
 }
 

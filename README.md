@@ -8,3 +8,8 @@ Functionalities include:
 - Pseudo residuals
 - Simulation of data from AR(p)-HMMs
 - Applications to real data
+
+
+Create ``MasterThesis_init.c`` with: 
+
+``tools::package_native_routine_registration_skeleton('./')``

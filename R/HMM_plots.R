@@ -12,9 +12,10 @@
 #' 
 #' @export
 #' @rdname plot_states
+#' @import RColorBrewer
 plot_states <- function(states, names="none", title=TRUE){
   N <- length(unique(states))
-  require(RColorBrewer)
+  #require(RColorBrewer)
   pal <- brewer.pal(N,'Dark2')
   
   if (title){
@@ -51,10 +52,12 @@ plot_states <- function(states, names="none", title=TRUE){
 #' 
 #' @export
 #' @rdname plot_fitted_dist
+#' @import CircStats
+#' @import RColorBrewer
 plot_fitted_dist <- function(data, dist, param, N, delta, title="none", breaks=30, xlab='x', legend=TRUE,
                              xlim='none'){
-  require(CircStats)
-  require(RColorBrewer)
+  #require(CircStats)
+  #require(RColorBrewer)
   pal <- brewer.pal(N+1, 'Dark2')
   dens <- matrix(NA, nrow=10000,ncol=N)
   x <- seq(min(data[data!=0], na.rm=TRUE),max(data, na.rm=TRUE),length=10000)
@@ -322,10 +325,12 @@ boxplot_sim_params <- function(gamma_mu, gamma_sigma, vm_mu, vm_kappa, gamma_aut
 #'                        
 #' @export
 #' @rdname circ_vm_viz
+#' @import CircStats
+#' @import RColorBrewer
 #' 
 circ_vm_viz <- function(mu, kappa, delta=1, data=NULL, sum_dist=FALSE, leg=FALSE){
-  require(CircStats)
-  require(RColorBrewer)
+  #require(CircStats)
+  #require(RColorBrewer)
   
   # create unit circle
   radius = 1

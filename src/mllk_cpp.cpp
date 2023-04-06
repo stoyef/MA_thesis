@@ -1,35 +1,45 @@
 #include "densities.h"
 
-// Compute negative (penalized) log-likelihood of an AR(p)-HMM in C++
+// allprobs for likelihood computation in C++
 //
-// Compute the negative log-likelihood, using one or several specified distributions.
-// The distributions have to be specified by their commonly known abbreviation in R, 
-// e.g. one of ['gamma', 'vm', 'pois', 'binom',...].
-// The named list of parameters (one value for each parameter and for each state) have to be
-// in suitable form, i.e. a vector of the working parameters.
-// In the likelihood computation, contemporaneous independence is assumed.
-// Includes an optional penalization term \eqn{\lambda} for parameter selection of \eqn{p}.
+// Used in mllk.R to speed up loop in allprobs calculation
+//
+// @param x Data
+// @param dists Vector of variable names
+// @param autocor Matrix of autoregression coefficients
+// @param params List of lists of distribution parameters
+// @param p Vector of autoregression degrees
 // 
-// @param theta.star Vector of parameters in the following order: 1) Off-diagonal entries of TPM,
-//                   2) Distribution parameters for each state (each distribution at a time, i.e. 
-//                   first all parameters of dist1, then all parameters of dist2 etc.), 
-//                   3) Autoregression parameters (each distribution at a time, i.e. 
-//                   first all autoregression parameters of dist1, then all autocorrelation 
-//                   parameters of dist2 etc.) -> degree parameters for each state of each variable.
-// @param dists Vector containing abbreviated names (in R-jargon) of the distributions 
-//              to be considered in the likelihood computation.
-// @param x Data vector or matrix for which the negative log-likelihood should be computed.
-// @param N Number of states.
-// @param p_auto Vector of autoregression degrees, one value for each state of each variable 
-//               (in case of penalization choose upper bound of number of parameters).
-// @param lambda Complexity penalty (≥0) for autoregression parameters \eqn{\phi}.(default: 0 no penalization).
-// @param scale_kappa Default 1, Scaling factor for kappa to avoid numerical issues in optimization for large kappa.
-// @param zero_inf Default FALSE, indicates if the gamma distributed variables should incorporate zero-inflation.
-// @param alt_data Default NULL, provide data here if variable name x is already taken in wrapper function.
+// @return Matrix of allprobs.
+// [[Rcpp::export]]
+arma::mat allprobs_cpp(arma::mat x, std::vector<std::string> dists, arma::mat autocor,
+                    List params, IntegerVector p)
+{
+  int N = x.n_cols;
+  int nObs = x.n_rows;
+  arma::mat probs(nObs, N, arma::fill::ones);
+  return probs;
+}
+
+
+// Forward algorithm for likelihood computation in C++
+//
+// Used in mllk.R to speed up loop in forward algorithm
+//
+// @param allprobs Output from allprobs_cpp
+// @param delta Stationary distribution
+// @param Gamma Transition probability matrix
+// @param autocor Matrix of autoregression coefficients
+// @param nObs Number of observations
+// @param nVars Number of variables
+// @param lambda Complexity penalty
 // 
 // @return Negative (penalized) log-likelihood.
 // [[Rcpp::export]]
-double mllk_cpp(){
+double forward_cpp(arma::mat allprobs, arma::rowvec delta, arma::mat Gamma,
+                   arma::mat autocor, int nObs, int nVars, double lambda)
+  {
+  int N = allprobs.n_cols;
   double mllk_scale = 0;
   return -mllk_scale;
 }

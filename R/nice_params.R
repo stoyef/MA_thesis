@@ -186,6 +186,7 @@ unstarize <- function(theta.star,N,p,dists, scale_kappa=1, zero_inf=FALSE){
 #' 
 #' @export
 #' @rdname starting_params_opt
+#' @import CircStats
 starting_params_opt <- function(data,dist,N){
   params <- c()
   
@@ -200,7 +201,7 @@ starting_params_opt <- function(data,dist,N){
       }
       params <- c(params,s)
   } else if (dist=='vm'){
-    require(CircStats)
+    #require(CircStats)
     params <- c(params, as.numeric(quantile(data,probs=q_1[2:(N+1)]))) # mu
     k <- c()
     for (state in 1:N){

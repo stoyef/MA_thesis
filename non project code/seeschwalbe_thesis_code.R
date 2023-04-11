@@ -38,7 +38,7 @@ c=0
 
 
 # AR(0,0)
-p=c(0,0)
+p=c(0,0,0,0,0,0)
 N=3
 theta = c(rep(-2,N*(N-1)),
           15,20,35,9,4,3,
@@ -190,7 +190,7 @@ hist(data_s_77_1hz[,2],probability = T,xlab='turning angle',breaks=10,
 # 5Hz
 
 N=2
-p=c(2,2)
+p=c(2,2,2,2)
 schwalbe_wrap <- function(iteration){
   # starting values
   step_init = c(runif(1,60,100),runif(1,140,170),
@@ -220,7 +220,7 @@ schwalbe_wrap <- function(iteration){
 iterations = 1:50
 results_ar00 <- mclapply(iterations,
                          schwalbe_wrap,
-                         mc.cores = n_cores
+                         mc.cores = 10
 )
 #results_ar00
 work=c(1,5,8,9)

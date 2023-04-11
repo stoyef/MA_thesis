@@ -58,17 +58,18 @@ mllk <- function(theta.star, dists, x, N, p_auto, lambda=0, scale_kappa=1, zero_
   ## --> allprobs_cpp
   allprobs = allprobs(x=x, dists=dists, autocor = autocor, params=params, N=N, p=p_auto)
   
-  ## --> forward_cpp
-  foo <- delta%*%diag(allprobs[1,])
-  l <- log(sum(foo))
-  phi <- foo/sum(foo)
-  for (t in 2:dim(x)[1]){
-    foo <- phi%*%Gamma%*%diag(allprobs[t,]) # here it can happen that 
-    # allprobs[t,] = c(0,0) due to numeric issues. 
-    # Then the function fails
-    l <- l+log(sum(foo))
-    phi <- foo/sum(foo)
-  }
+  ## --> forward_cpp (negative value, because we again take the negative later on)
+  l = -forward_cpp(allprobs=allprobs,delta=delta, Gamma=Gamma,nObs=dim(x)[1],nVars=length(dists))
+  #foo <- delta%*%diag(allprobs[1,])
+  #l <- log(sum(foo))
+  #phi <- foo/sum(foo)
+  #for (t in 2:dim(x)[1]){
+  #  foo <- phi%*%Gamma%*%diag(allprobs[t,]) # here it can happen that 
+  #  # allprobs[t,] = c(0,0) due to numeric issues. 
+  #  # Then the function fails
+  #  l <- l+log(sum(foo))
+  #  phi <- foo/sum(foo)
+  #}
   ## Lasso penalty for autoregression parameters
   if (lambda>0){
     sum_auto = 0
@@ -174,6 +175,19 @@ allprobs <- function(x, dists, autocor=0, params, N, p){
 mllk_new <- function(){
   mllk = allprobs_cpp() # doesn't work right now
   return(mllk)
+}
+
+#' Dummy for C++ test
+#'
+#' @param fake fake param 
+#' 
+#' @return Negative log likelihood
+#' 
+#' @export
+#' @rdname test_cpp
+test <- function(p){
+  test = test_cpp(p)
+  return(test)
 }
 
 

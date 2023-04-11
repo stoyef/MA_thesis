@@ -64,7 +64,7 @@ logAlpha <- function(mod, data, N, p){
 #' @rdname pseudores_arp
 #' @import CircStats
 pseudores_arp <- function(mod, data, N, p){
-  #require(CircStats)
+  require(CircStats)
   nbObs = nrow(data)
   stepfun = 'pgamma'
   anglefun = 'dvm'

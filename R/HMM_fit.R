@@ -40,8 +40,8 @@ fit_arp_model <- function(mllk, data, theta.star, N, p_auto, dists, opt_fun='opt
   skip = FALSE
   
   if (opt_fun=='optim'){
-    #require(optimParallel)
-    #require(parallel)
+    require(optimParallel)
+    require(parallel)
     n_cluster = detectCores()
     cl = makeCluster(n_cluster)
     setDefaultCluster(cl=cl)
@@ -73,7 +73,7 @@ fit_arp_model <- function(mllk, data, theta.star, N, p_auto, dists, opt_fun='opt
       }
     )
   } else if (opt_fun=="ga"){
-    #require("rgenoud")
+    require("rgenoud")
     tryCatch(
       mod <- genoud(fn=mllk, nvars=length(theta.star), pop.size=1000, max.generations=100,
                     starting.values = theta.star,

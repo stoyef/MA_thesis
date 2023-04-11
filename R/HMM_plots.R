@@ -329,8 +329,8 @@ boxplot_sim_params <- function(gamma_mu, gamma_sigma, vm_mu, vm_kappa, gamma_aut
 #' @import RColorBrewer
 #' 
 circ_vm_viz <- function(mu, kappa, delta=1, data=NULL, sum_dist=FALSE, leg=FALSE){
-  #require(CircStats)
-  #require(RColorBrewer)
+  require(CircStats)
+  require(RColorBrewer)
   
   # create unit circle
   radius = 1

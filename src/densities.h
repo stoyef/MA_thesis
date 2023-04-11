@@ -7,6 +7,7 @@
 #include <RcppArmadillo.h>
 // [[Rcpp::depends(RcppArmadillo)]]
 #include <iostream>
+#include <vector>
 using namespace Rcpp;
 using namespace std;
 

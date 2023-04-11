@@ -90,34 +90,44 @@ BEGIN_RCPP
 END_RCPP
 }
 // allprobs_cpp
-arma::mat allprobs_cpp(arma::mat x, std::vector<std::string> dists, arma::mat autocor, List params, IntegerVector p);
-RcppExport SEXP _MasterThesis_allprobs_cpp(SEXP xSEXP, SEXP distsSEXP, SEXP autocorSEXP, SEXP paramsSEXP, SEXP pSEXP) {
+arma::mat allprobs_cpp(arma::mat x, std::vector<std::string> dists, arma::mat autocor, arma::rowvec params_1, arma::rowvec params_2, arma::rowvec p);
+RcppExport SEXP _MasterThesis_allprobs_cpp(SEXP xSEXP, SEXP distsSEXP, SEXP autocorSEXP, SEXP params_1SEXP, SEXP params_2SEXP, SEXP pSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< arma::mat >::type x(xSEXP);
     Rcpp::traits::input_parameter< std::vector<std::string> >::type dists(distsSEXP);
     Rcpp::traits::input_parameter< arma::mat >::type autocor(autocorSEXP);
-    Rcpp::traits::input_parameter< List >::type params(paramsSEXP);
-    Rcpp::traits::input_parameter< IntegerVector >::type p(pSEXP);
-    rcpp_result_gen = Rcpp::wrap(allprobs_cpp(x, dists, autocor, params, p));
+    Rcpp::traits::input_parameter< arma::rowvec >::type params_1(params_1SEXP);
+    Rcpp::traits::input_parameter< arma::rowvec >::type params_2(params_2SEXP);
+    Rcpp::traits::input_parameter< arma::rowvec >::type p(pSEXP);
+    rcpp_result_gen = Rcpp::wrap(allprobs_cpp(x, dists, autocor, params_1, params_2, p));
     return rcpp_result_gen;
 END_RCPP
 }
 // forward_cpp
-double forward_cpp(arma::mat allprobs, arma::rowvec delta, arma::mat Gamma, arma::mat autocor, int nObs, int nVars, double lambda);
-RcppExport SEXP _MasterThesis_forward_cpp(SEXP allprobsSEXP, SEXP deltaSEXP, SEXP GammaSEXP, SEXP autocorSEXP, SEXP nObsSEXP, SEXP nVarsSEXP, SEXP lambdaSEXP) {
+double forward_cpp(arma::mat allprobs, arma::rowvec delta, arma::mat Gamma, int nObs, int nVars);
+RcppExport SEXP _MasterThesis_forward_cpp(SEXP allprobsSEXP, SEXP deltaSEXP, SEXP GammaSEXP, SEXP nObsSEXP, SEXP nVarsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< arma::mat >::type allprobs(allprobsSEXP);
     Rcpp::traits::input_parameter< arma::rowvec >::type delta(deltaSEXP);
     Rcpp::traits::input_parameter< arma::mat >::type Gamma(GammaSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type autocor(autocorSEXP);
     Rcpp::traits::input_parameter< int >::type nObs(nObsSEXP);
     Rcpp::traits::input_parameter< int >::type nVars(nVarsSEXP);
-    Rcpp::traits::input_parameter< double >::type lambda(lambdaSEXP);
-    rcpp_result_gen = Rcpp::wrap(forward_cpp(allprobs, delta, Gamma, autocor, nObs, nVars, lambda));
+    rcpp_result_gen = Rcpp::wrap(forward_cpp(allprobs, delta, Gamma, nObs, nVars));
+    return rcpp_result_gen;
+END_RCPP
+}
+// test_cpp
+int test_cpp(arma::rowvec p);
+RcppExport SEXP _MasterThesis_test_cpp(SEXP pSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::rowvec >::type p(pSEXP);
+    rcpp_result_gen = Rcpp::wrap(test_cpp(p));
     return rcpp_result_gen;
 END_RCPP
 }

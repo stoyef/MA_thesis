@@ -86,6 +86,91 @@ arma::mat allprobs_cpp(arma::mat x, std::vector<std::string> dists, arma::mat au
 
 
 
+// new translation from Bing (GPT-4)
+
+//#include <RcppArmadillo.h>
+
+//using namespace Rcpp;
+
+//arma::mat allprobs(arma::mat x, CharacterVector dists, arma::mat autocor,
+//                   List params, int N, IntegerVector p) {
+  
+//  arma::mat allprobs(x.n_rows,N);
+//  allprobs.fill(1);
+  
+//  for (int dist = 0; dist < dists.length(); ++dist) {
+    
+//    for (int j = 0; j < N; ++j) { 
+//      if (p[(dist*N) + j - 1] > 0){ // check if current state has autoregression
+        
+//        arma::uvec ind = find_finite(x.col(dist));
+//        ind.shed_rows(0,p[(dist*N) + j - 1] - 1);
+//        arma::mat autocor_ind(ind.n_elem,p[(dist*N) + j - 1]);
+        
+//        for (int i = 0; i < p[(dist*N) + j - 1]; ++i){
+//          autocor_ind.col(i) = ind - p[(dist*N) + j - 1] + i;
+//        }
+        
+//        arma::mat x_wo_na = x;
+//        x_wo_na.elem(find_nonfinite(x_wo_na.col(dist))).fill(mean(x_wo_na.col(dist)));
+//        autocor_ind = join_rows(autocor_ind.each_col() % x_wo_na.col(dist));
+        
+//        List theta_j = params[dist];
+//        for (int i = 0; i < theta_j.length(); ++i){
+//          List theta_i_j = theta_j[i];
+//          theta_i_j[0] = as<NumericVector>(theta_i_j[0])[j];
+//          theta_j[i] = theta_i_j;
+//        }
+        
+//        arma::mat probs(ind.n_elem,N);
+//        probs.fill(1);
+        
+//        if (dists[dist] == "gamma") {
+//          for (int i = 0; i < ind.n_elem; ++i){
+//            probs.row(i) = as<arma::rowvec>(dgamma(x(ind(i),dist), 
+//                                            as<NumericVector>(theta_j["mu"])[0], 
+//                                                                            as<NumericVector>(theta_j["sigma"])[0], 
+//                                                                                                               true));
+//          }
+          
+//        } else if (dists[dist] == "vm") {
+//          for (int i = 0; i < ind.n_elem; ++i){
+//            probs.row(i) = as<arma::rowvec>(dvonmises(x(ind(i),dist), 
+//                                            as<NumericVector>(theta_j["mu"])[0], 
+//                                                                            as<NumericVector>(theta_j["kappa"])[0], 
+//                                                                                                               true));
+//          }
+          
+//        } else {
+//          stop("Invalid distribution specified.");
+//        }
+        
+//        for (int i = 0; i < p[(dist*N) + j - 1]; ++i){
+//          probs.rows(i,ind.n_elem-1) %= autocor_ind.cols(i,autocor_ind.n_cols-1);
+//        }
+        
+//        allprobs.rows(ind) %= probs;
+        
+//      } else { // current state has no autoregression
+        
+//        arma::uvec ind = find_finite(x.col(dist));
+        
+//        arma::mat probs(ind.n_elem,N);
+//        probs.fill(1);
+        
+//        List theta_j = params[dist];
+//        for (int i = 0; i < theta_j.length(); ++i){
+//          List theta_i_j = theta_j[i];
+//          theta_i_j[0] = as<NumericVector>(theta_i_j[0])[j];
+//          theta_j[i] = theta_i_j;
+//        }
+        
+//        if (dists[dist] == "gamma") {
+//          for (int i = 0; i < ind.n_elem; ++i){
+//            probs.row(i) = as<arma::rowvec
+
+
+
 
 // Forward algorithm for likelihood computation in C++
 //

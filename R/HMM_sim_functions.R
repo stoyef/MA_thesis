@@ -248,8 +248,13 @@ full_sim_loop <- function(simulation, n_runs, dists_fitted, p_fitted,
         bics[n_its] = sim$fitted_model$BIC
         # log-likelihood
         logLike[n_its] = - sim$fitted_model$mllk_optim
-        # effective degrees of freedom
-        eff_df[n_its] = sim$fitted_model$effective_df
+        if (lambda>0){
+          # effective degrees of freedom
+          eff_df[n_its] = sim$fitted_model$effective_df
+        } else{
+          eff_df[n_its] = n_states_fitted*(n_states_fitted-1) + n_states_fitted*2*length(dists_fitted) + sum(p_fitted)
+        }
+       
       }
     }
   }

@@ -135,14 +135,14 @@ allprobs <- function(x, dists, autocor=0, params, N, p){
                                                            p[((dist-1)*N) + j])
         } else{ # current state has no autoregression
           ind <- which(!is.na(x[,dist]))
-          for (j in 1:N){
+          #for (j in 1:N){
             
             theta_j <- params[[dist]]
             for (i in names(theta_j)) theta_j[i][[1]] = theta_j[i][[1]][j] 
             
             allprobs[ind,j] <- allprobs[ind,j] * 
               match.fun(paste('dens_', dists[dist], sep=""))(x[ind,dist], theta_j)
-          }
+          #}
         }
       }
     } else{ 

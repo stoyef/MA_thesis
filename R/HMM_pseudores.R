@@ -106,10 +106,10 @@ pseudores_arp <- function(mod, data, N, p){
     for(i in 1:nbObs) {
       # steps
       if(!is.na(data[i,1])) {
-        if (p[step]>0){
-          if (i > p[step]){
+        if (p[state]>0){
+          if (i > p[state]){
             mu_auto <- (1-sum(autocor[[1]][[state]]))*stepArgs[[2]] + 
-              as.vector(x_wo_na_step[(i-p[step]):(i-1)]%*%autocor[[1]][[state]])
+              as.vector(x_wo_na_step[(i-p[state]):(i-1)]%*%autocor[[1]][[state]])
             sigma_auto <- cv*mu_auto
             pStepMat[i,state] <- zeromass+(1-zeromass)*pgamma(data[i,1],
                                                               shape=mu_auto^2/sigma_auto^2,
@@ -129,12 +129,12 @@ pseudores_arp <- function(mod, data, N, p){
       # angles
       if(!is.na(data[i,2])) {
         # angle==pi => residual=Inf
-        if (p[N+step]>0){
-          if (i > p[N+step]){
+        if (p[N+state]>0){
+          if (i > p[N+state]){
             if(data[i,2]!=pi) {
               mu_auto <- Arg(
                 (1-sum(autocor[[2]][[state]]))*exp(1i*angleArgs[[4]]) + 
-                  as.vector(exp(1i*x_wo_na_angle[(i-p[2]):(i-1)])%*%autocor[[2]][[state]])
+                  as.vector(exp(1i*x_wo_na_angle[(i-p[N+state]):(i-1)])%*%autocor[[2]][[state]])
               )
               pAngleMat[i,state] <- integrate(dvm,angleArgs[[2]],data[i,2],
                                               mu_auto,angleArgs[[5]])$value
